@@ -4,6 +4,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  DetailRow,
   IconButton,
   MetricCard,
   PageShell,
@@ -32,7 +33,6 @@ import EditLmcUserDrawer from "../_components/edit-supervisor-user-drawer";
 import { useQuery } from "@tanstack/react-query";
 import LmcService from "@/api/lmc";
 import { ILmcSummary } from "@/interfaces/lmc.interface";
-import type { ElementType } from "react";
 
 const formatUSD = (n: number) =>
   `USD ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -215,18 +215,16 @@ const PrimaryAddressCard = ({
   <Card>
     <CardHeader icon={<LuMapPin />} title="Primary address" />
     <CardBody className="flex flex-col gap-3">
-      <SideRow
-        icon={LuBuilding2}
-        iconBg="bg-primary-soft"
-        iconColor="text-primary"
-        value={name ?? "—"}
-      />
-      <SideRow
-        icon={LuMapPin}
-        iconBg="bg-amber-50"
-        iconColor="text-amber-500"
-        value={address || "N/A"}
-      />
+      <DetailRow
+          icon={<LuBuilding2 />}
+          iconClassName="bg-primary-soft text-primary"
+          label={name ?? "—"}
+        />
+      <DetailRow
+          icon={<LuMapPin />}
+          iconClassName="bg-amber-50 text-amber-500"
+          label={address || "N/A"}
+        />
 
       <div className="mt-1 border-t border-border-subtle pt-3">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
@@ -282,60 +280,28 @@ const PosCard = ({
   <Card>
     <CardHeader icon={<LuTablet />} title="POS devices" />
     <CardBody className="flex flex-col gap-3">
-      <SideRow
-        icon={LuTablet}
-        iconBg="bg-primary-soft"
-        iconColor="text-primary"
-        value="Issued"
-        trailing={String(posIssued)}
-      />
-      <SideRow
-        icon={LuActivity}
-        iconBg="bg-emerald-50"
-        iconColor="text-emerald-500"
-        value="Trading"
-        trailing={String(posTrading)}
-      />
-      <SideRow
-        icon={LuUsers}
-        iconBg="bg-blue-50"
-        iconColor="text-blue-500"
-        value="Writers"
-        trailing={String(writersTotal)}
-      />
+      <DetailRow
+          icon={<LuTablet />}
+          iconClassName="bg-primary-soft text-primary"
+          label="Issued"
+          value={String(posIssued)}
+        />
+      <DetailRow
+          icon={<LuActivity />}
+          iconClassName="bg-emerald-50 text-emerald-500"
+          label="Trading"
+          value={String(posTrading)}
+        />
+      <DetailRow
+          icon={<LuUsers />}
+          iconClassName="bg-blue-50 text-blue-500"
+          label="Writers"
+          value={String(writersTotal)}
+        />
     </CardBody>
   </Card>
 );
 
-const SideRow = ({
-  icon: Icon,
-  iconBg,
-  iconColor,
-  value,
-  trailing,
-}: {
-  icon: ElementType;
-  iconBg: string;
-  iconColor: string;
-  value: string;
-  trailing?: string;
-}) => (
-  <div className="flex items-center justify-between gap-3">
-    <div className="flex min-w-0 items-center gap-2.5">
-      <span
-        className={`flex size-7 shrink-0 items-center justify-center rounded-lg ${iconBg}`}
-      >
-        <Icon className={`size-3.5 ${iconColor}`} />
-      </span>
-      <span className="truncate text-xs text-muted-foreground">{value}</span>
-    </div>
-    {trailing && (
-      <span className="shrink-0 text-xs font-semibold tabular-nums text-foreground">
-        {trailing}
-      </span>
-    )}
-  </div>
-);
 
 const DonutChart = ({
   value,

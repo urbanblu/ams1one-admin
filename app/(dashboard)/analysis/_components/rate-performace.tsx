@@ -274,7 +274,7 @@ function RetentionRatePerformance() {
                   <span className="text-xs font-bold text-muted-foreground">
                     YTD RR:
                   </span>
-                  <span className="text-xs font-semibold tabular-nums bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold tabular-nums bg-primary-soft text-primary px-2 py-0.5 rounded-full">
                     {ytdRR}
                   </span>
                 </div>

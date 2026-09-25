@@ -169,7 +169,7 @@ function RetailerDetailView() {
           <Button
             variant="secondary"
             size="sm"
-            className="shrink-0 bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+            className="shrink-0 bg-emerald-50 text-emerald-500 hover:bg-emerald-100"
             isPending={unblocking}
             onClick={() => unblock()}
           >
@@ -205,20 +205,20 @@ function RetailerDetailView() {
               />
               <InfoRow
                 icon={LuPhone}
-                iconBg="bg-emerald-100"
-                iconColor="text-emerald-600"
+                iconBg="bg-emerald-50"
+                iconColor="text-emerald-500"
                 value={profile.phone}
               />
               <InfoRow
                 icon={LuMail}
-                iconBg="bg-blue-100"
+                iconBg="bg-blue-50"
                 iconColor="text-blue-500"
                 value={profile.email || "—"}
               />
               <InfoRow
                 icon={LuMapPin}
-                iconBg="bg-rose-100"
-                iconColor="text-rose-400"
+                iconBg="bg-rose-50"
+                iconColor="text-rose-500"
                 value={profile.location_address || "—"}
               />
               <InfoRow

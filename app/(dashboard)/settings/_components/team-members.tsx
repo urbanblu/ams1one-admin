@@ -69,15 +69,6 @@ function TeamMembers() {
             value={searchDraft}
             onChange={setSearchDraft}
           />
-          {/* <Button
- size="sm"
- variant="ghost"
- className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-subtle w-full shrink-0 md:w-auto"
- onClick={() => setSearchDraft((prev) => prev.trim())}
-          >
-            <IoFilter className="text-muted-foreground h-4 w-4" />
- Filter
-          </Button> */}
         </div>
         <div className="w-full md:w-auto md:shrink-0">
           <NewUserDrawer

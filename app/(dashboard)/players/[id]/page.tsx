@@ -1,7 +1,16 @@
 "use client";
 
 import { Tabs } from "@heroui/react";
-import { Avatar, Card, CardBody, CardHeader, IconButton, PageShell, StatTile } from "@/components/ui";
+import {
+  Avatar,
+  Card,
+  CardBody,
+  CardHeader,
+  DetailRow,
+  IconButton,
+  PageShell,
+  StatTile,
+} from "@/components/ui";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -276,7 +285,7 @@ const SideRow = ({
   value,
   iconBg = "bg-subtle",
   iconColor = "text-zinc-400",
-  valueClassName = "text-foreground",
+  valueClassName,
 }: {
   icon: ElementType;
   label: string;
@@ -285,21 +294,11 @@ const SideRow = ({
   iconColor?: string;
   valueClassName?: string;
 }) => (
-  <div className="flex items-center justify-between gap-3">
-    <div className="flex min-w-0 items-center gap-2.5">
-      <span
-        className={`flex size-7 shrink-0 items-center justify-center rounded-lg ${iconBg}`}
-      >
-        <Icon className={`size-3.5 ${iconColor}`} />
-      </span>
-      <span className="truncate text-xs text-muted-foreground">{label}</span>
-    </div>
-    {value && (
-      <span
-        className={`shrink-0 text-xs font-semibold tabular-nums ${valueClassName}`}
-      >
-        {value}
-      </span>
-    )}
-  </div>
+  <DetailRow
+    icon={<Icon />}
+    iconClassName={`${iconBg} ${iconColor}`}
+    label={label}
+    value={value}
+    valueClassName={valueClassName}
+  />
 );

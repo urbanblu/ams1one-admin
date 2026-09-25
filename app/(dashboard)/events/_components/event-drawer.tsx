@@ -165,7 +165,7 @@ function TicketRow({
           isPending={resendingId === ticket.id}
           isDisabled={!!resendingId}
           onClick={() => onResend(ticket.id)}
-          className="shrink-0 text-[10px] font-semibold text-primary bg-primary/10 h-7 px-2.5"
+          className="shrink-0 text-[10px] font-semibold text-primary bg-primary-soft h-7 px-2.5"
         >
           <LuSend className="w-3 h-3" />
           Resend
@@ -382,7 +382,7 @@ function SendPanel({ eventId }: { eventId: string }) {
                 isPending={resendingId === t.id}
                 isDisabled={!!resendingId || sendingAll}
                 onClick={() => handleResendOne(t.id)}
-                className="shrink-0 text-[10px] font-semibold text-primary bg-primary/10 h-7 px-2.5"
+                className="shrink-0 text-[10px] font-semibold text-primary bg-primary-soft h-7 px-2.5"
               >
                 <LuSend className="w-3 h-3" />
                 Send

@@ -321,16 +321,6 @@ function ReportsView() {
                   Download
                 </Button>
               )}
-              {/* <Button
- size="sm"
- className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
- onClick={() =>
- ToastService.info({ text: "Feature not yet available" })
-                }
-              >
-                <IoMailOutline className="w-3 h-3" />
- Email
-              </Button> */}
             </div>
           </div>
 
