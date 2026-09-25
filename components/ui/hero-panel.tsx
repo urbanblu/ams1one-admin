@@ -59,7 +59,7 @@ export function HeroStat({
       {isLoading ? (
         <div className="h-7 w-28 bg-white/20 rounded-lg animate-pulse" />
       ) : (
-        <p className="text-2xl font-bold text-white tracking-tight leading-none">
+        <p className="text-2xl font-bold text-white tracking-tight tabular-nums leading-none">
           {value}
         </p>
       )}

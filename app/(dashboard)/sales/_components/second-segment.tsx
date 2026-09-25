@@ -129,7 +129,7 @@ function SecondSalesSegment() {
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
       {(canSeeTopUp || canSeeFloat) && (
-        <div className="grid shrink-0 gap-3 sm:grid-cols-2">
+        <div className="grid shrink-0 gap-3 md:grid-cols-2">
           {canSeeTopUp && (
             <StatTile
               label="Today’s top-up"

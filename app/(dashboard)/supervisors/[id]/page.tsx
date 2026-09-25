@@ -81,10 +81,10 @@ function LmcDetailView() {
         </div>
       </div>
 
-      <div className="grid items-start gap-4 md:grid-cols-5">
-        <div className="col-span-5 min-w-0 space-y-4 md:col-span-4">
+      <div className="grid items-start gap-4 lg:grid-cols-5">
+        <div className="col-span-5 min-w-0 space-y-4 lg:col-span-4">
           {canSeeSummary && (
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
               <TopCard
                 icon={LuShoppingBag}
                 value={s ? formatUSD(parseFloat(s.ytd_sales)) : "—"}
@@ -191,7 +191,7 @@ function LmcDetailView() {
         </div>
 
         {canSeeSummary && (
-          <div className="col-span-5 space-y-4 md:col-span-1">
+          <div className="col-span-5 space-y-4 lg:col-span-1">
             <PrimaryAddressCard
               name={info?.name}
               address={info?.address}

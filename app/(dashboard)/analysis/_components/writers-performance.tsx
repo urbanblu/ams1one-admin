@@ -98,9 +98,9 @@ function WritersPerformace() {
         canSeeTopUpStats ||
         canSeeWinStats ||
         canSeeBestWorst) && (
-        <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-4 gap-4 h-auto">
+        <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-4 lg:gap-4 h-auto">
           {canSeeChart && (
-            <div className="col-span-3 flex flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-4 md:min-h-[400px]">
+            <div className="lg:col-span-3 flex min-w-0 flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-4 lg:min-h-[400px]">
               <div className="flex flex-col h-full">
                 <div className="md:flex md:justify-between space-y-5 md:space-y-0">
                   <div className="flex-col space-y-2">
@@ -163,7 +163,7 @@ function WritersPerformace() {
           )}
 
           <div
-            className={`${canSeeChart ? "col-span-1" : "col-span-4"} flex flex-col gap-4`}
+            className={`${canSeeChart ? "lg:col-span-1" : "lg:col-span-4"} flex min-w-0 flex-col gap-4`}
           >
             {canSeeTopUpStats && (
               <InfoCard
@@ -191,7 +191,7 @@ function WritersPerformace() {
               <div className="flex-none overflow-hidden rounded-2xl border border-border-subtle bg-surface">
                 <div className="flex items-center gap-2 border-b border-border-subtle px-5 py-3.5">
                   <LuMedal className="w-3.5 h-3.5 text-zinc-400" />
-                  <span className="font-bold text-xs text-muted-foreground uppercase tracking-wider">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                     Best &amp; Worst Performance
                   </span>
                 </div>
@@ -236,9 +236,9 @@ function WritersPerformace() {
       )}
 
       {(canSeeTopWriters || canSeeRetentionRate) && (
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid gap-4 lg:grid-cols-4">
           {canSeeTopWriters && (
-            <div className="flex flex-col md:col-span-3 space-y-3">
+            <div className="flex min-w-0 flex-col lg:col-span-3 space-y-3">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                 Top 10 retailers — year to date
               </span>
@@ -286,7 +286,7 @@ function WritersPerformace() {
 
           {canSeeRetentionRate && (
             <div
-              className={`${canSeeTopWriters ? "md:col-span-1" : "md:col-span-4"} overflow-hidden rounded-2xl border border-border-subtle bg-surface`}
+              className={`${canSeeTopWriters ? "lg:col-span-1" : "lg:col-span-4"} min-w-0 overflow-hidden rounded-2xl border border-border-subtle bg-surface`}
             >
               <div className="flex items-start justify-between gap-3 border-b border-border-subtle px-5 py-4">
                 <div className="min-w-0">
@@ -301,8 +301,8 @@ function WritersPerformace() {
                   <LuPercent className="size-4" />
                 </span>
               </div>
-              <div className="flex items-center justify-center py-10">
-                <span className="text-5xl font-bold tracking-tight tabular-nums text-primary">
+              <div className="flex items-center justify-center py-8">
+                <span className="text-3xl font-bold tracking-tight tabular-nums truncate text-primary">
                   {retention?.retention_rate ?? "—"}
                 </span>
               </div>

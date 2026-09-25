@@ -172,18 +172,10 @@ function RetentionRatePerformance() {
   ].filter(Boolean).length;
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-5">
       {/* 3×2 grid — dashed dividers only between cells */}
       {visibleCards > 0 && (
-        <div
-          className="grid grid-cols-2 md:grid-cols-3 *:border-border
- [&>*:not(:nth-child(2n))]:border-r [&>*:not(:nth-child(2n))]:border-dashed
- [&>*:nth-child(n+3)]:border-t [&>*:nth-child(n+3)]:border-dashed
- md:[&>*:not(:nth-child(2n))]:border-r-0
- md:[&>*:not(:nth-child(3n))]:border-r md:[&>*:not(:nth-child(3n))]:border-dashed
- md:[&>*:nth-child(n+3)]:border-t-0
- md:[&>*:nth-child(n+4)]:border-t md:[&>*:nth-child(n+4)]:border-dashed"
-        >
+        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border-subtle bg-border-subtle sm:grid-cols-2 lg:grid-cols-3">
           {canSeeSalesCard && (
             <PrimaryCard
               label="Sales"
@@ -195,7 +187,7 @@ function RetentionRatePerformance() {
                   : "N/A"
               }
               icon={LuShoppingBag}
-              iconBg="bg-primary/10"
+              iconBg="bg-primary-soft"
               iconColor="text-primary"
             />
           )}
@@ -206,8 +198,8 @@ function RetentionRatePerformance() {
               subLabel="Gross Top-Ups"
               subValue={netTopupsCard?.gross_topups ?? "N/A"}
               icon={LuWallet}
-              iconBg="bg-blue-100"
-              iconColor="text-blue-600"
+              iconBg="bg-blue-50"
+              iconColor="text-blue-500"
             />
           )}
           {canSeeWritersAtWork && (
@@ -225,8 +217,8 @@ function RetentionRatePerformance() {
                   : "N/A"
               }
               icon={LuUsers}
-              iconBg="bg-emerald-100"
-              iconColor="text-emerald-600"
+              iconBg="bg-emerald-50"
+              iconColor="text-emerald-500"
             />
           )}
           {canSeeWinsCard && (
@@ -240,7 +232,7 @@ function RetentionRatePerformance() {
                   : "N/A"
               }
               icon={LuTrophy}
-              iconBg="bg-orange-100"
+              iconBg="bg-amber-50"
               iconColor="text-orange-500"
             />
           )}
@@ -251,7 +243,7 @@ function RetentionRatePerformance() {
               subLabel="Unclaimed Tickets"
               subValue={liquidationCard?.unclaimed_coupons ?? "N/A"}
               icon={LuArrowDownUp}
-              iconBg="bg-rose-100"
+              iconBg="bg-rose-50"
               iconColor="text-rose-500"
             />
           )}
@@ -262,8 +254,8 @@ function RetentionRatePerformance() {
               subLabel="Claim Wallet Bal."
               subValue={settlementsCard?.claim_wallet_balance ?? "N/A"}
               icon={LuHandCoins}
-              iconBg="bg-teal-100"
-              iconColor="text-teal-600"
+              iconBg="bg-blue-50"
+              iconColor="text-blue-500"
             />
           )}
         </div>
@@ -275,7 +267,7 @@ function RetentionRatePerformance() {
           <div className="flex flex-col flex-1 h-full">
             <div className="sm:flex sm:justify-between space-y-5 sm:space-y-0 shrink-0 mb-4">
               <div className="flex-col space-y-1">
-                <div className="text-sm font-semibold uppercase tracking-tight">
+                <div className="text-sm font-semibold tracking-tight">
                   Retention Rate Trend
                 </div>
                 <div className="flex items-center gap-2">
@@ -378,24 +370,26 @@ const PrimaryCard = ({
   iconColor: string;
 }) => {
   return (
-    <div className="flex flex-col p-5 gap-3">
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground font-normal">
+    <div className="flex min-w-0 flex-col bg-surface px-5 py-4">
+      <div className="flex items-start justify-between gap-3">
+        <span className="min-w-0 flex-1 truncate text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
           {label}
         </span>
-        <div className={`p-1.5 rounded-lg ${iconBg}`}>
-          <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
-        </div>
-      </div>
-      <div className="flex items-baseline gap-2 flex-wrap">
-        <span className="font-semibold tabular-nums text-2xl leading-none">
-          {value}
-        </span>
-        <span className={`text-xs font-medium ${iconColor}`}>
-          {subValue}{" "}
-          <span className="text-zinc-400 font-normal">{subLabel}</span>
+        <span
+          className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${iconBg}`}
+        >
+          <Icon className={`size-4 ${iconColor}`} />
         </span>
       </div>
+      <p className="mt-1.5 truncate text-xl font-bold tracking-tight tabular-nums text-foreground">
+        {value}
+      </p>
+      <p className="mt-1 truncate text-[11px] text-muted-foreground">
+        <span className={`font-semibold tabular-nums ${iconColor}`}>
+          {subValue}
+        </span>{" "}
+        {subLabel}
+      </p>
     </div>
   );
 };

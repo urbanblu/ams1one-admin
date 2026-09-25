@@ -33,34 +33,20 @@ export function StatTile({
     <Wrapper
       onClick={onClick}
       className={cn(
-        "bg-surface border border-border-subtle rounded-2xl px-5 py-4 text-left w-full",
+        "w-full overflow-hidden rounded-2xl border border-border-subtle bg-surface px-5 py-4 text-left",
         onClick &&
-          "cursor-pointer transition-all hover:bg-subtle/60 active:scale-[0.99]",
+          "cursor-pointer transition-all hover:bg-subtle active:scale-[0.98]",
         className,
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] text-muted-foreground uppercase tracking-wider truncate">
-            {label}
-          </p>
-          {isLoading ? (
-            <div className="h-6 w-24 bg-subtle rounded animate-pulse mt-2" />
-          ) : (
-            <p className="text-xl font-bold text-foreground tracking-tight mt-1.5 truncate">
-              {value}
-            </p>
-          )}
-          {hint && (
-            <p className="text-[11px] text-muted-foreground mt-1 truncate">
-              {hint}
-            </p>
-          )}
-        </div>
+        <p className="min-w-0 flex-1 truncate text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+          {label}
+        </p>
         {icon && (
           <span
             className={cn(
-              "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 [&>svg]:size-4",
+              "flex size-9 shrink-0 items-center justify-center rounded-xl [&>svg]:size-4",
               iconClassName ?? "bg-primary-soft text-primary",
             )}
           >
@@ -68,6 +54,16 @@ export function StatTile({
           </span>
         )}
       </div>
+      {isLoading ? (
+        <div className="mt-2 h-6 w-24 animate-pulse rounded bg-subtle" />
+      ) : (
+        <p className="mt-1.5 truncate text-xl font-bold tracking-tight tabular-nums text-foreground">
+          {value}
+        </p>
+      )}
+      {hint && (
+        <p className="mt-1 truncate text-[11px] text-muted-foreground">{hint}</p>
+      )}
     </Wrapper>
   );
 }

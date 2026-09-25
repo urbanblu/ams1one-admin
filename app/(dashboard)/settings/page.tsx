@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import RightSegment from "./_components/right-segment";
 import GeneralSettings from "./_components/general-settings";
 import TeamMembers from "./_components/team-members";
 import ActivityLogsTab from "./_components/activity-logs-tab";
@@ -21,9 +20,6 @@ function SettingsView() {
     if (canSeeActivityLogs) return "activityLogs";
     return "generalSettings";
   });
-
-  const shouldShowRightSegment =
-    selectedTab === "generalSettings" || selectedTab === "teamMembers";
 
   const segments = [
     {
@@ -58,22 +54,14 @@ function SettingsView() {
         }
       />
 
-      <div className="mt-5 flex w-full min-w-0 flex-col gap-5 md:grid md:min-h-0 md:flex-1 md:grid-cols-4">
-        <div className="col-span-3 flex min-h-0 w-full max-w-full flex-col overflow-x-hidden">
-          {selectedTab === "generalSettings" && <GeneralSettings />}
-          {selectedTab === "teamMembers" && canSeeTeamMembers && (
-            <TeamMembers />
-          )}
-          {selectedTab === "activityLogs" && canSeeActivityLogs && (
-            <ActivityLogsTab />
-          )}
-        </div>
-
-        {shouldShowRightSegment ? (
-          <div className="col-span-1 h-full min-h-0 w-full basis-full">
-            <RightSegment />
-          </div>
-        ) : null}
+      {/* RightSegment rendered an empty <div/>, so a quarter of the widest page
+          in the app was permanently blank. Settings is a single column. */}
+      <div className="mt-5 flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-x-hidden">
+        {selectedTab === "generalSettings" && <GeneralSettings />}
+        {selectedTab === "teamMembers" && canSeeTeamMembers && <TeamMembers />}
+        {selectedTab === "activityLogs" && canSeeActivityLogs && (
+          <ActivityLogsTab />
+        )}
       </div>
     </div>
   );

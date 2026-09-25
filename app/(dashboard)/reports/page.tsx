@@ -173,7 +173,7 @@ function ReportsView() {
       />
 
       {/* Two-column layout */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 overflow-hidden sm:grid-cols-2">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 overflow-hidden lg:grid-cols-2">
         {/* ── Left column ── */}
         <div className="flex flex-col gap-4 h-full min-h-0">
           {/* Report selector */}

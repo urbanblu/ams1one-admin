@@ -61,7 +61,7 @@ export function MetricCard({
         {isLoading ? (
           <Skeleton className="mt-3 h-7 w-32" />
         ) : (
-          <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+          <p className="mt-2 truncate text-2xl font-bold tracking-tight tabular-nums text-foreground">
             {value}
           </p>
         )}

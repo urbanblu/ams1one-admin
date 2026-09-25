@@ -55,7 +55,7 @@ export function CardHeader({
         {icon && (
           <span
             className={cn(
-              "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 [&>svg]:size-4",
+              "size-9 rounded-xl flex items-center justify-center shrink-0 [&>svg]:size-4",
               iconClassName ?? "bg-primary-soft text-primary",
             )}
           >

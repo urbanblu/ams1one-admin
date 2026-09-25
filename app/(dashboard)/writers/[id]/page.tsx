@@ -199,9 +199,9 @@ function RetailerDetailView() {
         )}
       </div>
 
-      <div className="grid items-start gap-4 md:grid-cols-5">
+      <div className="grid items-start gap-4 lg:grid-cols-5">
         {/* ── Left sidebar ── */}
-        <div className="col-span-5 space-y-4 md:col-span-1">
+        <div className="col-span-5 space-y-4 lg:col-span-1">
           {/* Contact */}
           <Card>
             <CardHeader icon={<LuPhone />} title="Contact" />
@@ -325,9 +325,9 @@ function RetailerDetailView() {
         </div>
 
         {/* ── Right column ── */}
-        <div className="col-span-5 flex min-w-0 flex-col gap-4 md:col-span-4">
+        <div className="col-span-5 flex min-w-0 flex-col gap-4 lg:col-span-4">
           {/* Stat tiles */}
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
             <StatTile
               label="YTD sales"
               value={formatGhs(parseFloat(String(profile.ytd_sales)) || 0)}

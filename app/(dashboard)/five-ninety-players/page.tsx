@@ -115,7 +115,7 @@ function FiveNinetyPlayersView() {
 
       <div className="flex h-full flex-col gap-4">
         {canSeeStats && (
-          <div className="grid shrink-0 grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid shrink-0 grid-cols-2 gap-3 lg:grid-cols-4">
             <StatTile
               icon={<LuUsers />}
               iconClassName="bg-primary-soft text-primary"

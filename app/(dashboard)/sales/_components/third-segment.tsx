@@ -83,7 +83,7 @@ function ThirdSalesSegment() {
     <div className="flex h-full min-h-0 flex-col gap-4">
       {/* Wins + claims */}
       {(canSeeWins || canSeeClaims) && (
-        <div className="grid shrink-0 gap-3 sm:grid-cols-2">
+        <div className="grid shrink-0 gap-3 md:grid-cols-2">
           {canSeeWins && (
             <StatTile
               label="Today’s wins"
@@ -117,7 +117,7 @@ function ThirdSalesSegment() {
               description="Drawn events and the players who won them"
             />
 
-            <div className="grid shrink-0 gap-4 border-b border-border-subtle px-5 py-4 sm:grid-cols-2">
+            <div className="grid shrink-0 gap-3 border-b border-border-subtle px-5 py-4 sm:grid-cols-2">
               <div>
                 <CustomDatePicker
                   label="Draw date"
