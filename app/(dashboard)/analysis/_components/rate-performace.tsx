@@ -18,16 +18,22 @@ import {
   YAxis,
 } from "recharts";
 import {
-  LuShoppingBag,
-  LuWallet,
-  LuUsers,
-  LuTrophy,
   LuArrowDownUp,
+  LuChartLine,
   LuHandCoins,
+  LuShoppingBag,
+  LuTrophy,
+  LuUsers,
+  LuWallet,
 } from "react-icons/lu";
 import type { ElementType } from "react";
 import ChartColors from "@/utils/chart-colors";
-import { SegmentedControl } from "@/components/ui";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  SegmentedControl,
+} from "@/components/ui";
 
 type ChartEntry = {
   label: string;
@@ -263,24 +269,20 @@ function RetentionRatePerformance() {
 
       {/* Retention rate trend chart */}
       {canSeeTrend && (
-        <div className="flex min-h-[400px] flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-4">
-          <div className="flex flex-col flex-1 h-full">
-            <div className="sm:flex sm:justify-between space-y-5 sm:space-y-0 shrink-0 mb-4">
-              <div className="flex-col space-y-1">
-                <div className="text-sm font-semibold tracking-tight">
-                  Retention Rate Trend
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-muted-foreground">
-                    YTD RR:
+        <Card className="flex flex-col">
+          <CardHeader
+            icon={<LuChartLine />}
+            title="Retention rate trend"
+            action={
+              <div className="flex items-center gap-3">
+                <span className="hidden items-center gap-1.5 sm:flex">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+                    YTD
                   </span>
-                  <span className="text-xs font-semibold tabular-nums bg-primary-soft text-primary px-2 py-0.5 rounded-full">
+                  <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold tabular-nums text-primary">
                     {ytdRR}
                   </span>
-                </div>
-              </div>
-
-              <div className="shrink-0">
+                </span>
                 <SegmentedControl
                   segments={[
                     { key: "30days", label: "30 days" },
@@ -290,9 +292,10 @@ function RetentionRatePerformance() {
                   onChange={(key) => setPeriod(key)}
                 />
               </div>
-            </div>
-
-            <div className="h-[300px]">
+            }
+          />
+          <CardBody>
+            <div className="h-[18rem] lg:h-[22rem]">
               {chartData.length === 0 ? (
                 <div className="h-full flex items-center justify-center">
                   <span className="text-xs text-zinc-400">
@@ -343,8 +346,8 @@ function RetentionRatePerformance() {
                 </ResponsiveContainer>
               )}
             </div>
-          </div>
-        </div>
+          </CardBody>
+        </Card>
       )}
     </div>
   );

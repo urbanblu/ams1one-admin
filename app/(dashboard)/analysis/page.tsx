@@ -1,10 +1,9 @@
 "use client";
 import WritersPerformace from "./_components/writers-performance";
 import { Suspense, useState } from "react";
-import { Tabs } from "@heroui/react";
 import RetentionRatePerformance from "./_components/rate-performace";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { PageHeader, PageShell } from "@/components/ui";
+import { PageHeader, PageShell, SegmentedControl } from "@/components/ui";
 
 type Tab = "writers" | "rate";
 
@@ -43,39 +42,27 @@ function AnalysisPageView() {
       ? "writers"
       : "rate";
 
+  const analysisTabs = [
+    canSeeWritersPerf && { key: "writers" as const, label: "Writers" },
+    canSeeRatePerf && { key: "rate" as const, label: "Retention rate" },
+  ].filter(Boolean) as { key: Tab; label: string }[];
+
   return (
     <PageShell>
       <PageHeader
         className="shrink-0"
         title="Analysis"
         description="Writer performance and retention trends across the network."
+        actions={
+          analysisTabs.length > 1 ? (
+            <SegmentedControl
+              segments={analysisTabs}
+              value={activeTab}
+              onChange={setUserSelectedTab}
+            />
+          ) : undefined
+        }
       />
-      <div className="shrink-0 sm:max-w-sm">
-        <Tabs
-          selectedKey={activeTab}
-          onSelectionChange={(key) => setUserSelectedTab(key as Tab)}
-        >
-          <Tabs.ListContainer>
-            <Tabs.List
-              aria-label="Analysis view"
-              className="gap-1 rounded-2xl p-1"
-            >
-              {canSeeWritersPerf && (
-                <Tabs.Tab id="writers" className="h-9 rounded-xl px-4 text-sm">
-                  Writers Performance
-                  <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
-                </Tabs.Tab>
-              )}
-              {canSeeRatePerf && (
-                <Tabs.Tab id="rate" className="h-9 rounded-xl px-4 text-sm">
-                  Rate Performance
-                  <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
-                </Tabs.Tab>
-              )}
-            </Tabs.List>
-          </Tabs.ListContainer>
-        </Tabs>
-      </div>
 
       {activeTab === "writers" && canSeeWritersPerf && <WritersPerformace />}
       {activeTab === "rate" && canSeeRatePerf && <RetentionRatePerformance />}

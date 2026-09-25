@@ -46,7 +46,7 @@ function ActivityLogsTab() {
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   return (
-    <div className="mt-4 flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div>
           <span className="text-sm font-bold">Activity Logs</span>

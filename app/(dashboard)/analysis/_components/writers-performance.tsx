@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Axios from "@/api";
@@ -17,17 +16,26 @@ import {
   YAxis,
 } from "recharts";
 import {
-  LuWallet,
-  LuTrophy,
-  LuTrendingUp,
-  LuTrendingDown,
-  LuPercent,
+  LuChartColumn,
   LuMedal,
+  LuPercent,
+  LuTrendingDown,
+  LuTrendingUp,
+  LuTrophy,
   LuUpload,
+  LuWallet,
 } from "react-icons/lu";
 import type { ElementType } from "react";
 import ChartColors from "@/utils/chart-colors";
-import { Avatar, MetricCard, SegmentedControl } from "@/components/ui";
+import {
+  Avatar,
+  Button as UiButton,
+  Card,
+  CardBody,
+  CardHeader,
+  MetricCard,
+  SegmentedControl,
+} from "@/components/ui";
 
 function WritersPerformace() {
   const { hasPage } = usePageAccess();
@@ -100,25 +108,26 @@ function WritersPerformace() {
         canSeeBestWorst) && (
         <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-4 lg:gap-4 h-auto">
           {canSeeChart && (
-            <div className="lg:col-span-3 flex min-w-0 flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-4 lg:min-h-[400px]">
-              <div className="flex flex-col h-full">
-                <div className="md:flex md:justify-between space-y-5 md:space-y-0">
-                  <div className="flex-col space-y-2">
-                    <div className="text-sm font-semibold">
-                      Total Writers vs Active Writers
-                    </div>
-                    <div className="space-x-4 flex">
-                      <div className="flex items-center space-x-2">
-                        <div className="size-3.5 rounded-full bg-emerald-500" />
-                        <span className="text-xs">Deployed</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="rounded-full w-3.5 h-3.5 bg-primary"></div>
-                        <span className="text-xs">Active</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
+            <Card className="flex min-w-0 flex-col lg:col-span-3">
+              <CardHeader
+                icon={<LuChartColumn />}
+                title="Total writers vs active writers"
+                action={
+                  <div className="flex items-center gap-3">
+                    <span className="hidden items-center gap-3 sm:flex">
+                      <span className="flex items-center gap-1.5">
+                        <span className="size-2.5 rounded-full bg-emerald-500" />
+                        <span className="text-xs text-muted-foreground">
+                          Deployed
+                        </span>
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="size-2.5 rounded-full bg-primary" />
+                        <span className="text-xs text-muted-foreground">
+                          Active
+                        </span>
+                      </span>
+                    </span>
                     <SegmentedControl
                       className="shrink-0"
                       segments={[
@@ -129,10 +138,10 @@ function WritersPerformace() {
                       onChange={(key) => setRangeDays(key === "30" ? 30 : 365)}
                     />
                     {canSeeExport && (
-                      <Button
-                        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
-                        size="md"
-                        isDisabled={!downloadUrl}
+                      <UiButton
+                        variant="outline"
+                        size="sm"
+                        disabled={!downloadUrl}
                         onClick={async () => {
                           if (!downloadUrl) return;
                           const response = await Axios({
@@ -149,17 +158,19 @@ function WritersPerformace() {
                           URL.revokeObjectURL(href);
                         }}
                       >
-                        <LuUpload className="size-4" />
+                        <LuUpload />
                         Export
-                      </Button>
+                      </UiButton>
                     )}
                   </div>
-                </div>
-                <div className="w-full mt-5 h-[220px] md:h-auto md:flex-1 md:min-h-0">
+                }
+              />
+              <CardBody>
+                <div className="h-[18rem] w-full lg:h-[22rem]">
                   <ActiveWritersStackedBarChart days={chartDays} />
                 </div>
-              </div>
-            </div>
+              </CardBody>
+            </Card>
           )}
 
           <div

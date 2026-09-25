@@ -38,3 +38,61 @@
 [  432402ms] [LOG] [Fast Refresh] done in 153ms @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
 [  432552ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
 [  432700ms] [LOG] [Fast Refresh] done in 248ms @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  567982ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  568024ms] [LOG] [Fast Refresh] done in 103ms @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  617691ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  617882ms] [LOG] [Fast Refresh] done in 220ms @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  642607ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  642729ms] [ERROR] ./app/(dashboard)/analysis/_components/rate-performace.tsx:343:17
+Expected '</', got 'jsx text'
+  341 |               )}
+  342 |             </div>
+> 343 |           </div>
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 344 |         </div>
+      | ^^^^^^^^
+  345 |       )}
+  346 |     </div>
+  347 |   );
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/analysis/_components/rate-performace.tsx [Client Component Browser]
+    ./app/(dashboard)/analysis/page.tsx [Client Component Browser]
+    ./app/(dashboard)/analysis/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/analysis/_components/rate-performace.tsx [Client Component SSR]
+    ./app/(dashboard)/analysis/page.tsx [Client Component SSR]
+    ./app/(dashboard)/analysis/page.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:3272
+[  642774ms] [ERROR] ./app/(dashboard)/analysis/_components/rate-performace.tsx:343:17
+Expected '</', got 'jsx text'
+  341 |               )}
+  342 |             </div>
+> 343 |           </div>
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 344 |         </div>
+      | ^^^^^^^^
+  345 |       )}
+  346 |     </div>
+  347 |   );
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/analysis/_components/rate-performace.tsx [Client Component Browser]
+    ./app/(dashboard)/analysis/page.tsx [Client Component Browser]
+    ./app/(dashboard)/analysis/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/analysis/_components/rate-performace.tsx [Client Component SSR]
+    ./app/(dashboard)/analysis/page.tsx [Client Component SSR]
+    ./app/(dashboard)/analysis/page.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:3272
+[  642844ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  652041ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  652077ms] [LOG] [Fast Refresh] done in 56ms @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  678616ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431
+[  678698ms] [LOG] [Fast Refresh] done in 140ms @ http://localhost:3000/_next/static/chunks/0kn~_next_dist_0t0kgqw._.js:2431

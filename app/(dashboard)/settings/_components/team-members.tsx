@@ -127,7 +127,7 @@ const MemberItem = ({
     : "N/A";
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border-subtle bg-surface p-4 md:flex-row md:items-center md:justify-between md:gap-4">
+    <div className="flex flex-col gap-3 rounded-2xl border border-border-subtle bg-surface px-5 py-4 md:flex-row md:items-center md:justify-between md:gap-4">
       <div className="flex min-w-0 items-center gap-3">
         <Avatar
           name={user.full_name || `${user.first_name} ${user.last_name}`}

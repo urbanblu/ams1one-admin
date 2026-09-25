@@ -157,35 +157,35 @@ export default function EventsPage() {
         title="Events & QR tickets"
         description="Publish events, issue tickets and scan them at the gate."
         actions={
-          <>
-            {(showEventTab || showScannerTab) && (
-              <SegmentedControl
-                segments={
-                  [
-                    showEventTab && {
-                      key: "events" as const,
-                      label: "Events",
-                      icon: <LuCalendarDays />,
-                    },
-                    showScannerTab && {
-                      key: "scanner" as const,
-                      label: "Gate scanner",
-                      icon: <LuScanLine />,
-                    },
-                  ].filter(Boolean) as {
-                    key: Tab;
-                    label: string;
-                    icon: React.ReactNode;
-                  }[]
-                }
-                value={tab}
-                onChange={setTab}
-              />
-            )}
-            {tab === "events" && canCreate && <CreateEventModal />}
-          </>
+          tab === "events" && canCreate ? <CreateEventModal /> : undefined
         }
       />
+
+      {(showEventTab || showScannerTab) && (
+        <SegmentedControl
+          className="shrink-0 self-start"
+          segments={
+            [
+              showEventTab && {
+                key: "events" as const,
+                label: "Events",
+                icon: <LuCalendarDays />,
+              },
+              showScannerTab && {
+                key: "scanner" as const,
+                label: "Gate scanner",
+                icon: <LuScanLine />,
+              },
+            ].filter(Boolean) as {
+              key: Tab;
+              label: string;
+              icon: React.ReactNode;
+            }[]
+          }
+          value={tab}
+          onChange={setTab}
+        />
+      )}
 
       {/* Content */}
       {tab === "events" && showEventTab && <EventsList canManage={canManage} />}

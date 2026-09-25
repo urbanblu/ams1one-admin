@@ -1,8 +1,7 @@
 "use client";
 
 import CustomTable, { TableRow } from "@/components/custom-table";
-import { StatusBadge } from "@/components/ui";
-import { Tabs } from "@heroui/react";
+import { SegmentedControl, StatusBadge } from "@/components/ui";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import LmcService from "@/api/lmc";
@@ -201,35 +200,23 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
   };
 
   return (
-    <div className="rounded-2xl border border-border-subtle bg-surface p-5">
-      <span className="font-bold">{type}</span>
-      <div className="flex flex-col sm:flex-row items-center sm:justify-between mt-3">
-        <Tabs
-          className="max-w-full flex-wrap"
-          variant="primary"
-          selectedKey={tab}
-          onSelectionChange={(key) => handleTabChange(key.toString())}
-        >
-          <Tabs.ListContainer>
-            <Tabs.List aria-label="Options" className="gap-1 rounded-2xl p-1">
-              {tabs.map((i) => (
-                <Tabs.Tab
-                  className="h-9 whitespace-nowrap rounded-xl px-4 text-sm font-medium"
-                  id={i}
-                  key={i}
-                >
-                  {i}
-                  <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-          </Tabs.ListContainer>
-        </Tabs>
+    <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
+      {/* This sits under the page-level tab bar, so it reads as a filter row
+          rather than a second navigation level. */}
+      <div className="flex flex-col gap-3 border-b border-border-subtle px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+          {type}
+        </span>
+        <SegmentedControl
+          className="self-start"
+          segments={tabs.map((i) => ({ key: i, label: i }))}
+          value={tab}
+          onChange={handleTabChange}
+        />
       </div>
       {type != "Agents" && (
         <CustomTable
           key={tab}
-          className="py-3"
           addTableBorder={false}
           columns={columns}
           data={tableData}
