@@ -1,6 +1,7 @@
 "use client";
 
 import CustomTable from "@/components/custom-table";
+import { StatusBadge } from "@/components/ui";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
@@ -73,11 +74,7 @@ function CashoutTable({ writerId }: { writerId: string }) {
               {formatGhs(parseFloat(String(r.amount)) || 0)}
             </span>
           ),
-          status: (
-            <span className="text-xs capitalize text-emerald-600 font-medium">
-              {r.status}
-            </span>
-          ),
+          status: <StatusBadge status={r.status} />,
         }))}
         pagination={pagination}
         pageSize={currentPageSize}

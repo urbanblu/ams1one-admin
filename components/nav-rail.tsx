@@ -336,7 +336,7 @@ function NavRail({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-dvh bg-background">
       {/* Desktop rail */}
       <aside className="hidden md:flex flex-col w-64 shrink-0 border-r border-border-subtle">
         <SidebarContent {...sidebarProps} />
@@ -345,7 +345,7 @@ function NavRail({ children }: { children: React.ReactNode }) {
       {/* Mobile overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-zinc-900/40 backdrop-blur-sm transition-opacity duration-300 md:hidden",
+          "fixed inset-0 z-[var(--z-backdrop)] bg-zinc-900/40 backdrop-blur-sm transition-opacity duration-300 md:hidden",
           mobileOpen ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         onClick={() => setMobileOpen(false)}
@@ -354,7 +354,7 @@ function NavRail({ children }: { children: React.ReactNode }) {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 border-r border-border-subtle flex flex-col md:hidden transition-transform duration-300 ease-out",
+          "fixed inset-y-0 left-0 z-[var(--z-modal)] w-64 border-r border-border-subtle flex flex-col md:hidden transition-transform duration-300 ease-out",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >

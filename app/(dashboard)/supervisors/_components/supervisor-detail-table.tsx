@@ -1,6 +1,7 @@
 "use client";
 
 import CustomTable, { TableRow } from "@/components/custom-table";
+import { StatusBadge } from "@/components/ui";
 import { Tabs } from "@heroui/react";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -156,11 +157,7 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
             USD {row.ytd_topups}
           </span>
         ),
-        status: (
-          <span className="text-xs capitalize font-medium">
-            {row.status.replace("_", " ")}
-          </span>
-        ),
+        status: <StatusBadge status={row.status} />,
       })),
     [writersData],
   );

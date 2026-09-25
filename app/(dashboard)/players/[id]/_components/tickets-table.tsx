@@ -1,19 +1,11 @@
 "use client";
 
 import CustomTable from "@/components/custom-table";
+import { StatusBadge } from "@/components/ui";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PlayersService, { type PlayerGame } from "@/api/players";
 import { formatGhs } from "@/utils/currency";
-
-function statusClass(status: string) {
-  const s = status.toLowerCase();
-  if (s === "won") return "border-emerald-300 text-emerald-600";
-  if (s === "active") return "border-blue-500 text-blue-600";
-  if (s === "lost") return "border-rose-300 text-rose-500";
-  if (s === "claimed") return "border-teal-500 text-teal-600";
-  return "border-zinc-400 text-muted-foreground";
-}
 
 function TicketsTable({
   game,
@@ -95,11 +87,10 @@ function TicketsTable({
             </span>
           ),
           status: (
-            <div
-              className={`rounded-full border-[1.5px] text-center text-xs py-[2px] px-2 inline-block ${statusClass(r.status)}`}
-            >
-              <span className="text-[.6rem] capitalize">{r.status}</span>
-            </div>
+            <StatusBadge
+              status={r.status}
+              tone={r.status?.toLowerCase() === "active" ? "info" : undefined}
+            />
           ),
         }))}
         pagination={pagination}

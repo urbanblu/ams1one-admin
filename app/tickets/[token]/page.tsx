@@ -147,7 +147,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-6 p-8">
+        <div className="flex flex-col items-center gap-6 p-6 sm:p-8">
           {/* Status banner */}
           {bannerType && (
             <div className="w-full">

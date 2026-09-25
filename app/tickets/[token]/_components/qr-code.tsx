@@ -9,9 +9,15 @@ interface QRCodeDisplayProps {
 
 export default function QRCodeDisplay({ token, dimmed }: QRCodeDisplayProps) {
   return (
+    // qrcode.react emits fixed width/height presentation attributes, so the
+    // SVG has to be told to scale or it overflows (and gets clipped by the
+    // card's overflow-hidden) on any phone narrower than ~408px.
     <div
-      className="rounded-2xl p-4 bg-white inline-block"
-      style={{ opacity: dimmed ? 0.25 : 1, filter: dimmed ? "grayscale(1)" : "none" }}
+      className="w-full max-w-[17.5rem] rounded-2xl bg-white p-4"
+      style={{
+        opacity: dimmed ? 0.25 : 1,
+        filter: dimmed ? "grayscale(1)" : "none",
+      }}
     >
       <QRCodeSVG
         value={token}
@@ -19,6 +25,8 @@ export default function QRCodeDisplay({ token, dimmed }: QRCodeDisplayProps) {
         bgColor="#ffffff"
         fgColor="#111111"
         level="M"
+        className="h-auto w-full"
+        style={{ width: "100%", height: "auto" }}
       />
     </div>
   );

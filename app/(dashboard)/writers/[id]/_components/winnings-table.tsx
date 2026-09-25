@@ -1,6 +1,7 @@
 "use client";
 
 import CustomTable from "@/components/custom-table";
+import { StatusBadge } from "@/components/ui";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
@@ -66,7 +67,7 @@ function WinningsTable({ writerId }: { writerId: string }) {
           computedAt: r.computed_at,
           stakeAmount: formatGhs(parseFloat(String(r.stake_amount)) || 0),
           winAmount: formatGhs(parseFloat(String(r.win_amount)) || 0),
-          status: r.status,
+          status: <StatusBadge status={r.status} />,
         }))}
         pagination={pagination}
         pageSize={currentPageSize}

@@ -100,15 +100,18 @@ export function Badge({ children, tone = "neutral", dot, className }: BadgeProps
 export function StatusBadge({
   status,
   dot = true,
+  tone,
   className,
 }: {
   status?: string | null;
   dot?: boolean;
+  /** Override the inferred tone where a status means something domain-specific. */
+  tone?: BadgeTone;
   className?: string;
 }) {
   if (!status) return <span className="text-muted-foreground">—</span>;
   return (
-    <Badge tone={toneForStatus(status)} dot={dot} className={className}>
+    <Badge tone={tone ?? toneForStatus(status)} dot={dot} className={className}>
       {String(status).replace(/_/g, " ")}
     </Badge>
   );

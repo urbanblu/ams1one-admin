@@ -1,6 +1,7 @@
 "use client";
 
 import CustomTable from "@/components/custom-table";
+import { StatusBadge } from "@/components/ui";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
@@ -66,7 +67,7 @@ function SalesTable({ writerId }: { writerId: string }) {
           game: r.game,
           amountPaid: formatGhs(parseFloat(String(r.total_amount)) || 0),
           stakes: String(r.stake_count),
-          status: r.status,
+          status: <StatusBadge status={r.status} />,
         }))}
         pagination={pagination}
         pageSize={currentPageSize}

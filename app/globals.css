@@ -1,6 +1,10 @@
 @import "tailwindcss";
 /* Supplies the enter/exit animation utilities that @heroui/styles depends on */
 @import "tw-animate-css";
+/* Base positioning for the route-change progress bar; the brand overrides
+   further down use !important and still win. Without this, #nprogress has no
+   position:fixed and becomes a flex sibling of the app shell. */
+@import "nprogress/nprogress.css";
 @import "@heroui/styles/base" layer(base);
 @import "@heroui/styles/components/index.css" layer(components);
 @import "@heroui/styles/themes/default" layer(theme);
@@ -135,6 +139,20 @@
   --default: #f4f4f5;
   --default-foreground: #171717;
 
+  /* Stacking order. HeroUI portals its overlays to <body> at
+     --z-index-overlay: 100000, so anything that must clear a drawer or modal
+     has to sit above that number, not above the app's own values. */
+  --z-sticky: 10;
+  --z-dropdown: 20;
+  --z-backdrop: 40;
+  --z-modal: 50;
+  --z-reveal: 60;
+  --z-reveal-confetti: 70;
+
+  /* react-toastify defaults to 9999, which renders every toast *behind* an
+     open HeroUI drawer or modal — i.e. behind most forms in this app. */
+  --toastify-z-index: 100002;
+
   /* Legacy aliases kept so pre-redesign utility classes keep resolving */
   --primary-light: var(--primary-soft);
   --primary-hover: var(--primary-strong);
@@ -205,13 +223,6 @@ body {
 
 @utility bg-brand-gradient {
   background-image: var(--brand-gradient);
-}
-
-@utility text-brand-gradient {
-  background-image: var(--brand-gradient);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
 }
 
 @keyframes slide-up {
@@ -313,6 +324,28 @@ body {
   }
 
   .checkbox__control {
-    @apply size-4 rounded-[0.3rem] border border-border transition-colors data-[selected=true]:border-primary data-[selected=true]:bg-primary;
+    @apply size-4 rounded-sm border border-border transition-colors data-[selected=true]:border-primary data-[selected=true]:bg-primary;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion — every animation above needs a non-moving alternative.
+   Transitions collapse to near-instant rather than 0s so state changes still
+   read as changes, and the entrance animations resolve to a plain fade.
+--------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-slide-up,
+  .animate-rise-in {
+    animation: fade-in 0.01ms ease-out both !important;
   }
 }
