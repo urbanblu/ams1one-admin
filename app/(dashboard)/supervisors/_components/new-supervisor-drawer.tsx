@@ -1,15 +1,14 @@
-import { Button as UiButton, drawerDialogClass } from "@/components/ui";
+import {
+  Button as UiButton,
+  FormSection,
+  drawerDialogClass,
+} from "@/components/ui";
 import CustomInputComponent from "@/components/custom-input-component";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import LmcService from "@/api/lmc";
 import ToastService from "@/utils/toast-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Form,
-} from "@heroui/react";
+import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
 
 import Image from "next/image";
 import React from "react";
@@ -121,80 +120,91 @@ function NewLmcDrawer(payload: Props) {
               >
                 <div className="flex flex-col space-y-3">
                   <span className="text-lg font-bold">NEW SUPERVISOR</span>
-                  <div className="space-y-4">
-                    <InputComponent />
-                    <div className="w-full flex justify-center">
-                      <div
-                        className={`relative rounded-full w-35 h-35 ${files.length === 0 ? "border" : ""} justify-center flex flex-col`}
-                        onClick={onPhotoUploadClick}
-                      >
+                  <div className="space-y-6">
+                    <FormSection title="Identity">
+                      <InputComponent />
+                      <div className="w-full flex justify-center">
                         <div
-                          className={`flex flex-col items-center ${files.length === 0 ? "p-3" : ""} space-y-2`}
+                          className={`relative rounded-full w-35 h-35 ${files.length === 0 ? "border" : ""} justify-center flex flex-col`}
+                          onClick={onPhotoUploadClick}
                         >
-                          {files.length === 0 ? (
-                            <>
-                              <IoCameraOutline size={25} />
-                              <span className="text-center">
-                                Click to add photo
-                              </span>
-                            </>
-                          ) : (
-                            <Image
-                              src={URL.createObjectURL(files[0])}
-                              alt="Profile"
-                              className="w-35 h-35 object-cover rounded-full"
-                              width={0}
-                              height={0}
-                            />
+                          <div
+                            className={`flex flex-col items-center ${files.length === 0 ? "p-3" : ""} space-y-2`}
+                          >
+                            {files.length === 0 ? (
+                              <>
+                                <IoCameraOutline size={25} />
+                                <span className="text-center">
+                                  Click to add photo
+                                </span>
+                              </>
+                            ) : (
+                              <Image
+                                src={URL.createObjectURL(files[0])}
+                                alt="Profile"
+                                className="w-35 h-35 object-cover rounded-full"
+                                width={0}
+                                height={0}
+                              />
+                            )}
+                          </div>
+                          {files.length > 0 && (
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeFile(0);
+                              }}
+                              className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                            >
+                              <RiDeleteBin6Line className="text-rose-500" />
+                            </span>
                           )}
                         </div>
-                        {files.length > 0 && (
-                          <span
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeFile(0);
-                            }}
-                            className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
-                          >
-                            <RiDeleteBin6Line className="text-rose-500" />
-                          </span>
-                        )}
                       </div>
-                    </div>
-                    <CustomInputComponent label="First Name" name="firstName" />
-                    <CustomInputComponent label="Last Name" name="lastName" />
-                    <CustomInputComponent
-                      label="Email"
-                      name="email"
-                      type="email"
-                      showPreficIcon={false}
-                      showPlaceholder={false}
-                      isRequired
-                    />
-                    <CustomInputComponent
-                      label="Phone Number"
-                      name="phoneNumber"
-                      type="tel"
-                    />
-                    <CustomInputComponent label="Location" name="location" />
-                    <CustomInputComponent
-                      type="password"
-                      name="password"
-                      label="Password"
-                      minLength={8}
-                      onChange={(e) => setPasswordValue(e.target.value)}
-                    />
-                    <CustomInputComponent
-                      type="password"
-                      name="confirmPassword"
-                      label="Confirm Password"
-                      validate={(val) => {
-                        if (!val) return "This field is required";
-                        if (val !== passwordValue)
-                          return "Passwords do not match";
-                        return null;
-                      }}
-                    />
+                      <CustomInputComponent
+                        label="First Name"
+                        name="firstName"
+                      />
+                      <CustomInputComponent label="Last Name" name="lastName" />
+                    </FormSection>
+
+                    <FormSection title="Contact">
+                      <CustomInputComponent
+                        label="Email"
+                        name="email"
+                        type="email"
+                        showPreficIcon={false}
+                        showPlaceholder={false}
+                        isRequired
+                      />
+                      <CustomInputComponent
+                        label="Phone Number"
+                        name="phoneNumber"
+                        type="tel"
+                      />
+                      <CustomInputComponent label="Location" name="location" />
+                    </FormSection>
+
+                    <FormSection title="Credentials">
+                      <CustomInputComponent
+                        type="password"
+                        name="password"
+                        label="Password"
+                        minLength={8}
+                        onChange={(e) => setPasswordValue(e.target.value)}
+                      />
+                      <CustomInputComponent
+                        type="password"
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        validate={(val) => {
+                          if (!val) return "This field is required";
+                          if (val !== passwordValue)
+                            return "Passwords do not match";
+                          return null;
+                        }}
+                      />
+                    </FormSection>
                   </div>
                   <UiButton
                     className="mt-2"

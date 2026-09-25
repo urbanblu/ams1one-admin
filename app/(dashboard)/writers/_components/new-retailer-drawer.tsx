@@ -6,7 +6,11 @@ import WritersService from "@/api/writers";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import ToastService from "@/utils/toast-service";
 import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
-import { Button as UiButton, drawerDialogClass } from "@/components/ui";
+import {
+  Button as UiButton,
+  FormSection,
+  drawerDialogClass,
+} from "@/components/ui";
 import { DateValue, getLocalTimeZone, today } from "@internationalized/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -160,170 +164,186 @@ function NewRetailerDrawer(payload: Props) {
                   <p className="mt-1 text-xs text-muted-foreground">
                     Register a retailer and issue their login credentials.
                   </p>
-                  <div className="mt-5 space-y-4">
-                    <InputComponent />
-                    <IdCardInputComponent />
-                    {/* Profile photo */}
-                    <div className="flex w-full justify-center">
-                      <div
-                        className={`relative flex size-32 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full transition-colors ${
-                          files.length === 0
-                            ? "border border-dashed border-border bg-surface-muted hover:border-primary"
-                            : ""
-                        }`}
-                        onClick={onPhotoUploadClick}
-                      >
-                        {files.length === 0 ? (
-                          <div className="flex flex-col items-center gap-1.5 px-4 text-center">
-                            <LuCamera className="size-5 text-zinc-400" />
-                            <span className="text-[11px] text-muted-foreground">
-                              Click to add photo
+                  <div className="mt-5 space-y-6">
+                    <FormSection title="Identity">
+                      <InputComponent />
+                      <IdCardInputComponent />
+                      {/* Profile photo */}
+                      <div className="flex w-full justify-center">
+                        <div
+                          className={`relative flex size-32 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full transition-colors ${
+                            files.length === 0
+                              ? "border border-dashed border-border bg-surface-muted hover:border-primary"
+                              : ""
+                          }`}
+                          onClick={onPhotoUploadClick}
+                        >
+                          {files.length === 0 ? (
+                            <div className="flex flex-col items-center gap-1.5 px-4 text-center">
+                              <LuCamera className="size-5 text-zinc-400" />
+                              <span className="text-[11px] text-muted-foreground">
+                                Click to add photo
+                              </span>
+                            </div>
+                          ) : (
+                            <Image
+                              src={URL.createObjectURL(files[0])}
+                              alt="Profile"
+                              fill
+                              className="object-cover"
+                            />
+                          )}
+                          {files.length > 0 && (
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeFile(0);
+                              }}
+                              className="absolute right-1 top-1 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
+                            >
+                              <LuTrash2 className="size-3.5 text-rose-500" />
                             </span>
-                          </div>
-                        ) : (
-                          <Image
-                            src={URL.createObjectURL(files[0])}
-                            alt="Profile"
-                            fill
-                            className="object-cover"
-                          />
-                        )}
-                        {files.length > 0 && (
-                          <span
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeFile(0);
-                            }}
-                            className="absolute right-1 top-1 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
-                          >
-                            <LuTrash2 className="size-3.5 text-rose-500" />
-                          </span>
-                        )}
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    {/* ID card image */}
-                    <div className="flex flex-col gap-1.5">
-                      <span className="text-xs font-medium text-muted-foreground">
-                        ID card image
-                      </span>
-                      <div
-                        className="relative w-full cursor-pointer overflow-hidden rounded-xl border border-dashed border-border bg-surface-muted transition-colors hover:border-primary"
-                        style={{ minHeight: 120 }}
-                        onClick={onIdCardUploadClick}
-                      >
-                        {idCardFiles.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center gap-1.5 py-8">
-                            <LuCamera className="size-6 text-zinc-400" />
-                            <span className="text-xs text-muted-foreground">
-                              Click to upload ID card image
+                      {/* ID card image */}
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xs font-medium text-muted-foreground">
+                          ID card image
+                        </span>
+                        <div
+                          className="relative w-full cursor-pointer overflow-hidden rounded-xl border border-dashed border-border bg-surface-muted transition-colors hover:border-primary"
+                          style={{ minHeight: 120 }}
+                          onClick={onIdCardUploadClick}
+                        >
+                          {idCardFiles.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center gap-1.5 py-8">
+                              <LuCamera className="size-6 text-zinc-400" />
+                              <span className="text-xs text-muted-foreground">
+                                Click to upload ID card image
+                              </span>
+                              <span className="text-[10px] text-zinc-400">
+                                JPG, PNG — max 10 MB
+                              </span>
+                            </div>
+                          ) : (
+                            <Image
+                              src={URL.createObjectURL(idCardFiles[0])}
+                              alt="ID Card"
+                              className="w-full object-cover rounded-xl"
+                              width={400}
+                              height={220}
+                              style={{ maxHeight: 220, objectFit: "cover" }}
+                            />
+                          )}
+                          {idCardFiles.length > 0 && (
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeIdCardFile(0);
+                              }}
+                              className="absolute right-2 top-2 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
+                            >
+                              <LuTrash2 className="size-3.5 text-rose-500" />
                             </span>
-                            <span className="text-[10px] text-zinc-400">
-                              JPG, PNG — max 10 MB
-                            </span>
-                          </div>
-                        ) : (
-                          <Image
-                            src={URL.createObjectURL(idCardFiles[0])}
-                            alt="ID Card"
-                            className="w-full object-cover rounded-xl"
-                            width={400}
-                            height={220}
-                            style={{ maxHeight: 220, objectFit: "cover" }}
-                          />
-                        )}
-                        {idCardFiles.length > 0 && (
-                          <span
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeIdCardFile(0);
-                            }}
-                            className="absolute right-2 top-2 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
-                          >
-                            <LuTrash2 className="size-3.5 text-rose-500" />
-                          </span>
-                        )}
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <CustomInputComponent
-                      label="First name"
-                      name="firstName"
-                      isRequired
-                    />
-                    <CustomInputComponent
-                      label="Last name"
-                      name="lastName"
-                      isRequired
-                    />
-                    <CustomInputComponent
-                      label="Email"
-                      name="email"
-                      showPlaceholder={false}
-                      showPreficIcon={false}
-                      type="email"
-                    />
-                    <CustomInputComponent
-                      label="Phone number"
-                      name="phoneNumber"
-                      type="tel"
-                    />
-                    <CustomInputComponent
-                      type="password"
-                      name="password"
-                      label="Password"
-                      minLength={8}
-                      onChange={(e) => setPasswordValue(e.target.value)}
-                    />
-                    <CustomInputComponent
-                      type="password"
-                      name="confirmPassword"
-                      label="Confirm password"
-                      validate={(val) => {
-                        if (!val) return "This field is required";
-                        if (val !== passwordValue)
-                          return "Passwords do not match";
-                        return null;
-                      }}
-                    />
-                    <CustomSelectComponent
-                      label="Supervisor"
-                      placeholder=""
-                      showDropDownIcon
-                      list={lmcOptions}
-                      isDisabled={lmcPending || lmcOptions.length === 0}
-                      onSelectionChange={(val) => setSelectedLmcId(val.key)}
-                    />
-                    <CustomDatePicker
-                      label="Date of birth"
-                      className="w-full"
-                      maxValue={today(getLocalTimeZone()).subtract({ days: 1 })}
-                      onDatePicked={(date: DateValue) =>
-                        setSelectedDate(date.toString())
-                      }
-                    />
-                    <CustomSelectComponent
-                      label="County"
-                      placeholder="Select county"
-                      showDropDownIcon
-                      list={[
-                        { key: "Bomi", label: "Bomi" },
-                        { key: "Bong", label: "Bong" },
-                        { key: "Gbarpolu", label: "Gbarpolu" },
-                        { key: "Grand Bassa", label: "Grand Bassa" },
-                        { key: "Grand Cape Mount", label: "Grand Cape Mount" },
-                        { key: "Grand Gedeh", label: "Grand Gedeh" },
-                        { key: "Grand Kru", label: "Grand Kru" },
-                        { key: "Lofa", label: "Lofa" },
-                        { key: "Margibi", label: "Margibi" },
-                        { key: "Maryland", label: "Maryland" },
-                        { key: "Montserrado", label: "Montserrado" },
-                        { key: "Nimba", label: "Nimba" },
-                        { key: "River Cess", label: "River Cess" },
-                        { key: "River Gee", label: "River Gee" },
-                        { key: "Sinoe", label: "Sinoe" },
-                      ]}
-                      onSelectionChange={(val) => setSelectedCounty(val.key)}
-                    />
+                      <CustomInputComponent
+                        label="First name"
+                        name="firstName"
+                        isRequired
+                      />
+                      <CustomInputComponent
+                        label="Last name"
+                        name="lastName"
+                        isRequired
+                      />
+                    </FormSection>
+
+                    <FormSection title="Contact">
+                      <CustomInputComponent
+                        label="Email"
+                        name="email"
+                        showPlaceholder={false}
+                        showPreficIcon={false}
+                        type="email"
+                      />
+                      <CustomInputComponent
+                        label="Phone number"
+                        name="phoneNumber"
+                        type="tel"
+                      />
+                    </FormSection>
+
+                    <FormSection title="Credentials">
+                      <CustomInputComponent
+                        type="password"
+                        name="password"
+                        label="Password"
+                        minLength={8}
+                        onChange={(e) => setPasswordValue(e.target.value)}
+                      />
+                      <CustomInputComponent
+                        type="password"
+                        name="confirmPassword"
+                        label="Confirm password"
+                        validate={(val) => {
+                          if (!val) return "This field is required";
+                          if (val !== passwordValue)
+                            return "Passwords do not match";
+                          return null;
+                        }}
+                      />
+                    </FormSection>
+
+                    <FormSection title="Assignment">
+                      <CustomSelectComponent
+                        label="Supervisor"
+                        placeholder=""
+                        showDropDownIcon
+                        list={lmcOptions}
+                        isDisabled={lmcPending || lmcOptions.length === 0}
+                        onSelectionChange={(val) => setSelectedLmcId(val.key)}
+                      />
+                      <CustomDatePicker
+                        label="Date of birth"
+                        className="w-full"
+                        maxValue={today(getLocalTimeZone()).subtract({
+                          days: 1,
+                        })}
+                        onDatePicked={(date: DateValue) =>
+                          setSelectedDate(date.toString())
+                        }
+                      />
+                      <CustomSelectComponent
+                        label="County"
+                        placeholder="Select county"
+                        showDropDownIcon
+                        list={[
+                          { key: "Bomi", label: "Bomi" },
+                          { key: "Bong", label: "Bong" },
+                          { key: "Gbarpolu", label: "Gbarpolu" },
+                          { key: "Grand Bassa", label: "Grand Bassa" },
+                          {
+                            key: "Grand Cape Mount",
+                            label: "Grand Cape Mount",
+                          },
+                          { key: "Grand Gedeh", label: "Grand Gedeh" },
+                          { key: "Grand Kru", label: "Grand Kru" },
+                          { key: "Lofa", label: "Lofa" },
+                          { key: "Margibi", label: "Margibi" },
+                          { key: "Maryland", label: "Maryland" },
+                          { key: "Montserrado", label: "Montserrado" },
+                          { key: "Nimba", label: "Nimba" },
+                          { key: "River Cess", label: "River Cess" },
+                          { key: "River Gee", label: "River Gee" },
+                          { key: "Sinoe", label: "Sinoe" },
+                        ]}
+                        onSelectionChange={(val) => setSelectedCounty(val.key)}
+                      />
+                    </FormSection>
                   </div>
                   <UiButton
                     className="mt-5"
