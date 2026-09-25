@@ -1,6 +1,14 @@
 "use client";
-import { Tabs } from "@heroui/react";
-import { Avatar, Card, CardBody, CardHeader, IconButton, PageShell } from "@/components/ui";
+import {
+  Avatar,
+  Card,
+  CardBody,
+  CardHeader,
+  IconButton,
+  MetricCard,
+  PageShell,
+  SegmentedControl,
+} from "@/components/ui";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { usePageAccess } from "@/hooks/use-page-access";
@@ -35,16 +43,19 @@ function LmcDetailView() {
   const canSeeTransactions = hasPage("supervisors.transactions");
   const canSeeWritersOverview = hasPage("supervisors.writers_overview");
 
-  const firstTab = canSeeTransactions
-    ? "transactions"
-    : canSeeWritersOverview
-      ? "writers"
-      : "";
 
   const router = useRouter();
   const params = useParams();
   const lmcId = String(params.id ?? "");
-  const [activeTab, setActiveTab] = useState(firstTab);
+  const detailTabs = [
+    canSeeTransactions && { key: "transactions" as const, label: "Transactions" },
+    canSeeWritersOverview && { key: "writers" as const, label: "Writers" },
+    canSeeWritersOverview && { key: "agents" as const, label: "Agents" },
+  ].filter(Boolean) as { key: "transactions" | "writers" | "agents"; label: string }[];
+
+  const [activeTab, setActiveTab] = useState<
+    "transactions" | "writers" | "agents"
+  >(detailTabs[0]?.key ?? "transactions");
 
   const { data: summary } = useQuery<ILmcSummary>({
     queryKey: ["lmc", lmcId, "summary"],
@@ -76,82 +87,61 @@ function LmcDetailView() {
       </div>
 
       <div className="grid items-start gap-4 lg:grid-cols-5">
+        {canSeeSummary && (
+          <div className="col-span-5 space-y-4 lg:col-span-1">
+            <PrimaryAddressCard
+              name={info?.name}
+              address={info?.address}
+              phone={info?.phone}
+            />
+            <PosCard
+              posIssued={info?.pos_issued ?? 0}
+              posTrading={info?.pos_trading ?? 0}
+              writersTotal={info?.writers_total ?? 0}
+            />
+          </div>
+        )}
         <div className="col-span-5 min-w-0 space-y-4 lg:col-span-4">
           {canSeeSummary && (
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-              <TopCard
-                icon={LuShoppingBag}
+              <MetricCard
+                icon={<LuShoppingBag />}
+                title="YTD sales"
                 value={s ? formatUSD(parseFloat(s.ytd_sales)) : "—"}
-                label="YTD sales"
-                chartValue={s?.ytd_sales_ratio ?? 0}
                 tone="brand"
+                footer={<ContributionRatio value={s?.ytd_sales_ratio ?? 0} tone="brand" />}
               />
-              <TopCard
-                icon={LuTrendingUp}
+              <MetricCard
+                icon={<LuTrendingUp />}
+                title="YTD top-ups"
                 value={s ? formatUSD(parseFloat(s.ytd_topups)) : "—"}
-                label="YTD top-ups"
-                chartValue={s?.ytd_topups_ratio ?? 0}
                 tone="warning"
+                footer={<ContributionRatio value={s?.ytd_topups_ratio ?? 0} tone="warning" />}
               />
-              <TopCard
-                icon={LuTrophy}
+              <MetricCard
+                icon={<LuTrophy />}
+                title="YTD winnings"
                 value={s ? formatUSD(parseFloat(s.ytd_winnings)) : "—"}
-                label="YTD winnings"
-                chartValue={s?.ytd_winnings_ratio ?? 0}
                 tone="success"
+                footer={<ContributionRatio value={s?.ytd_winnings_ratio ?? 0} tone="success" />}
               />
-              <TopCard
-                icon={LuUsers}
+              <MetricCard
+                icon={<LuUsers />}
+                title="Writers"
                 value={s ? String(s.writers_count) : "—"}
-                label="Writers"
-                chartValue={s?.writers_ratio ?? 0}
                 tone="info"
+                footer={<ContributionRatio value={s?.writers_ratio ?? 0} tone="info" />}
               />
             </div>
           )}
 
-          <div className="min-w-0 overflow-x-auto">
-            <Tabs
-              className="w-full min-w-0 mb-2"
-              variant="secondary"
-              selectedKey={activeTab}
-              onSelectionChange={(key) => setActiveTab(String(key))}
-            >
-              <Tabs.ListContainer className="shrink-0 w-full max-w-full overflow-x-auto overflow-y-hidden md:overflow-visible">
-                <Tabs.List
-                  aria-label="Options"
-                  className="inline-flex! w-max! whitespace-nowrap"
-                >
-                  {canSeeTransactions && (
-                    <Tabs.Tab
-                      id="transactions"
-                      className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
-                    >
-                      Transactions
-                      <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
-                    </Tabs.Tab>
-                  )}
-                  {canSeeWritersOverview && (
-                    <Tabs.Tab
-                      id="writers"
-                      className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
-                    >
-                      Writers
-                      <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
-                    </Tabs.Tab>
-                  )}
-                  {canSeeWritersOverview && (
-                    <Tabs.Tab
-                      id="agents"
-                      className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
-                    >
-                      Agents
-                      <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
-                    </Tabs.Tab>
-                  )}
-                </Tabs.List>
-              </Tabs.ListContainer>
-            </Tabs>
+          <div className="min-w-0">
+            <SegmentedControl
+              className="mb-4"
+              segments={detailTabs}
+              value={activeTab}
+              onChange={setActiveTab}
+            />
 
             {activeTab === "transactions" && canSeeTransactions && (
               <LmcDetailTable
@@ -184,26 +174,26 @@ function LmcDetailView() {
           </div>
         </div>
 
-        {canSeeSummary && (
-          <div className="col-span-5 space-y-4 lg:col-span-1">
-            <PrimaryAddressCard
-              name={info?.name}
-              address={info?.address}
-              phone={info?.phone}
-            />
-            <PosCard
-              posIssued={info?.pos_issued ?? 0}
-              posTrading={info?.pos_trading ?? 0}
-              writersTotal={info?.writers_total ?? 0}
-            />
-          </div>
-        )}
       </div>
     </PageShell>
   );
 }
 
 export default LmcDetailView;
+
+/** The bottom rule of the four summary cards. */
+const ContributionRatio = ({
+  value,
+  tone,
+}: {
+  value: number;
+  tone: keyof typeof TONES;
+}) => (
+  <div className="flex items-center justify-between gap-2">
+    <span className="text-[11px] text-muted-foreground">Contribution ratio</span>
+    <DonutChart value={value} color={TONES[tone].chart} />
+  </div>
+);
 
 const TONES = {
   brand: { chip: "bg-primary-soft text-primary", chart: "#9387eb" },
@@ -212,46 +202,6 @@ const TONES = {
   info: { chip: "bg-blue-50 text-blue-500", chart: "#3b82f6" },
 };
 
-const TopCard = ({
-  icon: Icon,
-  label,
-  value,
-  chartValue,
-  tone = "brand",
-}: {
-  icon: ElementType;
-  label: string;
-  value: string;
-  chartValue: number;
-  tone?: keyof typeof TONES;
-}) => {
-  const { chip, chart } = TONES[tone];
-  return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface">
-      <div className="px-5 py-4">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-            {label}
-          </p>
-          <span
-            className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${chip}`}
-          >
-            <Icon className="size-4" />
-          </span>
-        </div>
-        <p className="mt-2 truncate text-xl font-bold tracking-tight text-foreground">
-          {value}
-        </p>
-      </div>
-      <div className="mt-auto flex items-center justify-between gap-2 border-t border-border-subtle px-5 py-3">
-        <span className="text-[11px] text-muted-foreground">
-          Contribution ratio
-        </span>
-        <DonutChart value={chartValue} color={chart} />
-      </div>
-    </div>
-  );
-};
 
 const PrimaryAddressCard = ({
   name,

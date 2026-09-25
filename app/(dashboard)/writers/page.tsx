@@ -242,7 +242,7 @@ function RetailersView() {
 
       <DeviceMapDrawer isOpen={mapOpen} onClose={() => setMapOpen(false)} />
 
-      <div className="h-[500px] sm:h-full sm:min-h-0 sm:flex-1">
+      <div className="min-h-0 sm:h-full sm:flex-1">
         <div className="h-full overflow-hidden">
           <CustomTable
             columns={[

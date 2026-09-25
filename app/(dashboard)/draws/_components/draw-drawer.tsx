@@ -161,7 +161,7 @@ function DrawDrawer({
                         {(event?.draw_numbers ?? []).map((n, i) => (
                           <span
                             key={i}
-                            className="bg-white/20 text-white font-semibold tabular-nums text-xs px-2 py-1 rounded-md"
+                            className="rounded-lg bg-white/20 px-2 py-1 text-xs font-semibold tabular-nums text-white"
                           >
                             {n}
                           </span>
@@ -202,7 +202,7 @@ function DrawDrawer({
                   </div>
                 </div>
 
-                <div className="h-[500px] sm:h-full sm:flex-1 sm:min-h-0 mt-2">
+                <div className="min-h-0 sm:h-full sm:flex-1 mt-3">
                   <div className="h-full overflow-hidden">
                     <CustomTable
                       columns={[
@@ -334,7 +334,7 @@ function DrawDrawer({
                                               {nums.map((num, ni) => (
                                                 <span
                                                   key={ni}
-                                                  className="rounded bg-primary text-white p-1 px-1.5 text-xs font-medium"
+                                                  className="rounded-lg bg-primary px-1.5 py-1 text-xs font-semibold tabular-nums text-white"
                                                 >
                                                   {num}
                                                 </span>

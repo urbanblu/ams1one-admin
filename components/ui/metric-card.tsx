@@ -21,6 +21,8 @@ type Props = {
   tone?: MetricTone;
   /** Breakdown rows rendered under the headline figure. */
   rows?: { label: string; value: React.ReactNode }[];
+  /** Arbitrary content in the bottom rule, for cards that need more than rows. */
+  footer?: React.ReactNode;
   isLoading?: boolean;
   className?: string;
 };
@@ -32,6 +34,7 @@ export function MetricCard({
   icon,
   tone = "brand",
   rows,
+  footer,
   isLoading,
   className,
 }: Props) {
@@ -66,6 +69,12 @@ export function MetricCard({
           </p>
         )}
       </div>
+
+      {footer && (
+        <div className="mt-auto border-t border-border-subtle px-5 py-3">
+          {footer}
+        </div>
+      )}
 
       {rows && rows.length > 0 && (
         <div className="mt-auto flex flex-col divide-y divide-border-subtle border-t border-border-subtle">

@@ -274,7 +274,7 @@ const PendingCard = ({
             {item.numbers.map((n, i) => (
               <span
                 key={i}
-                className="bg-white/20 text-white font-semibold tabular-nums text-xs px-2 py-1 rounded-md"
+                className="rounded-lg bg-white/20 px-2 py-1 text-xs font-semibold tabular-nums text-white"
               >
                 {n}
               </span>

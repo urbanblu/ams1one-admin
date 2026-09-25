@@ -247,7 +247,7 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
         />
       )}
       {type == "Agents" && (
-        <div className="w-full justify-center flex text-xs pb-96 mt-2">
+        <div className="flex w-full justify-center py-16 text-xs text-muted-foreground">
           Content coming soon
         </div>
       )}

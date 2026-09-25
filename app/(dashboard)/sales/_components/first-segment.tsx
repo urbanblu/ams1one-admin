@@ -4,7 +4,11 @@ import CustomTable, { TableRow } from "@/components/custom-table";
 import { useMemo, useState } from "react";
 import { CloseButton, Popover, Separator } from "@heroui/react";
 import CustomCheckboxItem from "@/components/custom-checkbox";
-import { HeroPanel, HeroStat } from "@/components/ui";
+import {
+  HeroPanel,
+  HeroStat,
+  NumberBall,
+} from "@/components/ui";
 import { LuEllipsisVertical, LuReceipt, LuFilter } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import SalesService from "@/api/sales";
@@ -167,12 +171,13 @@ function FirstSalesSegment() {
                           <div className="flex flex-col items-center space-y-1">
                             <div className="flex flex-wrap gap-1 justify-start">
                               {nums.map((num, ni) => (
-                                <div
+                                <NumberBall
                                   key={ni}
-                                  className="bg-primary text-white font-semibold tabular-nums text-xs h-[24px] flex justify-center items-center w-[24px] text-center rounded-sm"
+                                  variant="solid"
+                                  size="sm"
                                 >
                                   {num}
-                                </div>
+                                </NumberBall>
                               ))}
                             </div>
                             <span className="text-[10px] text-zinc-400">
@@ -206,7 +211,7 @@ function FirstSalesSegment() {
       <div className="flex shrink-0 flex-col gap-3">
         {/* Today's sales */}
         {canSeeSalesCard && (
-          <HeroPanel className="py-6">
+          <HeroPanel>
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <HeroStat
                 icon={<LuReceipt />}

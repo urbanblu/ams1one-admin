@@ -1,6 +1,11 @@
 "use client";
 
-import { drawerDialogClass, drawerWidth } from "@/components/ui";
+import type { BadgeTone } from "@/components/ui";
+import {
+  Badge,
+  drawerDialogClass,
+  drawerWidth,
+} from "@/components/ui";
 
 import React, { useState } from "react";
 import { Button, CloseButton, cn, Drawer, Spinner, Tabs } from "@heroui/react";
@@ -35,25 +40,16 @@ function formatDate(iso: string) {
   }).format(new Date(iso));
 }
 
-const STATUS_CHIP: Record<ITicketStatus, { label: string; cls: string }> = {
-  issued: { label: "Issued", cls: "bg-subtle text-muted-foreground" },
-  delivered: { label: "Delivered", cls: "bg-blue-100 text-blue-700" },
-  scanned: { label: "Scanned", cls: "bg-emerald-100 text-emerald-600" },
-  revoked: { label: "Revoked", cls: "bg-rose-100 text-rose-600" },
+const STATUS_CHIP: Record<ITicketStatus, { label: string; tone: BadgeTone }> = {
+  issued: { label: "Issued", tone: "neutral" },
+  delivered: { label: "Delivered", tone: "info" },
+  scanned: { label: "Scanned", tone: "success" },
+  revoked: { label: "Revoked", tone: "danger" },
 };
 
 function StatusChip({ status }: { status: ITicketStatus }) {
-  const { label, cls } = STATUS_CHIP[status] ?? STATUS_CHIP.issued;
-  return (
-    <span
-      className={cn(
-        "px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider",
-        cls,
-      )}
-    >
-      {label}
-    </span>
-  );
+  const { label, tone } = STATUS_CHIP[status] ?? STATUS_CHIP.issued;
+  return <Badge tone={tone}>{label}</Badge>;
 }
 
 // ─── Tickets panel ────────────────────────────────────────────────────────────
@@ -475,16 +471,9 @@ export default function EventDrawer({
                   </div>
                 )}
                 <div className="flex items-center gap-2 mt-1.5">
-                  <span
-                    className={cn(
-                      "text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase",
-                      event?.is_active
-                        ? "bg-emerald-100 text-emerald-600"
-                        : "bg-subtle text-muted-foreground",
-                    )}
-                  >
+<Badge tone={event?.is_active ? "success" : "danger"} dot>
                     {event?.is_active ? "Active" : "Inactive"}
-                  </span>
+                  </Badge>
                   <span className="text-[10px] text-zinc-400">
                     {event?.ticket_count ?? 0} ticket
                     {event?.ticket_count !== 1 ? "s" : ""}

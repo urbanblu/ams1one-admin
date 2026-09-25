@@ -147,7 +147,7 @@ function FiveNinetyPlayersView() {
           </div>
         )}
 
-        <div className="h-[500px] md:flex-1 md:min-h-0 overflow-hidden">
+        <div className="min-h-0 md:flex-1 md:overflow-hidden">
           <div className="h-full overflow-hidden">
             <CustomTable
               columns={[

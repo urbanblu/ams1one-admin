@@ -12,7 +12,7 @@ const SIZES = {
 type Props = {
   children: React.ReactNode;
   /** `solid` uses the brand gradient; `soft` the tinted chip. */
-  variant?: "solid" | "soft" | "muted";
+  variant?: "solid" | "soft" | "muted" | "onBrand";
   size?: keyof typeof SIZES;
   className?: string;
 };
@@ -32,6 +32,8 @@ export function NumberBall({
         variant === "solid" && "bg-brand-gradient text-white",
         variant === "soft" && "bg-primary-soft text-primary-strong",
         variant === "muted" && "bg-subtle text-muted-foreground",
+        // For numbers sitting on a brand-gradient surface.
+        variant === "onBrand" && "bg-white/20 text-white",
         className,
       )}
     >

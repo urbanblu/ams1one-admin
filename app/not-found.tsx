@@ -10,7 +10,7 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-background px-6">
+    <div className="flex min-h-dvh w-full items-center justify-center bg-background px-6">
       <div className="flex max-w-sm flex-col items-center text-center">
         <div className="relative h-56 w-56">
           <Image
