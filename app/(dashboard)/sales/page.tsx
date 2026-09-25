@@ -6,7 +6,7 @@ import FirstSalesSegment from "./_components/first-segment";
 import SecondSalesSegment from "./_components/second-segment";
 import ThirdSalesSegment from "./_components/third-segment";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { PageHeader, SegmentedControl } from "@/components/ui";
+import { PageHeader, PageShell, SegmentedControl } from "@/components/ui";
 import { LuTicket, LuTrophy, LuUsers } from "react-icons/lu";
 
 type Tab = "tickets" | "writers" | "winnings";
@@ -79,7 +79,7 @@ function SalesPageView() {
   ].filter(Boolean) as { key: Tab; label: string; icon: React.ReactNode }[];
 
   return (
-    <div className="flex h-full w-full flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell fill className="w-full">
       <PageHeader
         className="shrink-0"
         title="Sales"
@@ -100,7 +100,7 @@ function SalesPageView() {
         {effectiveTab === "writers" && canSeeWriters && <SecondSalesSegment />}
         {effectiveTab === "winnings" && canSeeWinnings && <ThirdSalesSegment />}
       </div>
-    </div>
+    </PageShell>
   );
 }
 

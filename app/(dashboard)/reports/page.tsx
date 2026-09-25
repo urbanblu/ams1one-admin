@@ -9,7 +9,7 @@ import ToastService from "@/utils/toast-service";
 import EmptyImage from "@/public/images/new/empty-page.jpg";
 import Image from "next/image";
 import { Header, Label, ListBox, Select } from "@heroui/react";
-import { Button, Card, CardHeader, PageHeader } from "@/components/ui";
+import { Button, Card, CardHeader, PageHeader, PageShell } from "@/components/ui";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { usePageAccess } from "@/hooks/use-page-access";
@@ -165,7 +165,7 @@ function ReportsView() {
   };
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-hidden px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell fill>
       <PageHeader
         className="shrink-0"
         title="Reports"
@@ -380,7 +380,7 @@ function ReportsView() {
           </div>
         </Card>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

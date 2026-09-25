@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { Tabs } from "@heroui/react";
 import RetentionRatePerformance from "./_components/rate-performace";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { PageHeader } from "@/components/ui";
+import { PageHeader, PageShell } from "@/components/ui";
 
 type Tab = "writers" | "rate";
 
@@ -44,7 +44,7 @@ function AnalysisPageView() {
       : "rate";
 
   return (
-    <div className="flex flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell>
       <PageHeader
         className="shrink-0"
         title="Analysis"
@@ -79,7 +79,7 @@ function AnalysisPageView() {
 
       {activeTab === "writers" && canSeeWritersPerf && <WritersPerformace />}
       {activeTab === "rate" && canSeeRatePerf && <RetentionRatePerformance />}
-    </div>
+    </PageShell>
   );
 }
 
@@ -87,7 +87,7 @@ export default function AnalysisPageWithSuspense() {
   return (
     <Suspense
       fallback={
-        <div className="px-5 py-6 text-sm text-muted-foreground lg:px-8">
+        <div className="px-5 py-6 text-sm text-muted-foreground lg:px-8 lg:py-7">
           Loading analysis…
         </div>
       }

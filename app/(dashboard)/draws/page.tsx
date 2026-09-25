@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
 import GamesService from "@/api/games";
 import { LuShoppingBag, LuTrophy, LuTrendingUp } from "react-icons/lu";
-import { MetricCard, NumberBallRow, PageHeader } from "@/components/ui";
+import { MetricCard, NumberBallRow, PageHeader, PageShell } from "@/components/ui";
 import { usePageAccess } from "@/hooks/use-page-access";
 
 function DrawView() {
@@ -99,7 +99,7 @@ function DrawView() {
   const ytdStakes = ytdSales?.total_stakes;
 
   return (
-    <div className="flex flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7 md:h-full md:overflow-hidden">
+    <PageShell fill>
       <PageHeader
         className="shrink-0"
         title="Draws & winnings"
@@ -236,7 +236,7 @@ function DrawView() {
         eventId={selectedEventId}
         drawerMode={drawerMode}
       />
-    </div>
+    </PageShell>
   );
 }
 

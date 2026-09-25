@@ -25,11 +25,13 @@ export function PageHeader({
       {leading}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-xl font-bold text-foreground tracking-tight truncate">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight truncate">
             {title}
           </h1>
           {description && (
-            <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
+            <p className="mt-0.5 truncate text-sm text-muted-foreground">
+              {description}
+            </p>
           )}
         </div>
         {actions && (
@@ -42,16 +44,32 @@ export function PageHeader({
   );
 }
 
-/** Standard page shell: canvas padding + vertical rhythm. */
+/**
+ * Standard page shell: canvas padding + vertical rhythm.
+ *
+ * `fill` is for pages that own their height — a header above a table that
+ * scrolls internally rather than letting the whole document scroll. It locks
+ * at `md`, the same breakpoint the nav rail appears, so the mobile top bar is
+ * never competing with a non-scrolling page.
+ */
 export function PageShell({
+  fill,
   className,
   children,
 }: {
+  /** Lock the page to the viewport and let a child own the scrolling. */
+  fill?: boolean;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("px-5 py-6 lg:px-8 lg:py-7 space-y-5", className)}>
+    <div
+      className={cn(
+        "flex min-w-0 flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7",
+        fill && "md:h-full md:min-h-0 md:overflow-hidden",
+        className,
+      )}
+    >
       {children}
     </div>
   );

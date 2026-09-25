@@ -1,12 +1,6 @@
 "use client";
 import { Tabs } from "@heroui/react";
-import {
-  Avatar,
-  Card,
-  CardBody,
-  CardHeader,
-  IconButton,
-} from "@/components/ui";
+import { Avatar, Card, CardBody, CardHeader, IconButton, PageShell } from "@/components/ui";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { usePageAccess } from "@/hooks/use-page-access";
@@ -62,8 +56,8 @@ function LmcDetailView() {
   const info = summary?.supervisor_info;
 
   return (
-    <div className="overflow-x-hidden px-5 py-6 lg:px-8 lg:py-7">
-      <div className="mb-5 flex min-w-0 items-center justify-between gap-3">
+    <PageShell className="overflow-x-hidden">
+      <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <IconButton label="Go back" onClick={() => router.back()}>
             <LuArrowLeft />
@@ -205,7 +199,7 @@ function LmcDetailView() {
           </div>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }
 

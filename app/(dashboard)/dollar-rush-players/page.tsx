@@ -1,7 +1,7 @@
 "use client";
 
 import CustomTable, { TableRow } from "@/components/custom-table";
-import { Avatar, PageHeader, SearchInput, StatTile } from "@/components/ui";
+import { Avatar, PageHeader, PageShell, SearchInput, StatTile } from "@/components/ui";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -91,7 +91,7 @@ function DollarRushPlayersView() {
   const wt = stats?.wallet_totals;
 
   return (
-    <div className="flex flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7 md:h-full md:overflow-hidden">
+    <PageShell fill>
       <PageHeader
         className="shrink-0"
         title="Dollar Rush players"
@@ -176,7 +176,7 @@ function DollarRushPlayersView() {
           </div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

@@ -5,15 +5,7 @@ import ReleasesService, { IRelease } from "@/api/releases";
 import ToastService from "@/utils/toast-service";
 import ApiError from "@/utils/api_error";
 import { Form } from "@heroui/react";
-import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  PageHeader,
-  Skeleton,
-} from "@/components/ui";
+import { Badge, Button, Card, CardBody, CardHeader, PageHeader, PageShell, Skeleton } from "@/components/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useFileUpload } from "@/hooks/use-file-upload";
@@ -75,7 +67,7 @@ function AppReleasesView() {
   };
 
   return (
-    <div className="max-w-xl space-y-5 px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell className="max-w-xl">
       <PageHeader
         title="App releases"
         description="Publish a new writer app build and share the download link."
@@ -191,7 +183,7 @@ function AppReleasesView() {
           </Form>
         </CardBody>
       </Card>
-    </div>
+    </PageShell>
   );
 }
 

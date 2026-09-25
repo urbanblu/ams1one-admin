@@ -1,16 +1,7 @@
 "use client";
 
 import { Tabs } from "@heroui/react";
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  IconButton,
-  StatTile,
-  StatusBadge,
-} from "@/components/ui";
+import { Avatar, Button, Card, CardBody, CardHeader, IconButton, PageShell, StatTile, StatusBadge } from "@/components/ui";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
@@ -141,9 +132,9 @@ function RetailerDetailView() {
   }
 
   return (
-    <div className="overflow-x-hidden px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell className="overflow-x-hidden">
       {/* Header */}
-      <div className="mb-5 flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <IconButton label="Go back" onClick={() => router.back()}>
           <LuArrowLeft />
         </IconButton>
@@ -440,7 +431,7 @@ function RetailerDetailView() {
           </div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

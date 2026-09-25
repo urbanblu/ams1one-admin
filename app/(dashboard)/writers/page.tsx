@@ -1,7 +1,7 @@
 "use client";
 
 import { Popover } from "@heroui/react";
-import { Avatar, Button, PageHeader, StatusBadge } from "@/components/ui";
+import { Avatar, Button, PageHeader, PageShell, StatusBadge } from "@/components/ui";
 import { Suspense } from "react";
 import FilterRetailers from "./_components/filter-retailers";
 import CustomTable, { TableRow } from "@/components/custom-table";
@@ -219,7 +219,7 @@ function RetailersView() {
   });
 
   return (
-    <div className="flex h-auto flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7 sm:h-full sm:overflow-hidden">
+    <PageShell fill>
       <PageHeader
         className="shrink-0"
         title="Retailers & Writers"
@@ -274,7 +274,7 @@ function RetailersView() {
           />
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

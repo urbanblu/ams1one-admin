@@ -6,7 +6,7 @@ import PayoutsService, { IAdminPayout } from "@/api/payouts";
 import ToastService from "@/utils/toast-service";
 import ApiError from "@/utils/api_error";
 import { Form } from "@heroui/react";
-import { Badge, Button, Card, PageHeader } from "@/components/ui";
+import { Badge, Button, Card, PageHeader, PageShell } from "@/components/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { usePageAccess } from "@/hooks/use-page-access";
@@ -107,7 +107,7 @@ function AdminPayoutsView() {
   }
 
   return (
-    <div className="max-w-xl space-y-5 px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell className="max-w-xl">
       <PageHeader
         title="Payments"
         description="Send a mobile money payout and track its confirmation."
@@ -197,7 +197,7 @@ function AdminPayoutsView() {
           </Button>
         </div>
       </Form>
-    </div>
+    </PageShell>
   );
 }
 

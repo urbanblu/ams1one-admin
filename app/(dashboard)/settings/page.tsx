@@ -5,7 +5,7 @@ import GeneralSettings from "./_components/general-settings";
 import TeamMembers from "./_components/team-members";
 import ActivityLogsTab from "./_components/activity-logs-tab";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { PageHeader, SegmentedControl } from "@/components/ui";
+import { PageHeader, PageShell, SegmentedControl } from "@/components/ui";
 import { LuHistory, LuSettings, LuUsers } from "react-icons/lu";
 
 type Tab = "generalSettings" | "teamMembers" | "activityLogs";
@@ -40,7 +40,7 @@ function SettingsView() {
   ].filter(Boolean) as { key: Tab; label: string; icon: React.ReactNode }[];
 
   return (
-    <div className="flex h-full flex-col overflow-x-hidden overflow-y-auto px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell fill className="overflow-x-hidden">
       <PageHeader
         className="shrink-0"
         title="Settings"
@@ -56,14 +56,14 @@ function SettingsView() {
 
       {/* RightSegment rendered an empty <div/>, so a quarter of the widest page
           in the app was permanently blank. Settings is a single column. */}
-      <div className="mt-5 flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-x-hidden">
+      <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-x-hidden">
         {selectedTab === "generalSettings" && <GeneralSettings />}
         {selectedTab === "teamMembers" && canSeeTeamMembers && <TeamMembers />}
         {selectedTab === "activityLogs" && canSeeActivityLogs && (
           <ActivityLogsTab />
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }
 

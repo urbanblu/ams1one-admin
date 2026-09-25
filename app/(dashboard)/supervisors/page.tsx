@@ -3,13 +3,7 @@
 import Image from "next/image";
 import EmptyImage from "@/public/images/new/empty-page.jpg";
 import { Tabs } from "@heroui/react";
-import {
-  Avatar,
-  Button,
-  PageHeader,
-  SearchInput,
-  Skeleton,
-} from "@/components/ui";
+import { Avatar, Button, PageHeader, PageShell, SearchInput, Skeleton } from "@/components/ui";
 import { LuUpload } from "react-icons/lu";
 import OperationalTab from "./_components/operational-tab";
 import FinancialTab from "./_components/financial-tab";
@@ -45,7 +39,7 @@ function Lmcs() {
   }, [cards, searchTerm]);
 
   return (
-    <div className="flex flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell>
       <PageHeader
         title="Supervisors"
         description={`${cards.length.toLocaleString("en-US")} local management companies`}
@@ -176,7 +170,7 @@ function Lmcs() {
           </div>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }
 

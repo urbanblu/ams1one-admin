@@ -3,14 +3,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LuCalendarDays, LuMapPin, LuScanLine, LuTicket } from "react-icons/lu";
-import {
-  Badge,
-  Button,
-  EmptyState,
-  PageHeader,
-  SegmentedControl,
-  Skeleton,
-} from "@/components/ui";
+import { Badge, Button, EmptyState, PageHeader, PageShell, SegmentedControl, Skeleton } from "@/components/ui";
 import EventsService from "@/api/events";
 import type { IEvent } from "@/interfaces/events.interface";
 import CreateEventModal from "./_components/create-event-modal";
@@ -158,7 +151,7 @@ export default function EventsPage() {
   const showScannerTab = canScan;
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-auto px-5 py-6 lg:px-8 lg:py-7">
+    <PageShell>
       <PageHeader
         className="shrink-0"
         title="Events & QR tickets"
@@ -197,6 +190,6 @@ export default function EventsPage() {
       {/* Content */}
       {tab === "events" && showEventTab && <EventsList canManage={canManage} />}
       {tab === "scanner" && showScannerTab && <ScanTab />}
-    </div>
+    </PageShell>
   );
 }

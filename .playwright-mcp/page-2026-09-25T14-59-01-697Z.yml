@@ -1,0 +1,31 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - img "Ams1one" [ref=e5]
+      - generic [ref=e6]:
+        - paragraph [ref=e7]: Admin Console
+        - heading "Everything across the network, in one place." [level=2] [ref=e8]
+        - generic [ref=e9]:
+          - generic [ref=e10]: Live sales and draw performance
+          - generic [ref=e14]: Approve payouts and top-ups in seconds
+          - generic [ref=e19]: Dual-approval controls on every draw
+      - paragraph [ref=e25]: © 2026 Ams1one. All rights reserved.
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - heading "Welcome back" [level=1] [ref=e29]
+        - paragraph [ref=e30]: Sign in to your admin account to continue.
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]: Email*
+            - textbox "Email*" [ref=e39]:
+              - /placeholder: Enter your email
+          - generic [ref=e40]:
+            - generic [ref=e41]: Password*
+            - textbox "Password*" [ref=e46]:
+              - /placeholder: Enter password
+            - button "Close" [ref=e47] [cursor=pointer]
+        - button "Sign in" [ref=e49] [cursor=pointer]
+  - region "Notifications Alt+T"
+  - button "Open Next.js Dev Tools" [ref=e56] [cursor=pointer]
+  - alert [ref=e60]
