@@ -6,6 +6,12 @@ import NProgress from "nprogress";
 import { IPagination } from "@/interfaces/general.interface";
 import { LuChevronsUpDown, LuInbox, LuLoaderCircle } from "react-icons/lu";
 
+/** Matches React Aria's SortDescriptor without depending on its nested package. */
+type SortDescriptor = {
+  column: string | number;
+  direction: "ascending" | "descending";
+};
+
 export interface TableColumn {
   key: string;
   label: string;
@@ -104,8 +110,16 @@ function CustomTable({
     onPageChange?.(page);
   };
 
-  const handleSort = (column: string) => {
-    onSort?.(column, "asc");
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | null>(
+    null,
+  );
+
+  const handleSortChange = (descriptor: SortDescriptor) => {
+    setSortDescriptor(descriptor);
+    onSort?.(
+      String(descriptor.column),
+      descriptor.direction === "ascending" ? "asc" : "desc",
+    );
   };
 
   useEffect(() => {
@@ -128,12 +142,14 @@ function CustomTable({
             addTableBorder && "border border-border-subtle",
           )}
         >
-          <Table.ScrollContainer className="min-h-0 w-full min-w-0 flex-1 overflow-x-auto overflow-y-auto max-h-[min(58dvh,26rem)] md:max-h-[min(62dvh,30rem)] lg:max-h-[min(62dvh,30rem)] lg:overflow-y-auto">
+          <Table.ScrollContainer className="min-h-0 w-full min-w-0 flex-1 overflow-x-auto overflow-y-auto max-h-[min(58dvh,26rem)] md:max-h-[min(62dvh,30rem)]">
             <Table.Content
               aria-label="Data table"
+              sortDescriptor={sortDescriptor ?? undefined}
+              onSortChange={handleSortChange}
               className={cn(
                 "w-full min-w-[720px] bg-transparent",
-                "[&_td]:px-5 [&_td]:py-3.5 [&_td]:text-sm [&_td]:text-muted-foreground",
+                "[&_td]:px-5 [&_td]:py-3.5 [&_td]:text-sm [&_td]:text-muted-foreground [&_td]:tabular-nums",
                 "[&_tbody_tr]:border-b [&_tbody_tr]:border-border-subtle [&_tbody_tr:last-child]:border-b-0",
               )}
             >
@@ -144,7 +160,7 @@ function CustomTable({
                     id={column.key}
                     isRowHeader={columns[0].key === column.key}
                     allowsSorting={column.sortable}
-                    className="bg-surface-muted px-5 py-3"
+                    className="group bg-surface-muted px-5 py-3.5 data-[allows-sorting=true]:cursor-pointer"
                   >
                     <div className="flex items-center gap-1.5">
                       <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
@@ -152,8 +168,8 @@ function CustomTable({
                       </span>
                       {column.sortable && (
                         <LuChevronsUpDown
-                          className="size-3 cursor-pointer text-zinc-300 transition-colors hover:text-zinc-500"
-                          onClick={() => handleSort(column.key)}
+                          aria-hidden
+                          className="size-3.5 shrink-0 text-zinc-300 transition-colors group-hover:text-zinc-500"
                         />
                       )}
                     </div>
@@ -188,7 +204,7 @@ function CustomTable({
                       <Table.Row
                         key={index}
                         id={index}
-                        className="cursor-pointer transition-colors data-[hovered=true]:bg-subtle/60 hover:bg-subtle/60"
+                        className="cursor-pointer transition-colors data-[hovered=true]:bg-subtle hover:bg-subtle"
                         onAction={() => {
                           onRowClick?.(row, index);
                         }}
@@ -210,7 +226,7 @@ function CustomTable({
           </Table.ScrollContainer>
 
           {!loading && enablePagination && (
-            <Table.Footer className="border-t border-border-subtle bg-surface px-2 py-1.5">
+            <Table.Footer className="border-t border-border-subtle bg-surface px-5 py-2.5">
               <Pagination size="sm">
                 <Pagination.Summary className="text-xs text-muted-foreground">
                   {start} to {end} of {pagination.totalCount} results

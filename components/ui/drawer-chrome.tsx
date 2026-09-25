@@ -77,7 +77,7 @@ export function DrawerTitleBar({
         type="button"
         aria-label="Close"
         onClick={onClose}
-        className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
+        className="relative flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-subtle text-muted-foreground transition-colors after:absolute after:-inset-1 after:content-[''] hover:bg-zinc-200 hover:text-foreground"
       >
         <LuX className="size-4" />
       </button>

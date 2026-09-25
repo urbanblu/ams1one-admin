@@ -45,7 +45,7 @@ export function SearchInput({
           type="button"
           aria-label="Clear search"
           onClick={() => update("")}
-          className="absolute right-3 top-1/2 flex size-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-subtle hover:text-foreground"
+          className="absolute right-3 top-1/2 flex size-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-zinc-400 transition-colors after:absolute after:-inset-2.5 after:content-[''] hover:bg-subtle hover:text-foreground"
         >
           <LuX className="size-3.5" />
         </button>

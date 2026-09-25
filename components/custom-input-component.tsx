@@ -202,8 +202,11 @@ function CustomInputComponent({
             )}
             <InputGroup
               className={cn(
-                "bg-surface border border-solid rounded-xl px-1 py-2.5 transition-colors duration-200",
+                "h-11 items-center bg-surface border border-solid rounded-xl px-4 transition-colors duration-200",
                 "focus-within:ring-0 focus-within:outline-none shadow-none",
+                // HeroUI's .input-group__input adds its own px-3 py-2; zero it
+                // so the group's own h-11/px-4 is what actually measures.
+                "[&_input]:px-0 [&_input]:py-0 [&_input]:h-full",
                 showInvalidState
                   ? "border-destructive! focus-within:border-destructive!"
                   : "border-border focus-within:border-primary",

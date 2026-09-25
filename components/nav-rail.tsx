@@ -151,7 +151,7 @@ function NavItem({ item, active, onNavigate }: NavItemProps) {
     >
       <Icon
         className={cn(
-          "size-[18px] shrink-0 transition-colors",
+          "size-5 shrink-0 transition-colors",
           active ? "text-primary" : "text-zinc-400 group-hover:text-zinc-600",
         )}
       />
@@ -209,7 +209,7 @@ function SidebarContent({
           <button
             onClick={onClose}
             aria-label="Close menu"
-            className="w-8 h-8 rounded-full bg-subtle flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer md:hidden"
+            className="relative flex size-9 cursor-pointer items-center justify-center rounded-full bg-subtle text-muted-foreground transition-colors after:absolute after:-inset-1 after:content-[''] hover:text-foreground md:hidden"
           >
             <LuX className="size-4" />
           </button>
@@ -220,7 +220,7 @@ function SidebarContent({
       <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
         {visibleGroups.map((group) => (
           <div key={group.title} className="space-y-1">
-            <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
+            <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
               {group.title}
             </p>
             {group.items.map((item) => (
@@ -256,7 +256,7 @@ function SidebarContent({
             </button>
           </Popover.Trigger>
 
-          <Popover.Content className="rounded-2xl border border-border-subtle w-56 p-1.5 mb-2 shadow-lg shadow-zinc-200/60">
+          <Popover.Content className="w-56 rounded-2xl border border-border-subtle p-1.5 shadow-lg shadow-zinc-200/60">
             <Popover.Dialog className="p-0 space-y-0.5">
               {canSeeSettings && (
                 <button
@@ -371,7 +371,7 @@ function NavRail({ children }: { children: React.ReactNode }) {
           <button
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
-            className="w-9 h-9 rounded-full bg-surface border border-border-subtle flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface text-muted-foreground transition-colors hover:text-foreground"
           >
             <LuMenu className="size-4" />
           </button>
@@ -382,7 +382,7 @@ function NavRail({ children }: { children: React.ReactNode }) {
             height={28}
             className="object-contain"
           />
-          <div className="w-9" />
+          <div className="size-11" />
         </header>
 
         <main className="flex-1 min-h-0 overflow-auto bg-background">

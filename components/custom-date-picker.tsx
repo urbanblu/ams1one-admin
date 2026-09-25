@@ -93,7 +93,7 @@ function CustomDatePicker({
           <Calendar.Grid>
             <Calendar.GridHeader>
               {(day) => (
-                <Calendar.HeaderCell className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+                <Calendar.HeaderCell className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                   {day}
                 </Calendar.HeaderCell>
               )}

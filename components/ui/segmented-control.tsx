@@ -39,7 +39,7 @@ export function SegmentedControl<T extends string>({
           type="button"
           onClick={() => onChange(key)}
           className={cn(
-            "flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-[0.8rem] font-medium transition-all cursor-pointer whitespace-nowrap",
+            "flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer whitespace-nowrap",
             "[&>svg]:size-3.5",
             fullWidth && "flex-1",
             value === key

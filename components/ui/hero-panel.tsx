@@ -52,7 +52,7 @@ export function HeroStat({
         {icon && (
           <span className="text-white/50 [&>svg]:size-3.5">{icon}</span>
         )}
-        <p className="text-[10px] text-white/60 uppercase tracking-widest">
+        <p className="text-[11px] font-semibold text-white/70 uppercase tracking-wider">
           {label}
         </p>
       </div>
