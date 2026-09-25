@@ -1,7 +1,13 @@
 "use client";
 
 import CustomTable, { TableRow } from "@/components/custom-table";
-import { Avatar, PageHeader, PageShell, SearchInput, StatTile } from "@/components/ui";
+import {
+  Avatar,
+  PageHeader,
+  PageShell,
+  SearchInput,
+  StatTile,
+} from "@/components/ui";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";

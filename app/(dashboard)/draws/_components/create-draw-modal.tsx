@@ -4,10 +4,7 @@ import { Button as UiButton } from "@/components/ui";
 import CustomSelectComponent from "@/components/custom-select-component";
 import GamesService from "@/api/games";
 import ToastService from "@/utils/toast-service";
-import {
-  Button,
-  Modal,
-} from "@heroui/react";
+import { Button, Modal } from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ApiError from "@/utils/api_error";

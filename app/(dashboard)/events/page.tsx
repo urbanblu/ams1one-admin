@@ -3,7 +3,15 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LuCalendarDays, LuMapPin, LuScanLine, LuTicket } from "react-icons/lu";
-import { Badge, Button, EmptyState, PageHeader, PageShell, SegmentedControl, Skeleton } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  EmptyState,
+  PageHeader,
+  PageShell,
+  SegmentedControl,
+  Skeleton,
+} from "@/components/ui";
 import EventsService from "@/api/events";
 import type { IEvent } from "@/interfaces/events.interface";
 import CreateEventModal from "./_components/create-event-modal";

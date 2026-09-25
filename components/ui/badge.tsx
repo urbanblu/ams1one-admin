@@ -4,12 +4,7 @@ import { cn } from "@heroui/react";
 import React from "react";
 
 export type BadgeTone =
-  | "neutral"
-  | "brand"
-  | "success"
-  | "warning"
-  | "danger"
-  | "info";
+  "neutral" | "brand" | "success" | "warning" | "danger" | "info";
 
 const TONES: Record<BadgeTone, string> = {
   neutral: "bg-zinc-100 text-zinc-600",
@@ -49,7 +44,16 @@ export function toneForStatus(status?: string | null): BadgeTone {
     ].includes(s)
   )
     return "success";
-  if (["pending", "processing", "in_progress", "awaiting", "review", "draft"].includes(s))
+  if (
+    [
+      "pending",
+      "processing",
+      "in_progress",
+      "awaiting",
+      "review",
+      "draft",
+    ].includes(s)
+  )
     return "warning";
   if (
     [
@@ -79,7 +83,12 @@ type BadgeProps = {
   className?: string;
 };
 
-export function Badge({ children, tone = "neutral", dot, className }: BadgeProps) {
+export function Badge({
+  children,
+  tone = "neutral",
+  dot,
+  className,
+}: BadgeProps) {
   return (
     <span
       className={cn(

@@ -9,7 +9,12 @@ import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
 import GamesService from "@/api/games";
 import { LuShoppingBag, LuTrophy, LuTrendingUp } from "react-icons/lu";
-import { MetricCard, NumberBallRow, PageHeader, PageShell } from "@/components/ui";
+import {
+  MetricCard,
+  NumberBallRow,
+  PageHeader,
+  PageShell,
+} from "@/components/ui";
 import { usePageAccess } from "@/hooks/use-page-access";
 
 function DrawView() {

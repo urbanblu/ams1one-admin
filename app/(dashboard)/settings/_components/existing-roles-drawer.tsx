@@ -7,7 +7,16 @@ import CustomInputComponent from "@/components/custom-input-component";
 import PermissionsService from "@/api/permissions";
 import ToastService from "@/utils/toast-service";
 import type { IDashboardRole } from "@/interfaces/admin-users.interface";
-import { cn, Accordion, Button, CloseButton, CloseIcon, Drawer, Modal, Spinner } from "@heroui/react";
+import {
+  cn,
+  Accordion,
+  Button,
+  CloseButton,
+  CloseIcon,
+  Drawer,
+  Modal,
+  Spinner,
+} from "@heroui/react";
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -46,7 +55,12 @@ function ExistingRolesDrawer() {
         }}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className={cn(drawerDialogClass, "flex h-full max-h-screen flex-col")}>
+          <Drawer.Dialog
+            className={cn(
+              drawerDialogClass,
+              "flex h-full max-h-screen flex-col",
+            )}
+          >
             <Drawer.Header>
               <CloseButton
                 className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"

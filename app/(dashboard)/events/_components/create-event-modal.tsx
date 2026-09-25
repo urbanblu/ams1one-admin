@@ -2,11 +2,7 @@
 
 import { Button as UiButton } from "@/components/ui";
 import React from "react";
-import {
-  Button,
-  Form,
-  Modal,
-} from "@heroui/react";
+import { Button, Form, Modal } from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LuCalendarDays, LuPlus } from "react-icons/lu";
 import EventsService from "@/api/events";

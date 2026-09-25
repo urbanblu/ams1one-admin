@@ -10,12 +10,7 @@ import WritersService from "@/api/writers";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import ToastService from "@/utils/toast-service";
 import ApiError from "@/utils/api_error";
-import {
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Form,
-} from "@heroui/react";
+import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -257,7 +252,7 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                               e.stopPropagation();
                               removeSelfie(0);
                             }}
-                            className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                            className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1"
                           >
                             <RiDeleteBin6Line className="text-rose-500" />
                           </span>
@@ -312,7 +307,7 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                               e.stopPropagation();
                               removeIdCardFile(0);
                             }}
-                            className="absolute top-2 right-2 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                            className="absolute top-2 right-2 z-10 cursor-pointer bg-white rounded-full p-1"
                           >
                             <RiDeleteBin6Line className="text-rose-500" />
                           </span>

@@ -28,12 +28,7 @@ import {
 } from "react-icons/lu";
 import type { ElementType } from "react";
 import ChartColors from "@/utils/chart-colors";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  SegmentedControl,
-} from "@/components/ui";
+import { Card, CardBody, CardHeader, SegmentedControl } from "@/components/ui";
 
 type ChartEntry = {
   label: string;

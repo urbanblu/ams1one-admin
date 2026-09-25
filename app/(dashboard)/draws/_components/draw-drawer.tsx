@@ -111,10 +111,7 @@ function DrawDrawer({
       }}
       isDismissable={true}
     >
-      <Drawer.Content
-        placement="right"
-        className={drawerWidth.wide}
-      >
+      <Drawer.Content placement="right" className={drawerWidth.wide}>
         <Drawer.Dialog className={cn(drawerDialogClass, "w-full")}>
           <Drawer.Header>
             <div className="flex justify-between items-center">

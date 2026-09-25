@@ -5,7 +5,16 @@ import ReleasesService, { IRelease } from "@/api/releases";
 import ToastService from "@/utils/toast-service";
 import ApiError from "@/utils/api_error";
 import { Form } from "@heroui/react";
-import { Badge, Button, Card, CardBody, CardHeader, PageHeader, PageShell, Skeleton } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  PageHeader,
+  PageShell,
+  Skeleton,
+} from "@/components/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useFileUpload } from "@/hooks/use-file-upload";

@@ -2,7 +2,14 @@
 
 import { drawerDialogClass, drawerWidth } from "@/components/ui";
 
-import { cn, AlertDialog, Button, CloseButton, Drawer, Spinner } from "@heroui/react";
+import {
+  cn,
+  AlertDialog,
+  Button,
+  CloseButton,
+  Drawer,
+  Spinner,
+} from "@heroui/react";
 import { useState } from "react";
 import { RiCheckLine, RiCloseCircleLine } from "react-icons/ri";
 import { LuCalendar, LuUser } from "react-icons/lu";
@@ -102,11 +109,10 @@ function ManageDrawDrawer({
     <div>
       <Drawer isOpen={isOpen}>
         <Drawer.Backdrop isDismissable={true}>
-          <Drawer.Content
-            placement="right"
-            className={drawerWidth.form}
-          >
-            <Drawer.Dialog className={cn(drawerDialogClass, "flex h-full w-full flex-col")}>
+          <Drawer.Content placement="right" className={drawerWidth.form}>
+            <Drawer.Dialog
+              className={cn(drawerDialogClass, "flex h-full w-full flex-col")}
+            >
               <Drawer.Header className="shrink-0">
                 <div className="flex justify-between items-center">
                   <Drawer.Heading className="text-sm font-semibold">

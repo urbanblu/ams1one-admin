@@ -2,12 +2,7 @@ import { Button as UiButton, drawerDialogClass } from "@/components/ui";
 import CustomInputComponent from "@/components/custom-input-component";
 import CustomSelectComponent from "@/components/custom-select-component";
 import PermissionsService from "@/api/permissions";
-import {
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Form,
-} from "@heroui/react";
+import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminUsersService from "@/api/admin-users";

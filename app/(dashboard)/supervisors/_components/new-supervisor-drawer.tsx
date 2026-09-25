@@ -154,7 +154,7 @@ function NewLmcDrawer(payload: Props) {
                                 e.stopPropagation();
                                 removeFile(0);
                               }}
-                              className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                              className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1"
                             >
                               <RiDeleteBin6Line className="text-rose-500" />
                             </span>

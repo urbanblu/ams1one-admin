@@ -16,4 +16,8 @@ export { DetailRow } from "./detail-row";
 export { FormSection } from "./form-section";
 export { SearchInput } from "./search-input";
 export { NumberBall, NumberBallRow } from "./number-ball";
-export { DrawerTitleBar, drawerDialogClass, drawerWidth } from "./drawer-chrome";
+export {
+  DrawerTitleBar,
+  drawerDialogClass,
+  drawerWidth,
+} from "./drawer-chrome";

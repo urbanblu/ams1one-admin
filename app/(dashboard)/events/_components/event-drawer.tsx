@@ -1,11 +1,7 @@
 "use client";
 
 import type { BadgeTone } from "@/components/ui";
-import {
-  Badge,
-  drawerDialogClass,
-  drawerWidth,
-} from "@/components/ui";
+import { Badge, drawerDialogClass, drawerWidth } from "@/components/ui";
 
 import React, { useState } from "react";
 import { Button, CloseButton, cn, Drawer, Spinner, Tabs } from "@heroui/react";
@@ -443,11 +439,10 @@ export default function EventDrawer({
         if (!open) onClose();
       }}
     >
-      <Drawer.Content
-        placement="right"
-        className={drawerWidth.form}
-      >
-        <Drawer.Dialog className={cn(drawerDialogClass, "flex h-full w-full flex-col")}>
+      <Drawer.Content placement="right" className={drawerWidth.form}>
+        <Drawer.Dialog
+          className={cn(drawerDialogClass, "flex h-full w-full flex-col")}
+        >
           <Drawer.Header className="border-b border-border-subtle pb-4 shrink-0">
             <div className="flex items-start justify-between gap-2 w-full">
               <div className="flex flex-col gap-0.5 min-w-0">
@@ -471,7 +466,7 @@ export default function EventDrawer({
                   </div>
                 )}
                 <div className="flex items-center gap-2 mt-1.5">
-<Badge tone={event?.is_active ? "success" : "danger"} dot>
+                  <Badge tone={event?.is_active ? "success" : "danger"} dot>
                     {event?.is_active ? "Active" : "Inactive"}
                   </Badge>
                   <span className="text-[10px] text-zinc-400">

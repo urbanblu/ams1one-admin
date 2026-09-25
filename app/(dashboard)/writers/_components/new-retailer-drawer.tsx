@@ -199,7 +199,7 @@ function NewRetailerDrawer(payload: Props) {
                                 e.stopPropagation();
                                 removeFile(0);
                               }}
-                              className="absolute right-1 top-1 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
+                              className="absolute right-1 top-1 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface"
                             >
                               <LuTrash2 className="size-3.5 text-rose-500" />
                             </span>
@@ -243,7 +243,7 @@ function NewRetailerDrawer(payload: Props) {
                                 e.stopPropagation();
                                 removeIdCardFile(0);
                               }}
-                              className="absolute right-2 top-2 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
+                              className="absolute right-2 top-2 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface"
                             >
                               <LuTrash2 className="size-3.5 text-rose-500" />
                             </span>

@@ -42,23 +42,11 @@ function GeneralSettings() {
           </div>
         </div>
         <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border-subtle">
-          <InfoTile
-            icon={LuMail}
-            label="Primary Email"
-            value="N/A"
-          />
-          <InfoTile
-            icon={LuPhone}
-            label="Primary Contact"
-            value="N/A"
-          />
+          <InfoTile icon={LuMail} label="Primary Email" value="N/A" />
+          <InfoTile icon={LuPhone} label="Primary Contact" value="N/A" />
         </div>
         <div className="border-t border-border-subtle">
-          <InfoTile
-            icon={LuMapPin}
-            label="Address"
-            value="N/A"
-          />
+          <InfoTile icon={LuMapPin} label="Address" value="N/A" />
         </div>
       </div>
 
@@ -87,12 +75,7 @@ function GeneralSettings() {
             value="N/A"
             border
           />
-          <InfoTile
-            icon={LuGlobe}
-            label="Country"
-            value="N/A"
-            border
-          />
+          <InfoTile icon={LuGlobe} label="Country" value="N/A" border />
           <InfoTile
             icon={LuLanguages}
             label="Default Language"
@@ -115,12 +98,7 @@ function GeneralSettings() {
           </span>
         </div>
         <div className="grid sm:grid-cols-2 divide-border-subtle">
-          <InfoTile
-            icon={LuLandmark}
-            label="Partner Bank"
-            value="N/A"
-            border
-          />
+          <InfoTile icon={LuLandmark} label="Partner Bank" value="N/A" border />
           <InfoTile
             icon={LuCreditCard}
             label="Collection Account #"

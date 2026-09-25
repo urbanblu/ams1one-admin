@@ -4,11 +4,7 @@ import CustomTable, { TableRow } from "@/components/custom-table";
 import { useMemo, useState } from "react";
 import { CloseButton, Popover, Separator } from "@heroui/react";
 import CustomCheckboxItem from "@/components/custom-checkbox";
-import {
-  HeroPanel,
-  HeroStat,
-  NumberBall,
-} from "@/components/ui";
+import { HeroPanel, HeroStat, NumberBall } from "@/components/ui";
 import { LuEllipsisVertical, LuReceipt, LuFilter } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import SalesService from "@/api/sales";
@@ -171,11 +167,7 @@ function FirstSalesSegment() {
                           <div className="flex flex-col items-center space-y-1">
                             <div className="flex flex-wrap gap-1 justify-start">
                               {nums.map((num, ni) => (
-                                <NumberBall
-                                  key={ni}
-                                  variant="solid"
-                                  size="sm"
-                                >
+                                <NumberBall key={ni} variant="solid" size="sm">
                                   {num}
                                 </NumberBall>
                               ))}

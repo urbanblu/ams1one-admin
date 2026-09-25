@@ -43,15 +43,20 @@ function LmcDetailView() {
   const canSeeTransactions = hasPage("supervisors.transactions");
   const canSeeWritersOverview = hasPage("supervisors.writers_overview");
 
-
   const router = useRouter();
   const params = useParams();
   const lmcId = String(params.id ?? "");
   const detailTabs = [
-    canSeeTransactions && { key: "transactions" as const, label: "Transactions" },
+    canSeeTransactions && {
+      key: "transactions" as const,
+      label: "Transactions",
+    },
     canSeeWritersOverview && { key: "writers" as const, label: "Writers" },
     canSeeWritersOverview && { key: "agents" as const, label: "Agents" },
-  ].filter(Boolean) as { key: "transactions" | "writers" | "agents"; label: string }[];
+  ].filter(Boolean) as {
+    key: "transactions" | "writers" | "agents";
+    label: string;
+  }[];
 
   const [activeTab, setActiveTab] = useState<
     "transactions" | "writers" | "agents"
@@ -109,28 +114,48 @@ function LmcDetailView() {
                 title="YTD sales"
                 value={s ? formatUSD(parseFloat(s.ytd_sales)) : "—"}
                 tone="brand"
-                footer={<ContributionRatio value={s?.ytd_sales_ratio ?? 0} tone="brand" />}
+                footer={
+                  <ContributionRatio
+                    value={s?.ytd_sales_ratio ?? 0}
+                    tone="brand"
+                  />
+                }
               />
               <MetricCard
                 icon={<LuTrendingUp />}
                 title="YTD top-ups"
                 value={s ? formatUSD(parseFloat(s.ytd_topups)) : "—"}
                 tone="warning"
-                footer={<ContributionRatio value={s?.ytd_topups_ratio ?? 0} tone="warning" />}
+                footer={
+                  <ContributionRatio
+                    value={s?.ytd_topups_ratio ?? 0}
+                    tone="warning"
+                  />
+                }
               />
               <MetricCard
                 icon={<LuTrophy />}
                 title="YTD winnings"
                 value={s ? formatUSD(parseFloat(s.ytd_winnings)) : "—"}
                 tone="success"
-                footer={<ContributionRatio value={s?.ytd_winnings_ratio ?? 0} tone="success" />}
+                footer={
+                  <ContributionRatio
+                    value={s?.ytd_winnings_ratio ?? 0}
+                    tone="success"
+                  />
+                }
               />
               <MetricCard
                 icon={<LuUsers />}
                 title="Writers"
                 value={s ? String(s.writers_count) : "—"}
                 tone="info"
-                footer={<ContributionRatio value={s?.writers_ratio ?? 0} tone="info" />}
+                footer={
+                  <ContributionRatio
+                    value={s?.writers_ratio ?? 0}
+                    tone="info"
+                  />
+                }
               />
             </div>
           )}
@@ -173,7 +198,6 @@ function LmcDetailView() {
             )}
           </div>
         </div>
-
       </div>
     </PageShell>
   );
@@ -190,7 +214,9 @@ const ContributionRatio = ({
   tone: keyof typeof TONES;
 }) => (
   <div className="flex items-center justify-between gap-2">
-    <span className="text-[11px] text-muted-foreground">Contribution ratio</span>
+    <span className="text-[11px] text-muted-foreground">
+      Contribution ratio
+    </span>
     <DonutChart value={value} color={TONES[tone].chart} />
   </div>
 );
@@ -201,7 +227,6 @@ const TONES = {
   success: { chip: "bg-emerald-50 text-emerald-500", chart: "#10b981" },
   info: { chip: "bg-blue-50 text-blue-500", chart: "#3b82f6" },
 };
-
 
 const PrimaryAddressCard = ({
   name,
@@ -216,15 +241,15 @@ const PrimaryAddressCard = ({
     <CardHeader icon={<LuMapPin />} title="Primary address" />
     <CardBody className="flex flex-col gap-3">
       <DetailRow
-          icon={<LuBuilding2 />}
-          iconClassName="bg-primary-soft text-primary"
-          label={name ?? "—"}
-        />
+        icon={<LuBuilding2 />}
+        iconClassName="bg-primary-soft text-primary"
+        label={name ?? "—"}
+      />
       <DetailRow
-          icon={<LuMapPin />}
-          iconClassName="bg-amber-50 text-amber-500"
-          label={address || "N/A"}
-        />
+        icon={<LuMapPin />}
+        iconClassName="bg-amber-50 text-amber-500"
+        label={address || "N/A"}
+      />
 
       <div className="mt-1 border-t border-border-subtle pt-3">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
@@ -242,7 +267,7 @@ const PrimaryAddressCard = ({
               <button
                 type="button"
                 aria-label="Remove phone number"
-                className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-rose-50 hover:text-rose-500"
+                className="relative flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-zinc-400 transition-colors after:absolute after:-inset-2 after:content-[''] hover:bg-rose-50 hover:text-rose-500"
                 onClick={() =>
                   ToastService.info({ text: "Feature not yet available" })
                 }
@@ -281,27 +306,26 @@ const PosCard = ({
     <CardHeader icon={<LuTablet />} title="POS devices" />
     <CardBody className="flex flex-col gap-3">
       <DetailRow
-          icon={<LuTablet />}
-          iconClassName="bg-primary-soft text-primary"
-          label="Issued"
-          value={String(posIssued)}
-        />
+        icon={<LuTablet />}
+        iconClassName="bg-primary-soft text-primary"
+        label="Issued"
+        value={String(posIssued)}
+      />
       <DetailRow
-          icon={<LuActivity />}
-          iconClassName="bg-emerald-50 text-emerald-500"
-          label="Trading"
-          value={String(posTrading)}
-        />
+        icon={<LuActivity />}
+        iconClassName="bg-emerald-50 text-emerald-500"
+        label="Trading"
+        value={String(posTrading)}
+      />
       <DetailRow
-          icon={<LuUsers />}
-          iconClassName="bg-blue-50 text-blue-500"
-          label="Writers"
-          value={String(writersTotal)}
-        />
+        icon={<LuUsers />}
+        iconClassName="bg-blue-50 text-blue-500"
+        label="Writers"
+        value={String(writersTotal)}
+      />
     </CardBody>
   </Card>
 );
-
 
 const DonutChart = ({
   value,

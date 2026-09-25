@@ -3,7 +3,14 @@
 import Image from "next/image";
 import EmptyImage from "@/public/images/new/empty-page.jpg";
 import { Tabs } from "@heroui/react";
-import { Avatar, Button, PageHeader, PageShell, SearchInput, Skeleton } from "@/components/ui";
+import {
+  Avatar,
+  Button,
+  PageHeader,
+  PageShell,
+  SearchInput,
+  Skeleton,
+} from "@/components/ui";
 import { LuUpload } from "react-icons/lu";
 import OperationalTab from "./_components/operational-tab";
 import FinancialTab from "./_components/financial-tab";

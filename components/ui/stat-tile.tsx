@@ -62,7 +62,9 @@ export function StatTile({
         </p>
       )}
       {hint && (
-        <p className="mt-1 truncate text-[11px] text-muted-foreground">{hint}</p>
+        <p className="mt-1 truncate text-[11px] text-muted-foreground">
+          {hint}
+        </p>
       )}
     </Wrapper>
   );

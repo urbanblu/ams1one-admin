@@ -49,9 +49,7 @@ export function HeroStat({
   return (
     <div className={className}>
       <div className="flex items-center gap-1.5 mb-1.5">
-        {icon && (
-          <span className="text-white/50 [&>svg]:size-3.5">{icon}</span>
-        )}
+        {icon && <span className="text-white/50 [&>svg]:size-3.5">{icon}</span>}
         <p className="text-[11px] font-semibold text-white/70 uppercase tracking-wider">
           {label}
         </p>

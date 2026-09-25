@@ -1,7 +1,17 @@
 "use client";
 
 import { Tabs } from "@heroui/react";
-import { Avatar, Button, Card, CardBody, CardHeader, IconButton, PageShell, StatTile, StatusBadge } from "@/components/ui";
+import {
+  Avatar,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  IconButton,
+  PageShell,
+  StatTile,
+  StatusBadge,
+} from "@/components/ui";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import WritersService from "@/api/writers";

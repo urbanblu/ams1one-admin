@@ -1,11 +1,6 @@
 import { Button as UiButton, drawerDialogClass } from "@/components/ui";
 import CustomInputComponent from "@/components/custom-input-component";
-import {
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Form,
-} from "@heroui/react";
+import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
 import React from "react";
 
 type Props = {
@@ -72,7 +67,12 @@ function SetCreditPromiseDrawer(payload: Props) {
                         return true;
                       }}
                     />
-                    <UiButton className="mt-2" size="lg" type="submit" fullWidth>
+                    <UiButton
+                      className="mt-2"
+                      size="lg"
+                      type="submit"
+                      fullWidth
+                    >
                       Save credit promise
                     </UiButton>
                   </div>

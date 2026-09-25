@@ -6,13 +6,7 @@ import CustomInputComponent from "@/components/custom-input-component";
 import LmcService from "@/api/lmc";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import ToastService from "@/utils/toast-service";
-import {
-  Button,
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Form,
-} from "@heroui/react";
+import { Button, CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import React from "react";
@@ -149,7 +143,7 @@ function EditLmcUserDrawer({
                               e.stopPropagation();
                               removeSelfie(0);
                             }}
-                            className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                            className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1"
                           >
                             <RiDeleteBin6Line className="text-rose-500" />
                           </span>

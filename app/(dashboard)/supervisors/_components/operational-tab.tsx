@@ -96,4 +96,3 @@ const Section = ({
     {children}
   </div>
 );
-

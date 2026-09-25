@@ -49,4 +49,3 @@ function FinancialTab({ financial }: { financial: ILmcFinancial }) {
 }
 
 export default FinancialTab;
-

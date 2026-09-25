@@ -1,7 +1,13 @@
 "use client";
 
 import { Popover } from "@heroui/react";
-import { Avatar, Button, PageHeader, PageShell, StatusBadge } from "@/components/ui";
+import {
+  Avatar,
+  Button,
+  PageHeader,
+  PageShell,
+  StatusBadge,
+} from "@/components/ui";
 import { Suspense } from "react";
 import FilterRetailers from "./_components/filter-retailers";
 import CustomTable, { TableRow } from "@/components/custom-table";
