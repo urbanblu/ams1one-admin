@@ -114,7 +114,7 @@ function AdminPayoutsView() {
       />
 
       {lastPayout && (
-        <Card className="p-5">
+        <Card>
           <div className="flex items-center justify-between gap-3">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
               Last payout

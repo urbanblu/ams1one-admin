@@ -63,13 +63,16 @@ function LoginView() {
   const isPending = loginRequest.isPending || profileRequest.isPending;
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-dvh bg-background">
       {/* Left panel — brand */}
-      <div className="relative hidden w-[46%] flex-col justify-between overflow-hidden bg-brand-gradient p-12 lg:flex">
+      <div className="relative hidden w-5/12 flex-col justify-between overflow-hidden bg-brand-gradient p-12 lg:flex">
         {/* Soft highlights + dot grid, matching the hero panels in-app */}
         <div className="pointer-events-none absolute -top-24 -right-20 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-        <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.07]" />
+        <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.06]" />
+        {/* Darkens the panel so the copy over it clears 4.5:1; pure white on
+            the raw brand gradient only reaches ~2.4:1. */}
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(24_16_64/0.22)_0%,rgb(24_16_64/0.40)_100%)]" />
 
         {/* The mark is a violet gradient built for light surfaces, so it sits
             on a white plate rather than directly on the brand gradient. */}
@@ -85,7 +88,7 @@ function LoginView() {
         </div>
 
         <div className="relative max-w-sm">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-white/50">
+          <p className="relative text-[11px] font-semibold uppercase tracking-[0.2em] text-white/90">
             Admin Console
           </p>
           <h2 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-white">
@@ -98,13 +101,13 @@ function LoginView() {
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-white/20">
                   <Icon className="size-3.5 text-white" />
                 </span>
-                <span className="text-sm text-white/75">{text}</span>
+                <span className="text-sm text-white">{text}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <p className="relative text-[11px] text-white/60">
+        <p className="relative text-[11px] text-white/85">
           © {new Date().getFullYear()} Ams1one. All rights reserved.
         </p>
       </div>
@@ -156,19 +159,9 @@ function LoginView() {
               size="lg"
               fullWidth
               isPending={isPending}
-              className="relative overflow-hidden"
+              className="shine-on-hover"
             >
-              <span className="relative z-10">
-                {isPending ? "Signing in…" : "Sign in"}
-              </span>
-              {/* Shine sweep */}
-              <span
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%)",
-                }}
-              />
+              {isPending ? "Signing in…" : "Sign in"}
             </Button>
           </Form>
 

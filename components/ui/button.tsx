@@ -80,7 +80,7 @@ export function IconButton({
       title={label}
       className={cn(
         "w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all cursor-pointer",
-        "active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed [&>svg]:size-4",
+        "active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed [&>svg]:size-4",
         tone === "brand" && "bg-brand-gradient text-white",
         tone === "danger" && "bg-rose-50 text-rose-500 hover:bg-rose-100",
         tone === "default" &&

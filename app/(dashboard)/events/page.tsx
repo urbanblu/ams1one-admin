@@ -35,7 +35,7 @@ function EventCard({
   canManage: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-border-subtle bg-surface p-4 transition-colors hover:border-border sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-4 rounded-2xl border border-border-subtle bg-surface px-5 py-4 transition-colors hover:border-border sm:flex-row sm:items-center">
       <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
         <LuCalendarDays className="size-5" />
       </span>
@@ -97,7 +97,7 @@ function EventsList({ canManage }: { canManage: boolean }) {
           Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 rounded-2xl border border-border-subtle bg-surface p-4"
+              className="flex items-center gap-4 rounded-2xl border border-border-subtle bg-surface px-5 py-4"
             >
               <Skeleton className="size-11 rounded-xl" />
               <div className="flex-1 space-y-2">

@@ -141,7 +141,7 @@ export default function ScanTab() {
           </Button>
 
           {cameraOn && (
-            <div className="w-full border border-border rounded-2xl overflow-hidden bg-black">
+            <div className="w-full border border-border-subtle rounded-2xl overflow-hidden bg-black">
               <QRScannerInner
                 onScan={handleScan}
                 onError={(msg) => {

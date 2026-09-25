@@ -266,6 +266,41 @@ body {
   animation: rise-in 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
+@keyframes shine-sweep {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* A single light sweep across a brand-gradient surface, on hover/focus only.
+   The reduced-motion block below collapses it to nothing. */
+@utility shine-on-hover {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%);
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgb(255 255 255 / 0.25) 50%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    animation: shine-sweep 0.7s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+}
+
 /* Dotted overlay used on the gradient hero panels */
 @utility bg-dot-grid {
   background-image: radial-gradient(circle, #fff 1px, transparent 1px);
@@ -347,5 +382,9 @@ body {
   .animate-slide-up,
   .animate-rise-in {
     animation: fade-in 0.01ms ease-out both !important;
+  }
+
+  .shine-on-hover::after {
+    display: none !important;
   }
 }

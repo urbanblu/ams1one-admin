@@ -254,7 +254,7 @@ function IssuePanel({ eventId }: { eventId: string }) {
       </Button>
 
       {result && (
-        <div className="rounded-xl border border-border bg-surface-muted p-4 flex flex-col gap-2">
+        <div className="rounded-2xl border border-border-subtle bg-surface-muted px-5 py-4 flex flex-col gap-2">
           <p className="text-sm font-semibold text-foreground">
             {result.created} ticket{result.created !== 1 ? "s" : ""} issued ·{" "}
             {result.queued} SMS queued
@@ -324,7 +324,7 @@ function SendPanel({ eventId }: { eventId: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-xl border border-border p-4 flex items-center justify-between gap-4">
+      <div className="rounded-2xl border border-border-subtle px-5 py-4 flex items-center justify-between gap-4">
         <div>
           <p className="text-sm font-semibold text-foreground">
             Resend all undelivered
