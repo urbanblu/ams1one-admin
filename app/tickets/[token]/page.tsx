@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import EnvConstants from "@/constants/env_constants";
 import QRCodeDisplay from "./_components/qr-code";
 import {
   LuCalendarDays,
@@ -29,7 +30,7 @@ interface TicketResponse {
 async function getTicket(token: string): Promise<TicketResponse | null> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/events/public/${token}/`,
+      `${EnvConstants.API_BASE_URL}/api/v1/events/public/${token}/`,
       { cache: "no-store" },
     );
     if (res.status === 404) return null;
