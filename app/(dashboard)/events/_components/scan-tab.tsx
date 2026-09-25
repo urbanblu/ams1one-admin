@@ -13,7 +13,9 @@ import {
 import EventsService from "@/api/events";
 import ApiError from "@/utils/api_error";
 
-const QRScannerInner = dynamic(() => import("./qr-scanner-inner"), { ssr: false });
+const QRScannerInner = dynamic(() => import("./qr-scanner-inner"), {
+  ssr: false,
+});
 
 type ScanState =
   | { status: "idle" }
@@ -58,10 +60,10 @@ export default function ScanTab() {
   return (
     <div className="flex flex-col items-center gap-6 max-w-md mx-auto py-4">
       <div className="text-center">
-        <h2 className="text-sm font-gotham-black text-gray-900 uppercase tracking-wider">
+        <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">
           Gate Scanner
         </h2>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Point your camera at a ticket QR code to validate entry.
         </p>
       </div>
@@ -71,18 +73,20 @@ export default function ScanTab() {
         <div
           className={`w-full rounded-2xl p-6 flex flex-col items-center gap-3 ${
             scanState.status === "success"
-              ? "bg-green-50 border border-green-200"
-              : "bg-red-50 border border-red-200"
+              ? "bg-emerald-50 border border-emerald-200"
+              : "bg-rose-50 border border-rose-200"
           }`}
         >
           {scanState.status === "success" ? (
             <>
-              <LuCircleCheck className="w-14 h-14 text-green-500" />
-              <p className="text-lg font-gotham-black text-green-700">Entry Approved</p>
-              <div className="text-center text-sm text-green-800 space-y-0.5">
-                <p className="font-gotham-bold">{scanState.event}</p>
+              <LuCircleCheck className="w-14 h-14 text-emerald-500" />
+              <p className="text-lg font-bold text-emerald-600">
+                Entry Approved
+              </p>
+              <div className="text-center text-sm text-emerald-700 space-y-0.5">
+                <p className="font-semibold">{scanState.event}</p>
                 <p>{scanState.phone}</p>
-                <p className="text-xs text-green-600">
+                <p className="text-xs text-emerald-600">
                   Scanned{" "}
                   {new Intl.DateTimeFormat("en-GB", {
                     hour: "2-digit",
@@ -94,15 +98,17 @@ export default function ScanTab() {
             </>
           ) : (
             <>
-              <LuCircleX className="w-14 h-14 text-red-500" />
-              <p className="text-lg font-gotham-black text-red-700">Entry Denied</p>
-              <p className="text-sm text-red-600 text-center">{scanState.message}</p>
+              <LuCircleX className="w-14 h-14 text-rose-500" />
+              <p className="text-lg font-bold text-rose-600">Entry Denied</p>
+              <p className="text-sm text-rose-600 text-center">
+                {scanState.message}
+              </p>
             </>
           )}
           <Button
             size="sm"
             onClick={reset}
-            className="mt-1 font-gotham-bold text-xs bg-white border border-gray-200 text-gray-700"
+            className="mt-1 font-semibold text-xs bg-white border border-border text-foreground"
           >
             Scan Another
           </Button>
@@ -114,33 +120,43 @@ export default function ScanTab() {
         <>
           <Button
             size="md"
-            onClick={() => { setCameraOn((v) => !v); setCameraError(null); }}
+            onClick={() => {
+              setCameraOn((v) => !v);
+              setCameraError(null);
+            }}
             isDisabled={isPending}
-            className={`w-full font-gotham-bold text-sm rounded-xl ${
-              cameraOn ? "bg-gray-100 text-gray-700" : "bg-primary text-white"
+            className={`w-full font-semibold text-sm rounded-xl ${
+              cameraOn ? "bg-subtle text-foreground" : "bg-primary text-white"
             }`}
           >
             {cameraOn ? (
-              <><LuCameraOff className="w-4 h-4" /> Stop Camera</>
+              <>
+                <LuCameraOff className="w-4 h-4" /> Stop Camera
+              </>
             ) : (
-              <><LuCamera className="w-4 h-4" /> Start Camera Scanner</>
+              <>
+                <LuCamera className="w-4 h-4" /> Start Camera Scanner
+              </>
             )}
           </Button>
 
           {cameraOn && (
-            <div className="w-full border border-gray-200 rounded-2xl overflow-hidden bg-black">
+            <div className="w-full border border-border rounded-2xl overflow-hidden bg-black">
               <QRScannerInner
                 onScan={handleScan}
-                onError={(msg) => { setCameraError(msg); setCameraOn(false); }}
+                onError={(msg) => {
+                  setCameraError(msg);
+                  setCameraOn(false);
+                }}
                 active={cameraOn}
               />
             </div>
           )}
 
           {cameraError && !cameraOn && (
-            <div className="w-full flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-              <LuCameraOff className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-              <p className="text-xs text-red-600">{cameraError}</p>
+            <div className="w-full flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
+              <LuCameraOff className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+              <p className="text-xs text-rose-600">{cameraError}</p>
             </div>
           )}
         </>

@@ -18,6 +18,7 @@ import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import ApiError from "@/utils/api_error";
+import { LuShieldCheck } from "react-icons/lu";
 
 function ExistingRolesDrawer() {
   const [drawerIsOpen, setDrawerOpen] = React.useState(false);
@@ -34,15 +35,16 @@ function ExistingRolesDrawer() {
   return (
     <>
       <Button
-        className="rounded-lg bg-transparent border text-black w-full md:w-auto"
+        className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-subtle w-full md:w-auto"
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
-        <span className="text-xs font-gotham-bold">Roles and Permissions</span>
+        <LuShieldCheck className="size-4" />
+        Roles &amp; permissions
       </Button>
       <Drawer.Backdrop
         variant="blur"
-        className="backdrop-blur-xs"
+        className="backdrop-blur-sm"
         isOpen={drawerIsOpen}
         onOpenChange={(open) => {
           if (!open) resetDrawerState();
@@ -50,13 +52,13 @@ function ExistingRolesDrawer() {
         }}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none h-full max-h-screen flex flex-col">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden flex h-full max-h-screen flex-col">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={resetDrawerState}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
 
@@ -134,16 +136,16 @@ function RolesList({
         }}
       >
         <Modal.Container placement="center" size="sm">
-          <Modal.Dialog>
+          <Modal.Dialog className="rounded-3xl">
             <Modal.Header>
-              <Modal.Heading className="font-gotham-black text-base">
+              <Modal.Heading className="text-lg font-semibold tracking-tight">
                 Delete role?
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Are you sure you want to delete{" "}
-                <span className="font-gotham-bold text-black">
+                <span className="font-semibold text-black">
                   {confirmRole?.name}
                 </span>
                 ? This cannot be undone.
@@ -151,7 +153,7 @@ function RolesList({
             </Modal.Body>
             <Modal.Footer>
               <Button
-                className="rounded-lg bg-transparent border border-gray-300 text-black text-xs font-gotham-bold flex-1"
+                className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-subtle flex-1"
                 size="md"
                 isDisabled={isDeleting}
                 onClick={() => setConfirmRole(null)}
@@ -159,7 +161,7 @@ function RolesList({
                 Cancel
               </Button>
               <Button
-                className="rounded-lg bg-red-500 text-white text-xs font-gotham-bold flex-1"
+                className="h-10 flex-1 cursor-pointer rounded-xl bg-rose-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-rose-600"
                 size="md"
                 isPending={isDeleting}
                 onClick={() => confirmRole && deleteRole(confirmRole.id)}
@@ -173,12 +175,12 @@ function RolesList({
         </Modal.Container>
       </Modal.Backdrop>
 
-      <Drawer.Body className="text-black flex-1 overflow-y-auto">
+      <Drawer.Body className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-lg font-gotham-black">Existing Roles</span>
+            <span className="text-lg font-bold">Existing Roles</span>
             <Button
-              className="rounded-lg bg-primary text-xs font-gotham-bold"
+              className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
               size="md"
               onClick={onAdd}
             >
@@ -188,31 +190,31 @@ function RolesList({
 
           {isPending ? (
             <div className="flex justify-center py-8">
-              <Spinner size="sm" />
+              <Spinner size="sm" className="text-primary" />
             </div>
           ) : roles.length === 0 ? (
-            <p className="text-xs text-gray-400 text-center py-8">
+            <p className="text-xs text-zinc-400 text-center py-8">
               No roles yet. Create one to assign to team members.
             </p>
           ) : (
-            <div className="border rounded-lg p-0">
+            <div className="rounded-2xl border border-border-subtle bg-surface">
               <Accordion>
                 {roles.map((role) => (
                   <Accordion.Item key={role.id}>
                     <Accordion.Heading>
                       <Accordion.Trigger>
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm font-gotham-black truncate">
+                          <span className="text-sm font-bold truncate">
                             {role.name}
                           </span>
-                          <span className="text-[10px] text-gray-400 shrink-0">
+                          <span className="text-[10px] text-zinc-400 shrink-0">
                             ({role.user_count} user
                             {role.user_count !== 1 ? "s" : ""})
                           </span>
                           <span
                             role="button"
                             tabIndex={0}
-                            className="text-[10px] font-gotham-bold text-[#0A6FFD] cursor-pointer shrink-0"
+                            className="text-[10px] font-semibold text-primary cursor-pointer shrink-0"
                             onClick={(e) => {
                               e.stopPropagation();
                               onEdit(role);
@@ -233,20 +235,20 @@ function RolesList({
                     <Accordion.Panel>
                       <Accordion.Body>
                         {role.description && (
-                          <p className="text-[11px] text-gray-500 mb-2">
+                          <p className="text-[11px] text-muted-foreground mb-2">
                             {role.description}
                           </p>
                         )}
                         <div className="flex flex-wrap gap-1.5 mb-3">
                           {role.page_keys.length === 0 ? (
-                            <span className="text-[11px] text-gray-400">
+                            <span className="text-[11px] text-zinc-400">
                               No pages assigned
                             </span>
                           ) : (
                             role.page_keys.map((key) => (
                               <span
                                 key={key}
-                                className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-mono"
+                                className="text-[10px] bg-subtle text-muted-foreground px-2 py-0.5 rounded font-mono"
                               >
                                 {key}
                               </span>
@@ -255,7 +257,7 @@ function RolesList({
                         </div>
                         {role.user_count === 0 && (
                           <button
-                            className="flex items-center gap-1 text-[11px] cursor-pointer text-red-500 font-gotham-bold mt-1"
+                            className="flex items-center gap-1 text-[11px] cursor-pointer text-rose-500 font-semibold mt-1"
                             onClick={() => setConfirmRole(role)}
                           >
                             <RiDeleteBin6Line />
@@ -335,23 +337,21 @@ function RoleForm({
   };
 
   return (
-    <Drawer.Body className="text-black flex-1 overflow-y-auto">
+    <Drawer.Body className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
       <div className="flex flex-col space-y-4">
-        <span className="text-lg font-gotham-black">
+        <span className="text-lg font-bold">
           {role ? "Edit Role" : "New Role"}
         </span>
 
         <div key={role?.id ?? "new"} className="space-y-3">
           <CustomInputComponent
             label="Name"
-            className="p-0 border rounded-lg border-gray-300"
             name="name"
             defaultValue={name}
             onChange={(e) => setName(e.target.value)}
           />
           <CustomInputComponent
             label="Description"
-            className="p-0 border rounded-lg border-gray-300"
             name="description"
             defaultValue={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -359,12 +359,12 @@ function RoleForm({
         </div>
 
         <div>
-          <span className="text-xs font-gotham-black text-gray-500 uppercase tracking-wide">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             Pages
           </span>
           {pagesPending ? (
             <div className="flex justify-center py-4">
-              <Spinner size="sm" />
+              <Spinner size="sm" className="text-primary" />
             </div>
           ) : (
             <div className="space-y-4 mt-2">
@@ -383,7 +383,7 @@ function RoleForm({
                       <CustomCheckboxItem
                         selected={allSelected || someSelected}
                         label={category}
-                        labelClassName="text-[11px] font-gotham-black"
+                        labelClassName="text-[11px] font-bold"
                         setIsSelected={() => toggleCategory(catKeys)}
                       />
                     </div>
@@ -393,7 +393,7 @@ function RoleForm({
                           key={page.key}
                           selected={selectedKeys.includes(page.key)}
                           label={page.name}
-                          labelClassName="text-[11px] font-gotham-regular"
+                          labelClassName="text-[11px] font-normal"
                           setIsSelected={() => toggle(page.key)}
                         />
                       ))}
@@ -406,7 +406,7 @@ function RoleForm({
         </div>
 
         <Button
-          className="rounded-lg bg-black w-full text-xs font-gotham-black"
+          className="h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
           isDisabled={isPending || !name.trim()}
           isPending={isPending}
           onClick={() => saveRole()}
@@ -416,7 +416,7 @@ function RoleForm({
           }
         </Button>
         <Button
-          className="rounded-lg bg-transparent border border-black text-black w-full text-xs font-gotham-black"
+          className="h-11 w-full cursor-pointer rounded-xl border border-border bg-surface text-sm font-semibold text-foreground transition-colors hover:bg-subtle"
           onClick={onCancel}
         >
           Cancel

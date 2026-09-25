@@ -1,12 +1,13 @@
 "use client";
 
-import { Tabs } from "@heroui/react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, Suspense } from "react";
 import FirstSalesSegment from "./_components/first-segment";
 import SecondSalesSegment from "./_components/second-segment";
 import ThirdSalesSegment from "./_components/third-segment";
 import { usePageAccess } from "@/hooks/use-page-access";
+import { PageHeader, SegmentedControl } from "@/components/ui";
+import { LuTicket, LuTrophy, LuUsers } from "react-icons/lu";
 
 type Tab = "tickets" | "writers" | "winnings";
 const VALID_TABS: Tab[] = ["tickets", "writers", "winnings"];
@@ -17,14 +18,32 @@ function SalesPageView() {
   const searchParams = useSearchParams();
   const { hasAnyPage } = usePageAccess();
 
-  const canSeeTickets = hasAnyPage("sales.detailed_tickets", "sales.today_sales");
-  const canSeeWriters = hasAnyPage("sales.writer_statistics", "sales.today_topups", "sales.available_float");
-  const canSeeWinnings = hasAnyPage("sales.winning_events", "sales.winners_list", "sales.today_wins", "sales.today_claims");
+  const canSeeTickets = hasAnyPage(
+    "sales.detailed_tickets",
+    "sales.today_sales",
+  );
+  const canSeeWriters = hasAnyPage(
+    "sales.writer_statistics",
+    "sales.today_topups",
+    "sales.available_float",
+  );
+  const canSeeWinnings = hasAnyPage(
+    "sales.winning_events",
+    "sales.winners_list",
+    "sales.today_wins",
+    "sales.today_claims",
+  );
 
   const rawTab = searchParams.get("tab") ?? "";
-  const activeTab: Tab = VALID_TABS.includes(rawTab as Tab) ? (rawTab as Tab) : "tickets";
+  const activeTab: Tab = VALID_TABS.includes(rawTab as Tab)
+    ? (rawTab as Tab)
+    : "tickets";
 
-  const defaultTab: Tab = canSeeTickets ? "tickets" : canSeeWriters ? "writers" : "winnings";
+  const defaultTab: Tab = canSeeTickets
+    ? "tickets"
+    : canSeeWriters
+      ? "writers"
+      : "winnings";
   const isCurrentTabAccessible =
     (activeTab === "tickets" && canSeeTickets) ||
     (activeTab === "writers" && canSeeWriters) ||
@@ -41,39 +60,42 @@ function SalesPageView() {
     router.push(`${pathname}?tab=${tab}`);
   };
 
-  return (
-    <div className="w-full h-full flex flex-col py-5 px-5 md:px-8">
-      <div className="mb-5 shrink-0 sm:max-w-sm">
-        <Tabs
-          selectedKey={effectiveTab}
-          onSelectionChange={(key) => setActiveTab(key as Tab)}
-        >
-          <Tabs.ListContainer>
-            <Tabs.List aria-label="Sales view" className="rounded-lg">
-              {canSeeTickets && (
-                <Tabs.Tab id="tickets" className="px-5 py-1.5 text-sm">
-                  Tickets
-                  <Tabs.Indicator className="rounded-md" />
-                </Tabs.Tab>
-              )}
-              {canSeeWriters && (
-                <Tabs.Tab id="writers" className="px-5 py-1.5 text-sm">
-                  Writers
-                  <Tabs.Indicator className="rounded-md" />
-                </Tabs.Tab>
-              )}
-              {canSeeWinnings && (
-                <Tabs.Tab id="winnings" className="px-5 py-1.5 text-sm">
-                  Winnings
-                  <Tabs.Indicator className="rounded-md" />
-                </Tabs.Tab>
-              )}
-            </Tabs.List>
-          </Tabs.ListContainer>
-        </Tabs>
-      </div>
+  const segments = [
+    canSeeTickets && {
+      key: "tickets" as const,
+      label: "Tickets",
+      icon: <LuTicket />,
+    },
+    canSeeWriters && {
+      key: "writers" as const,
+      label: "Writers",
+      icon: <LuUsers />,
+    },
+    canSeeWinnings && {
+      key: "winnings" as const,
+      label: "Winnings",
+      icon: <LuTrophy />,
+    },
+  ].filter(Boolean) as { key: Tab; label: string; icon: React.ReactNode }[];
 
-      <div className="flex-1 min-h-0 overflow-hidden">
+  return (
+    <div className="flex h-full w-full flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7">
+      <PageHeader
+        className="shrink-0"
+        title="Sales"
+        description="Ticket flow, writer performance and winnings across the network."
+        actions={
+          segments.length > 1 ? (
+            <SegmentedControl
+              segments={segments}
+              value={effectiveTab}
+              onChange={setActiveTab}
+            />
+          ) : null
+        }
+      />
+
+      <div className="min-h-0 flex-1 overflow-hidden">
         {effectiveTab === "tickets" && canSeeTickets && <FirstSalesSegment />}
         {effectiveTab === "writers" && canSeeWriters && <SecondSalesSegment />}
         {effectiveTab === "winnings" && canSeeWinnings && <ThirdSalesSegment />}

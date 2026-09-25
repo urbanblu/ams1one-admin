@@ -72,8 +72,8 @@ type StatusBannerProps = {
 function StatusBanner({ type, scannedAt }: StatusBannerProps) {
   if (type === "scanned") {
     return (
-      <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
-        <LuCircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+      <div className="flex items-start gap-3 rounded-2xl bg-amber-50 px-4 py-3 text-amber-700">
+        <LuCircleCheck className="mt-0.5 size-5 shrink-0 text-amber-500" />
         <p className="text-sm font-medium leading-snug">
           This ticket was already used
           {scannedAt ? ` on ${formatScannedAt(scannedAt)}` : ""}.
@@ -84,8 +84,8 @@ function StatusBanner({ type, scannedAt }: StatusBannerProps) {
 
   if (type === "revoked") {
     return (
-      <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800">
-        <LuCircleX className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+      <div className="flex items-start gap-3 rounded-2xl bg-rose-50 px-4 py-3 text-rose-700">
+        <LuCircleX className="mt-0.5 size-5 shrink-0 text-rose-500" />
         <p className="text-sm font-medium leading-snug">
           This ticket has been cancelled.
         </p>
@@ -94,8 +94,8 @@ function StatusBanner({ type, scannedAt }: StatusBannerProps) {
   }
 
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-600">
-      <LuCircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-gray-400" />
+    <div className="flex items-start gap-3 rounded-2xl bg-subtle px-4 py-3 text-muted-foreground">
+      <LuCircleAlert className="mt-0.5 size-5 shrink-0 text-zinc-400" />
       <p className="text-sm font-medium leading-snug">
         This event is no longer active.
       </p>
@@ -126,39 +126,45 @@ export default async function TicketPage({ params }: TicketPageProps) {
           : null;
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-white rounded-3xl shadow-lg p-8 flex flex-col items-center gap-6">
+    <main className="flex min-h-screen items-center justify-center bg-background p-4">
+      <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-border-subtle bg-surface">
         {/* Event info */}
-        <div className="w-full text-center space-y-1">
-          <h1 className="text-2xl font-bold text-gray-900 leading-tight">
-            {event.name}
-          </h1>
-          <div className="flex items-center justify-center gap-1.5 text-sm text-gray-500 pt-1">
-            <LuCalendarDays className="h-4 w-4 shrink-0" />
-            <span>{formatEventDate(event.event_date)}</span>
-          </div>
-          <div className="flex items-center justify-center gap-1.5 text-sm text-gray-400">
-            <LuMapPin className="h-4 w-4 shrink-0" />
-            <span>{event.venue}</span>
+        <div className="relative overflow-hidden bg-brand-gradient px-8 py-7 text-center">
+          <div className="pointer-events-none absolute -top-12 -right-12 size-40 rounded-full bg-white/20 blur-3xl" />
+          <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.06]" />
+          <div className="relative space-y-1">
+            <h1 className="text-2xl font-bold leading-tight text-white">
+              {event.name}
+            </h1>
+            <div className="flex items-center justify-center gap-1.5 pt-1 text-sm text-white/80">
+              <LuCalendarDays className="size-4 shrink-0" />
+              <span>{formatEventDate(event.event_date)}</span>
+            </div>
+            <div className="flex items-center justify-center gap-1.5 text-sm text-white/60">
+              <LuMapPin className="size-4 shrink-0" />
+              <span>{event.venue}</span>
+            </div>
           </div>
         </div>
 
-        {/* Status banner */}
-        {bannerType && (
-          <div className="w-full">
-            <StatusBanner type={bannerType} scannedAt={ticket.scanned_at} />
-          </div>
-        )}
+        <div className="flex flex-col items-center gap-6 p-8">
+          {/* Status banner */}
+          {bannerType && (
+            <div className="w-full">
+              <StatusBanner type={bannerType} scannedAt={ticket.scanned_at} />
+            </div>
+          )}
 
-        {/* QR code */}
-        <QRCodeDisplay token={ticket.token} dimmed={isInvalid} />
+          {/* QR code */}
+          <QRCodeDisplay token={ticket.token} dimmed={isInvalid} />
 
-        {/* Footer note */}
-        <p className="text-xs text-gray-400 text-center">
-          {isInvalid
-            ? "This QR code is no longer valid."
-            : "Show this QR at the gate. Don't share it — single use only."}
-        </p>
+          {/* Footer note */}
+          <p className="text-center text-xs text-muted-foreground">
+            {isInvalid
+              ? "This QR code is no longer valid."
+              : "Show this QR at the gate. Don\u2019t share it — single use only."}
+          </p>
+        </div>
       </div>
     </main>
   );

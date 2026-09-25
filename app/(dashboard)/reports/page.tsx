@@ -8,19 +8,12 @@ import type { IReportDefinition } from "@/interfaces/financials.interface";
 import ToastService from "@/utils/toast-service";
 import EmptyImage from "@/public/images/new/empty-page.jpg";
 import Image from "next/image";
-import {
-  Button,
-  Header,
-  Label,
-  ListBox,
-  Select,
-  Separator,
-  Spinner,
-} from "@heroui/react";
+import { Header, Label, ListBox, Select } from "@heroui/react";
+import { Button, Card, CardHeader, PageHeader } from "@/components/ui";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { RiDownloadLine } from "react-icons/ri";
+import { LuDownload, LuFileText } from "react-icons/lu";
 import ApiError from "@/utils/api_error";
 
 const PAGE_SIZE = 20;
@@ -172,14 +165,15 @@ function ReportsView() {
   };
 
   return (
-    <div className="flex flex-col h-full px-7 py-5 gap-4 overflow-hidden">
-      {/* Page title */}
-      <span className="text-sm sm:text-lg font-gotham-black uppercase shrink-0">
-        REPORTS
-      </span>
+    <div className="flex h-full flex-col gap-5 overflow-hidden px-5 py-6 lg:px-8 lg:py-7">
+      <PageHeader
+        className="shrink-0"
+        title="Reports"
+        description="Build, preview and export operational reports."
+      />
 
       {/* Two-column layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1 min-h-0 overflow-hidden">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 overflow-hidden sm:grid-cols-2">
         {/* ── Left column ── */}
         <div className="flex flex-col gap-4 h-full min-h-0">
           {/* Report selector */}
@@ -198,27 +192,29 @@ function ReportsView() {
           </div>
 
           {/* Config card — scrolls internally */}
-          <div className="flex-1 min-h-0 rounded-lg border flex flex-col overflow-hidden">
-            {/* Category label */}
-            <div className="px-5 pt-4 pb-3 shrink-0 border-b">
-              <span className="text-xs font-gotham-bold text-gray-500 uppercase tracking-wide">
-                {selectedReport?.schema.category ?? "General"}
-              </span>
-            </div>
+          <Card className="flex min-h-0 flex-1 flex-col">
+            <CardHeader
+              className="shrink-0"
+              icon={<LuFileText />}
+              title={selectedReport?.name ?? "Report configuration"}
+              description={selectedReport?.schema.category ?? "General"}
+            />
 
             {/* Scrollable filters + columns */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-5">
+            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-4">
               {/* Filters */}
               {(selectedReport?.schema.filters ?? []).length > 0 && (
                 <div className="space-y-3">
-                  <span className="text-[0.65rem] font-gotham-black text-gray-400 uppercase tracking-wide">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                     Filters
-                  </span>
+                  </p>
                   {(selectedReport?.schema.filters ?? []).map((filter) => {
                     if (filter.type === "date") {
                       return (
-                        <div key={filter.key} className="max-w-[220px]">
-                          <Label className="text-xs">{filter.label}</Label>
+                        <div key={filter.key} className="max-w-[240px]">
+                          <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                            {filter.label}
+                          </Label>
                           <input
                             type="date"
                             value={filters[filter.key] ?? ""}
@@ -228,7 +224,7 @@ function ReportsView() {
                                 [filter.key]: e.target.value,
                               }))
                             }
-                            className="mt-2 w-full border rounded-lg border-gray-300 px-3 py-2 text-xs"
+                            className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none transition-colors focus:border-primary"
                           />
                         </div>
                       );
@@ -236,7 +232,7 @@ function ReportsView() {
                     return (
                       <CustomInputComponent
                         key={filter.key}
-                        className="max-w-[220px] p-0 border border-gray-400 rounded-lg"
+                        className="max-w-[240px]"
                         label={filter.label}
                         placeholder={`Input ${filter.label}`}
                         onChange={(e) =>
@@ -254,9 +250,9 @@ function ReportsView() {
               {/* Columns */}
               {(selectedReport?.schema.columns ?? []).length > 0 && (
                 <div className="space-y-3">
-                  <span className="text-[0.65rem] font-gotham-black text-gray-400 uppercase tracking-wide">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                     Columns
-                  </span>
+                  </p>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     {(selectedReport?.schema.columns ?? []).map((column) => (
                       <CustomCheckboxItem
@@ -265,7 +261,7 @@ function ReportsView() {
                           column.required || optionalSelectedColumns[column.key]
                         }
                         label={column.label}
-                        labelClassName="font-gotham-regular"
+                        labelClassName="font-normal"
                         isDisabled={column.required}
                         setIsSelected={(checked) =>
                           setOptionalSelectedColumns((prev) => ({
@@ -282,33 +278,33 @@ function ReportsView() {
 
             {/* Generate button pinned to bottom */}
             {canExecute && (
-              <div className="px-5 pb-5 pt-3 shrink-0 border-t">
+              <div className="shrink-0 border-t border-border-subtle px-5 py-4">
                 <Button
-                  className="w-full rounded-lg bg-black text-white font-gotham-black text-xs py-5"
-                  isDisabled={!selectedReport || executeMutation.isPending}
+                  size="lg"
+                  fullWidth
+                  disabled={!selectedReport}
                   onClick={onGenerate}
                   isPending={executeMutation.isPending}
                 >
-                  {({ isPending }) => (
-                    <>
-                      {isPending && <Spinner color="current" size="sm" />}
-                      GENERATE REPORT
-                    </>
-                  )}
+                  {executeMutation.isPending
+                    ? "Generating…"
+                    : "Generate report"}
                 </Button>
               </div>
             )}
-          </div>
+          </Card>
         </div>
 
         {/* ── Right column — preview ── */}
-        <div className="flex flex-col h-full min-h-0 rounded-lg border overflow-hidden">
+        <Card className="flex h-full min-h-0 flex-col">
           {/* Header */}
-          <div className="px-5 py-3 shrink-0 flex items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-xs font-gotham-bold">Preview</span>
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle px-5 py-3.5">
+            <div className="flex min-w-0 flex-col">
+              <span className="text-sm font-semibold text-foreground">
+                Preview
+              </span>
               {executeMutation.data && (
-                <span className="text-[0.6rem] text-gray-400 font-gotham-regular mt-0.5">
+                <span className="mt-0.5 truncate text-[11px] text-zinc-400">
                   {executeMutation.data.report_name}
                   {` · ${previewRows.length.toLocaleString("en-US")} records`}
                 </span>
@@ -318,47 +314,44 @@ function ReportsView() {
               {canDownload && (
                 <Button
                   size="sm"
-                  className="text-[0.65rem] bg-primary text-white rounded-lg font-gotham-bold"
-                  isDisabled={!previewRows.length}
+                  disabled={!previewRows.length}
                   onClick={onDownloadCsv}
                 >
-                  <RiDownloadLine className="w-3 h-3" />
+                  <LuDownload />
                   Download
                 </Button>
               )}
               {/* <Button
-                size="sm"
-                className="text-[0.65rem] bg-black border text-white rounded-lg font-gotham-bold"
-                onClick={() =>
-                  ToastService.info({ text: "Feature not yet available" })
+ size="sm"
+ className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
+ onClick={() =>
+ ToastService.info({ text: "Feature not yet available" })
                 }
               >
                 <IoMailOutline className="w-3 h-3" />
-                Email
+ Email
               </Button> */}
             </div>
           </div>
-          <Separator />
 
           {/* Content */}
-          <div className="flex-1 min-h-0 overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-hidden">
             {!executeMutation.data ? (
               /* Empty state */
-              <div className="flex flex-col items-center justify-center h-full gap-3 px-6">
-                <div className="relative w-48 h-48">
+              <div className="flex h-full flex-col items-center justify-center gap-2 px-6">
+                <div className="relative size-44">
                   <Image
                     src={EmptyImage}
-                    alt="No report generated"
+                    alt=""
                     fill
                     className="object-contain"
                   />
                 </div>
-                <p className="text-sm font-gotham-bold text-gray-700 text-center">
+                <p className="text-sm font-medium text-foreground">
                   No report generated yet
                 </p>
-                <p className="text-xs text-gray-400 text-center max-w-[200px]">
-                  Select a report, configure filters, then click Generate
-                  Report.
+                <p className="max-w-[220px] text-center text-xs text-muted-foreground">
+                  Pick a report, set its filters, then generate it.
                 </p>
               </div>
             ) : (
@@ -385,7 +378,7 @@ function ReportsView() {
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
@@ -414,23 +407,23 @@ const ReportsSelection = ({ reports, onSelected, selectedValue }: Props) => {
       isOpen={isOpen}
       onOpenChange={setIsOpen}
     >
-      <Label className="text-xs font-gotham-bold text-gray-500">
-        Select a Report
+      <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+        Select a report
       </Label>
       <Select.Trigger
-        className="border border-gray-200 shadow-none rounded-lg bg-white hover:border-gray-400 transition-colors w-full"
+        className="h-11 w-full cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm shadow-none transition-colors hover:border-zinc-300 data-[focused=true]:border-primary"
         onClick={() => setIsOpen(true)}
       >
-        <Select.Value className="text-xs">
-          {selectedLabel || "Select a Report"}
+        <Select.Value className="text-sm text-foreground">
+          {selectedLabel || "Select a report"}
         </Select.Value>
         <Select.Indicator />
       </Select.Trigger>
-      <Select.Popover className="rounded-lg">
+      <Select.Popover className="rounded-2xl border border-border-subtle p-1.5 shadow-lg shadow-zinc-200/60">
         <ListBox>
           {reports.map((section, sIndex) => (
             <ListBox.Section key={section.key}>
-              <Header className="px-4 py-2 text-[10px] font-gotham-medium text-gray-400 uppercase tracking-wider">
+              <Header className="px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
                 {section.key}
               </Header>
               {section.values.map((report) => (
@@ -439,17 +432,17 @@ const ReportsSelection = ({ reports, onSelected, selectedValue }: Props) => {
                   id={report.name.toLowerCase().replace(/\s+/g, "-")}
                   textValue={report.name}
                   onAction={() => handleAction(report)}
-                  className="flex items-center px-4 py-2 text-xs rounded-lg cursor-pointer hover:bg-gray-200/50 outline-none transition-colors"
+                  className="flex cursor-pointer items-center rounded-xl px-3 py-2.5 text-sm text-muted-foreground outline-none transition-colors data-[hovered=true]:bg-subtle data-[hovered=true]:text-foreground"
                 >
                   <div className="flex items-center gap-3 w-full">
-                    <span className="flex-1 truncate group-selected:font-gotham-medium">
+                    <span className="flex-1 truncate group-selected:font-medium">
                       {report.name}
                     </span>
                   </div>
                 </ListBox.Item>
               ))}
               {sIndex < reports.length - 1 && (
-                <div className="h-px bg-gray-500/30 my-1 mx-2" />
+                <div className="mx-2 my-1 h-px bg-border-subtle" />
               )}
             </ListBox.Section>
           ))}

@@ -1,10 +1,9 @@
 "use client";
 
-import CustomInputComponent from "@/components/custom-input-component";
 import CustomTable, { TableRow } from "@/components/custom-table";
-import { Avatar, CloseButton } from "@heroui/react";
+import { Avatar, SearchInput, StatTile } from "@/components/ui";
 import { useMemo, useState } from "react";
-import { BiSearch } from "react-icons/bi";
+import { LuUsers, LuWallet } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
 import FinancialsService from "@/api/financials";
@@ -95,90 +94,86 @@ function SecondSalesSegment() {
   const topUpDisplay = todayTopUp?.total_topup ?? "—";
 
   const tableData: TableRow[] = paged.map((row) => {
-    const initial = row.writer.name.charAt(0).toUpperCase();
     return {
       retailer: (
-        <div className="flex items-center space-x-4">
-          <div
-            className={`w-2 h-2 rounded-full shrink-0 ${
-              row.writer.online ? "bg-green-500" : "bg-gray-300"
-            }`}
+        <div className="flex items-center gap-3">
+          <Avatar
+            name={row.writer.name}
+            src={row.writer.profileImage ?? undefined}
+            size="sm"
+            status={row.writer.online ? "active" : "inactive"}
           />
-          <Avatar size="lg" className="w-8 h-8">
-            <Avatar.Image alt="" src={row.writer.profileImage ?? ""} />
-            <Avatar.Fallback className="bg-primary text-white text-sm font-gotham-bold">
-              {initial}
-            </Avatar.Fallback>
-          </Avatar>
-          <div className="flex flex-col items-start space-y-1 min-w-0">
-            <span className="text-[12px] truncate">{row.writer.name}</span>
-            <span className="text-[10px] font-gotham-medium text-gray-500">
+          <div className="flex min-w-0 flex-col items-start">
+            <span className="truncate text-sm font-medium text-foreground">
+              {row.writer.name}
+            </span>
+            <span className="mt-0.5 text-[11px] text-zinc-400">
               {row.writer.contact.phone}
             </span>
           </div>
         </div>
       ),
-      topUp: <span className="font-jura-bold text-sm">{row.topup}</span>,
-      sales: <span className="font-jura-bold text-sm">{row.sales}</span>,
+      topUp: (
+        <span className="font-semibold tabular-nums text-foreground">
+          {row.topup}
+        </span>
+      ),
+      sales: (
+        <span className="font-semibold tabular-nums text-foreground">
+          {row.sales}
+        </span>
+      ),
     };
   });
 
   return (
-    <div className="flex flex-col gap-3 h-full min-h-0">
+    <div className="flex h-full min-h-0 flex-col gap-4">
       {(canSeeTopUp || canSeeFloat) && (
-        <div className="rounded-lg shrink-0 overflow-hidden border">
-          {/* Colorful stats row */}
-          <div className="grid grid-cols-2">
-            {canSeeTopUp && (
-              <div className="flex flex-col items-start px-5 py-4 bg-linear-to-br from-primary to-[#5b4abf]">
-                <span className="text-[0.65rem] font-gotham-black text-white/70 uppercase tracking-wide">
-                  Today&apos;s Top-Up
-                </span>
-                <span className="font-jura-bold text-xl text-white">
-                  {topUpDisplay}
-                </span>
-              </div>
-            )}
-            {canSeeFloat && (
-              <div className="flex flex-col items-start px-5 py-4 bg-linear-to-br from-[#E17100] to-[#f09a20]">
-                <span className="text-[0.65rem] font-gotham-black text-white/70 uppercase tracking-wide">
-                  Available Float
-                </span>
-                <span className="font-jura-bold text-xl text-white">
-                  {availableFloat?.available_float ?? "—"}
-                </span>
-              </div>
-            )}
-          </div>
-          {/* Search row */}
-          {canSeeWriters && (
-            <div className="border-t bg-gray-50 p-3 flex flex-col gap-2">
-              <div>
-                <span className="font-jura-bold text-sm">{tradingCount}</span>
-                <span className="font-jura-light text-sm">
-                  {" retailers trading"}
-                </span>
-              </div>
-              <CustomInputComponent
-                className="border-gray-300 py-0 rounded-lg"
-                placeholder="Enter retailer's phone number"
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                suffixIcon={
-                  <CloseButton className="mr-2">
-                    <BiSearch className="h-3.5" />
-                  </CloseButton>
-                }
-              />
-            </div>
+        <div className="grid shrink-0 gap-3 sm:grid-cols-2">
+          {canSeeTopUp && (
+            <StatTile
+              label="Today’s top-up"
+              value={topUpDisplay}
+              icon={<LuWallet />}
+              iconClassName="bg-primary-soft text-primary"
+              isLoading={topUpPending}
+            />
+          )}
+          {canSeeFloat && (
+            <StatTile
+              label="Available float"
+              value={availableFloat?.available_float ?? "—"}
+              icon={<LuWallet />}
+              iconClassName="bg-amber-50 text-amber-500"
+              isLoading={floatPending}
+            />
           )}
         </div>
       )}
 
       {canSeeWriters && (
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 text-sm">
+            <LuUsers className="size-4 text-zinc-400" />
+            <span className="font-semibold tabular-nums text-foreground">
+              {tradingCount}
+            </span>
+            <span className="text-muted-foreground">retailers trading</span>
+          </div>
+          <SearchInput
+            className="sm:max-w-xs"
+            placeholder="Search by name, phone or email"
+            value={searchTerm}
+            onChange={(v) => {
+              setSearchTerm(v);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+      )}
+
+      {canSeeWriters && (
+        <div className="min-h-0 flex-1 overflow-hidden">
           <div className="h-full">
             <CustomTable
               columns={[

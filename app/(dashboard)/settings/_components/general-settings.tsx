@@ -20,8 +20,8 @@ import type { ElementType } from "react";
 function GeneralSettings() {
   return (
     <div className="flex flex-col gap-5 w-full">
-      <div className="border rounded-lg overflow-hidden">
-        <div className="bg-linear-to-br from-primary to-[#5b4abf] px-5 py-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
+        <div className="relative flex flex-col items-start gap-4 overflow-hidden bg-brand-gradient px-5 py-6 sm:flex-row sm:items-center">
           <div className="rounded-xl overflow-hidden border-2 border-white/30 shrink-0">
             <Image
               src={OrganizationImage}
@@ -30,16 +30,18 @@ function GeneralSettings() {
             />
           </div>
           <div className="flex flex-col gap-1 min-w-0">
-            <span className="text-[0.6rem] font-gotham-black text-white/60 uppercase tracking-wide">
+            <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">
               Organisation
             </span>
-            <span className="text-lg font-gotham-black text-white leading-tight">
+            <span className="text-lg font-bold text-white leading-tight">
               N/A
             </span>
-            <span className="text-xs font-jura-medium text-white/70">N/A</span>
+            <span className="text-xs font-medium tabular-nums text-white/70">
+              N/A
+            </span>
           </div>
         </div>
-        <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+        <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border-subtle">
           <InfoTile
             icon={LuMail}
             iconBg="bg-blue-100"
@@ -49,13 +51,13 @@ function GeneralSettings() {
           />
           <InfoTile
             icon={LuPhone}
-            iconBg="bg-green-100"
-            iconColor="text-green-600"
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-600"
             label="Primary Contact"
             value="N/A"
           />
         </div>
-        <div className="border-t">
+        <div className="border-t border-border-subtle">
           <InfoTile
             icon={LuMapPin}
             iconBg="bg-orange-100"
@@ -66,13 +68,13 @@ function GeneralSettings() {
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <div className="px-5 py-3 border-b bg-gray-50">
-          <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
+      <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
+        <div className="border-b border-border-subtle px-5 py-3.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
             Organisation Details
           </span>
         </div>
-        <div className="grid sm:grid-cols-2 divide-gray-100">
+        <div className="grid sm:grid-cols-2 divide-border-subtle">
           <InfoTile
             icon={LuHash}
             iconBg="bg-primary/10"
@@ -124,13 +126,13 @@ function GeneralSettings() {
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <div className="px-5 py-3 border-b bg-gray-50">
-          <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
+      <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
+        <div className="border-b border-border-subtle px-5 py-3.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
             Financial Settings
           </span>
         </div>
-        <div className="grid sm:grid-cols-2 divide-gray-100">
+        <div className="grid sm:grid-cols-2 divide-border-subtle">
           <InfoTile
             icon={LuLandmark}
             iconBg="bg-blue-100"
@@ -141,8 +143,8 @@ function GeneralSettings() {
           />
           <InfoTile
             icon={LuCreditCard}
-            iconBg="bg-green-100"
-            iconColor="text-green-600"
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-600"
             label="Collection Account #"
             value="N/A"
             border
@@ -157,8 +159,8 @@ function GeneralSettings() {
           />
           <InfoTile
             icon={LuDatabase}
-            iconBg="bg-red-100"
-            iconColor="text-red-500"
+            iconBg="bg-rose-100"
+            iconColor="text-rose-500"
             label="Operations Account #"
             value="N/A"
             border
@@ -187,16 +189,16 @@ const InfoTile = ({
   border?: boolean;
 }) => (
   <div
-    className={`flex items-center gap-3 px-5 py-3.5 ${border ? "border-b border-gray-100" : ""}`}
+    className={`flex items-center gap-3 px-5 py-3.5 ${border ? "border-b border-border-subtle" : ""}`}
   >
     <div className={`${iconBg} rounded-md p-2 shrink-0`}>
       <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
     </div>
     <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-      <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
         {label}
       </span>
-      <span className="text-xs font-jura-bold text-gray-700 truncate">
+      <span className="text-xs font-semibold tabular-nums text-foreground truncate">
         {value}
       </span>
     </div>

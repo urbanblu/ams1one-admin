@@ -1,6 +1,5 @@
 "use client";
 
-import { Tabs } from "@heroui/react";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
@@ -27,6 +26,8 @@ import {
   LuHandCoins,
 } from "react-icons/lu";
 import type { ElementType } from "react";
+import ChartColors from "@/utils/chart-colors";
+import { SegmentedControl } from "@/components/ui";
 
 type ChartEntry = {
   label: string;
@@ -35,9 +36,9 @@ type ChartEntry = {
 };
 
 const getBarColor = (value: number) => {
-  if (value < 0) return "#ef4444";
-  if (value >= 50) return "#22c55e";
-  return "#3b82f6";
+  if (value < 0) return ChartColors.danger;
+  if (value >= 50) return ChartColors.success;
+  return ChartColors.info;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,7 +65,7 @@ const renderCustomLabel = (props: any) => {
       y={labelY}
       textAnchor="middle"
       fontSize={9}
-      fill="#374151"
+      fill={ChartColors.label}
       fontWeight="bold"
     >
       {value}%
@@ -82,9 +83,9 @@ const CustomTooltip = ({
   if (!active || !payload?.length) return null;
   const { fullLabel, value } = payload[0].payload;
   return (
-    <div className="bg-white border rounded-lg shadow-md px-3 py-2 text-xs">
-      <p className="font-gotham-black text-gray-700">{fullLabel}</p>
-      <p className="text-green-500 font-gotham-medium mt-1">
+    <div className="rounded-xl border border-border-subtle bg-surface px-3 py-2 text-xs shadow-lg shadow-zinc-200/60">
+      <p className="font-bold text-foreground">{fullLabel}</p>
+      <p className="text-emerald-500 font-medium mt-1">
         Retention rate: {value}%
       </p>
     </div>
@@ -162,28 +163,36 @@ function RetentionRatePerformance() {
     trendData != null ? `${trendData.ytd_retention_rate.toFixed(2)}%` : "—";
 
   const visibleCards = [
-    canSeeSalesCard, canSeeNetTopups, canSeeWritersAtWork,
-    canSeeWinsCard, canSeeLiquidation, canSeeSettlements,
+    canSeeSalesCard,
+    canSeeNetTopups,
+    canSeeWritersAtWork,
+    canSeeWinsCard,
+    canSeeLiquidation,
+    canSeeSettlements,
   ].filter(Boolean).length;
 
   return (
     <div className="flex flex-col space-y-4">
       {/* 3×2 grid — dashed dividers only between cells */}
       {visibleCards > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 *:border-gray-200
-          [&>*:not(:nth-child(2n))]:border-r [&>*:not(:nth-child(2n))]:border-dashed
-          [&>*:nth-child(n+3)]:border-t [&>*:nth-child(n+3)]:border-dashed
-          md:[&>*:not(:nth-child(2n))]:border-r-0
-          md:[&>*:not(:nth-child(3n))]:border-r md:[&>*:not(:nth-child(3n))]:border-dashed
-          md:[&>*:nth-child(n+3)]:border-t-0
-          md:[&>*:nth-child(n+4)]:border-t md:[&>*:nth-child(n+4)]:border-dashed">
+        <div
+          className="grid grid-cols-2 md:grid-cols-3 *:border-border
+ [&>*:not(:nth-child(2n))]:border-r [&>*:not(:nth-child(2n))]:border-dashed
+ [&>*:nth-child(n+3)]:border-t [&>*:nth-child(n+3)]:border-dashed
+ md:[&>*:not(:nth-child(2n))]:border-r-0
+ md:[&>*:not(:nth-child(3n))]:border-r md:[&>*:not(:nth-child(3n))]:border-dashed
+ md:[&>*:nth-child(n+3)]:border-t-0
+ md:[&>*:nth-child(n+4)]:border-t md:[&>*:nth-child(n+4)]:border-dashed"
+        >
           {canSeeSalesCard && (
             <PrimaryCard
               label="Sales"
               value={salesCard?.total_sales ?? "N/A"}
               subLabel="Net Sales"
               subValue={
-                salesCard != null ? formatGhs(salesCard.total_sales_amount) : "N/A"
+                salesCard != null
+                  ? formatGhs(salesCard.total_sales_amount)
+                  : "N/A"
               }
               icon={LuShoppingBag}
               iconBg="bg-primary/10"
@@ -216,8 +225,8 @@ function RetentionRatePerformance() {
                   : "N/A"
               }
               icon={LuUsers}
-              iconBg="bg-green-100"
-              iconColor="text-green-600"
+              iconBg="bg-emerald-100"
+              iconColor="text-emerald-600"
             />
           )}
           {canSeeWinsCard && (
@@ -242,8 +251,8 @@ function RetentionRatePerformance() {
               subLabel="Unclaimed Tickets"
               subValue={liquidationCard?.unclaimed_coupons ?? "N/A"}
               icon={LuArrowDownUp}
-              iconBg="bg-red-100"
-              iconColor="text-red-500"
+              iconBg="bg-rose-100"
+              iconColor="text-rose-500"
             />
           )}
           {canSeeSettlements && (
@@ -261,103 +270,90 @@ function RetentionRatePerformance() {
       )}
 
       {/* Retention rate trend chart */}
-      {canSeeTrend && <div className="border rounded-lg px-5 py-4 min-h-[400px] flex flex-col">
-        <div className="flex flex-col flex-1 h-full">
-          <div className="sm:flex sm:justify-between space-y-5 sm:space-y-0 shrink-0 mb-4">
-            <div className="flex-col space-y-1">
-              <div className="text-sm font-gotham-bold uppercase tracking-tight">
-                Retention Rate Trend
+      {canSeeTrend && (
+        <div className="flex min-h-[400px] flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-4">
+          <div className="flex flex-col flex-1 h-full">
+            <div className="sm:flex sm:justify-between space-y-5 sm:space-y-0 shrink-0 mb-4">
+              <div className="flex-col space-y-1">
+                <div className="text-sm font-semibold uppercase tracking-tight">
+                  Retention Rate Trend
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-muted-foreground">
+                    YTD RR:
+                  </span>
+                  <span className="text-xs font-semibold tabular-nums bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                    {ytdRR}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-gotham-black text-gray-500">
-                  YTD RR:
-                </span>
-                <span className="text-xs font-jura-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                  {ytdRR}
-                </span>
+
+              <div className="shrink-0">
+                <SegmentedControl
+                  segments={[
+                    { key: "30days", label: "30 days" },
+                    { key: "1year", label: "1 year" },
+                  ]}
+                  value={period}
+                  onChange={(key) => setPeriod(key)}
+                />
               </div>
             </div>
 
-            <div className="shrink-0">
-              <Tabs
-                className="min-w-48 flex-wrap"
-                selectedKey={period}
-                onSelectionChange={(key) =>
-                  setPeriod(key as "30days" | "1year")
-                }
-              >
-                <Tabs.ListContainer>
-                  <Tabs.List
-                    aria-label="Options"
-                    className="rounded-lg bg-gray-100"
+            <div className="h-[300px]">
+              {chartData.length === 0 ? (
+                <div className="h-full flex items-center justify-center">
+                  <span className="text-xs text-zinc-400">
+                    No data available
+                  </span>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 20, right: 10, left: 0, bottom: 5 }}
+                    barCategoryGap="30%"
                   >
-                    <Tabs.Tab
-                      id="30days"
-                      className="px-4 py-1 text-xs font-gotham-bold"
-                    >
-                      {"30 days"}
-                      <Tabs.Indicator className="rounded-lg" />
-                    </Tabs.Tab>
-                    <Tabs.Tab
-                      id="1year"
-                      className="px-4 py-1 text-xs font-gotham-bold"
-                    >
-                      {"1 year"}
-                      <Tabs.Indicator className="rounded-lg" />
-                    </Tabs.Tab>
-                  </Tabs.List>
-                </Tabs.ListContainer>
-              </Tabs>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke={ChartColors.grid}
+                    />
+                    <XAxis dataKey="label" hide />
+                    <YAxis
+                      domain={[-100, 100]}
+                      ticks={[-100, -50, 0, 50, 100]}
+                      orientation="right"
+                      tick={{ fontSize: 9, fill: ChartColors.axis }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={30}
+                    />
+                    <ReferenceLine
+                      y={0}
+                      stroke={ChartColors.reference}
+                      strokeWidth={1}
+                    />
+                    <Tooltip
+                      content={<CustomTooltip />}
+                      cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                    />
+                    <Bar dataKey="value" radius={[2, 2, 0, 0]}>
+                      {chartData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={getBarColor(entry.value)}
+                        />
+                      ))}
+                      <LabelList dataKey="value" content={renderCustomLabel} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
-          </div>
-
-          <div className="h-[300px]">
-            {chartData.length === 0 ? (
-              <div className="h-full flex items-center justify-center">
-                <span className="text-xs text-gray-400">No data available</span>
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={chartData}
-                  margin={{ top: 20, right: 10, left: 0, bottom: 5 }}
-                  barCategoryGap="30%"
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#e5e7eb"
-                  />
-                  <XAxis dataKey="label" hide />
-                  <YAxis
-                    domain={[-100, 100]}
-                    ticks={[-100, -50, 0, 50, 100]}
-                    orientation="right"
-                    tick={{ fontSize: 9, fill: "#6b7280" }}
-                    axisLine={false}
-                    tickLine={false}
-                    width={30}
-                  />
-                  <ReferenceLine y={0} stroke="#d1d5db" strokeWidth={1} />
-                  <Tooltip
-                    content={<CustomTooltip />}
-                    cursor={{ fill: "rgba(0,0,0,0.04)" }}
-                  />
-                  <Bar dataKey="value" radius={[2, 2, 0, 0]}>
-                    {chartData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={getBarColor(entry.value)}
-                      />
-                    ))}
-                    <LabelList dataKey="value" content={renderCustomLabel} />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
           </div>
         </div>
-      </div>}
+      )}
     </div>
   );
 }
@@ -384,19 +380,22 @@ const PrimaryCard = ({
   return (
     <div className="flex flex-col p-5 gap-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-500 font-gotham-regular">{label}</span>
+        <span className="text-xs text-muted-foreground font-normal">
+          {label}
+        </span>
         <div className={`p-1.5 rounded-lg ${iconBg}`}>
           <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
         </div>
       </div>
       <div className="flex items-baseline gap-2 flex-wrap">
-        <span className="font-jura-bold text-2xl leading-none">{value}</span>
-        <span className={`text-xs font-gotham-medium ${iconColor}`}>
+        <span className="font-semibold tabular-nums text-2xl leading-none">
+          {value}
+        </span>
+        <span className={`text-xs font-medium ${iconColor}`}>
           {subValue}{" "}
-          <span className="text-gray-400 font-gotham-regular">{subLabel}</span>
+          <span className="text-zinc-400 font-normal">{subLabel}</span>
         </span>
       </div>
     </div>
   );
 };
-

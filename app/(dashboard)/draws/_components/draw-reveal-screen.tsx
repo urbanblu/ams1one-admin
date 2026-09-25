@@ -450,9 +450,7 @@ export default function DrawRevealScreen({
         />
 
         {/* ── Left: ball grid (4 of 6 cols, full height) ── */}
-        <div
-          className="relative z-10 col-span-4 flex items-center justify-center p-2"
-        >
+        <div className="relative z-10 col-span-4 flex items-center justify-center p-2">
           <div
             style={{
               display: "grid",
@@ -483,7 +481,7 @@ export default function DrawRevealScreen({
           >
             <div className="flex items-center gap-2 mb-1">
               <LuTrophy className="w-5 h-5 text-yellow-400" />
-              <span className="text-yellow-400 font-gotham-black text-xs uppercase tracking-[0.2em]">
+              <span className="text-yellow-400 font-bold text-xs uppercase tracking-[0.2em]">
                 {result.draw_result.game_type.name}
               </span>
               <LuTrophy className="w-5 h-5 text-yellow-400" />
@@ -492,7 +490,7 @@ export default function DrawRevealScreen({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-white font-gotham-black text-2xl tracking-widest uppercase"
+              className="text-white font-bold text-2xl tracking-widest uppercase"
             >
               Draw Results
             </motion.h1>
@@ -500,7 +498,7 @@ export default function DrawRevealScreen({
 
           {/* Revealed numbers */}
           <div className="w-full flex flex-col items-center gap-3">
-            <span className="text-white/30 text-[0.6rem] font-gotham-black uppercase tracking-widest">
+            <span className="text-white/30 text-[11px] font-bold uppercase tracking-widest">
               Winning Numbers
             </span>
             <div className="flex flex-wrap gap-3 justify-center min-h-[72px] items-center">
@@ -514,7 +512,7 @@ export default function DrawRevealScreen({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-white/20 text-xs font-gotham-bold tracking-wider uppercase text-center"
+                  className="text-white/20 text-xs font-semibold tracking-wider uppercase text-center"
                 >
                   Numbers will appear here
                 </motion.span>
@@ -534,7 +532,7 @@ export default function DrawRevealScreen({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-white/30 text-xs font-gotham-bold tracking-widest uppercase text-center"
+                  className="text-white/30 text-xs font-semibold tracking-widest uppercase text-center"
                 >
                   Preparing draw…
                 </motion.p>
@@ -551,7 +549,7 @@ export default function DrawRevealScreen({
                   <motion.p
                     animate={{ opacity: [0.55, 1, 0.55] }}
                     transition={{ repeat: Infinity, duration: 1.6 }}
-                    className="text-white font-gotham-black text-sm tracking-[0.12em] uppercase leading-snug"
+                    className="text-white font-bold text-sm tracking-[0.12em] uppercase leading-snug"
                   >
                     Press SPACE to reveal{"\n"}number{" "}
                     {revealedNumbers.length + 1} of {numbers.length}
@@ -573,7 +571,7 @@ export default function DrawRevealScreen({
                   <motion.p
                     animate={{ opacity: [0.6, 1, 0.6] }}
                     transition={{ repeat: Infinity, duration: 0.45 }}
-                    className="text-yellow-400 font-gotham-black text-lg tracking-[0.2em] uppercase"
+                    className="text-yellow-400 font-bold text-lg tracking-[0.2em] uppercase"
                   >
                     Drawing…
                   </motion.p>
@@ -603,14 +601,14 @@ export default function DrawRevealScreen({
                   <motion.p
                     animate={{ scale: [1, 1.05, 1] }}
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="text-yellow-400 font-gotham-black text-2xl tracking-[0.15em] uppercase"
+                    className="text-yellow-400 font-bold text-2xl tracking-[0.15em] uppercase"
                   >
                     Draw Complete!
                   </motion.p>
                   <motion.p
                     animate={{ opacity: [0.4, 0.9, 0.4] }}
                     transition={{ repeat: Infinity, duration: 1.6 }}
-                    className="text-white/50 text-xs font-gotham-bold tracking-widest uppercase"
+                    className="text-white/50 text-xs font-semibold tracking-widest uppercase"
                   >
                     Press SPACE to continue
                   </motion.p>

@@ -53,25 +53,31 @@ function TopUpTable({ writerId }: { writerId: string }) {
           { key: "method", label: "Method", sortable: false },
           { key: "reference", label: "Reference", sortable: false },
           { key: "amount", label: "Amount", sortable: false },
-          { key: "airtimeCredited", label: "Airtime Credited", sortable: false },
+          {
+            key: "airtimeCredited",
+            label: "Airtime Credited",
+            sortable: false,
+          },
         ]}
         data={rows.map((r) => ({
           createdAt: r.created_at,
           method: (
-            <span className="font-gotham-bold text-xs capitalize">
+            <span className="font-semibold text-xs capitalize">
               {r.method.replace(/_/g, " ")}
             </span>
           ),
           reference: (
-            <span className="font-jura-bold text-xs">{r.reference || "—"}</span>
+            <span className="font-semibold tabular-nums text-xs">
+              {r.reference || "—"}
+            </span>
           ),
           amount: (
-            <span className="text-sm font-jura-bold">
+            <span className="text-sm font-semibold tabular-nums">
               {formatGhs(parseFloat(String(r.amount)) || 0)}
             </span>
           ),
           airtimeCredited: (
-            <span className="text-sm font-jura-bold text-gray-700">
+            <span className="text-sm font-semibold tabular-nums text-foreground">
               {formatGhs(parseFloat(String(r.airtime_credited)) || 0)}
             </span>
           ),

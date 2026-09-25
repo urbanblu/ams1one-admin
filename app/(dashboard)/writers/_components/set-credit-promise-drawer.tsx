@@ -12,7 +12,7 @@ function SetCreditPromiseDrawer(payload: Props) {
   return (
     <Drawer>
       <Button
-        className="rounded-lg bg-black text-xs font-gotham-bold"
+        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
@@ -20,21 +20,21 @@ function SetCreditPromiseDrawer(payload: Props) {
       </Button>
       <Drawer.Backdrop
         variant="blur"
-        className={"backdrop-blur-xs"}
+        className="backdrop-blur-sm"
         isOpen={drawerIsOpen}
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={() => setDrawerOpen(false)}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
-            <Drawer.Body className="text-black">
+            <Drawer.Body className="px-5 pb-6">
               <Form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -51,13 +51,10 @@ function SetCreditPromiseDrawer(payload: Props) {
                 }}
               >
                 <div className="flex flex-col space-y-3">
-                  <span className="text-sm font-gotham-black">
-                    Set Credit Promise
-                  </span>
+                  <span className="text-sm font-bold">Set Credit Promise</span>
                   <div className="space-y-4">
                     <CustomInputComponent
                       label="Amount"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="amount"
                       validate={(value) => {
                         if (!value || value.trim() === "") {
@@ -74,7 +71,7 @@ function SetCreditPromiseDrawer(payload: Props) {
                       }}
                     />
                     <Button
-                      className="rounded-lg bg-black w-full text-xs font-gotham-black mt-2"
+                      className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                       type="submit"
                     >
                       Save

@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Button, Tabs } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Axios from "@/api";
@@ -16,7 +16,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { AiOutlineExport } from "react-icons/ai";
 import {
   LuWallet,
   LuTrophy,
@@ -24,8 +23,11 @@ import {
   LuTrendingDown,
   LuPercent,
   LuMedal,
+  LuUpload,
 } from "react-icons/lu";
 import type { ElementType } from "react";
+import ChartColors from "@/utils/chart-colors";
+import { Avatar, MetricCard, SegmentedControl } from "@/components/ui";
 
 function WritersPerformace() {
   const { hasPage } = usePageAccess();
@@ -92,58 +94,43 @@ function WritersPerformace() {
 
   return (
     <div className="flex flex-col space-y-5">
-      {(canSeeChart || canSeeTopUpStats || canSeeWinStats || canSeeBestWorst) && (
+      {(canSeeChart ||
+        canSeeTopUpStats ||
+        canSeeWinStats ||
+        canSeeBestWorst) && (
         <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-4 gap-4 h-auto">
           {canSeeChart && (
-            <div className="col-span-3 border rounded-lg px-5 py-4 flex flex-col md:min-h-[400px]">
+            <div className="col-span-3 flex flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-4 md:min-h-[400px]">
               <div className="flex flex-col h-full">
                 <div className="md:flex md:justify-between space-y-5 md:space-y-0">
                   <div className="flex-col space-y-2">
-                    <div className="text-sm font-gotham-bold">
+                    <div className="text-sm font-semibold">
                       Total Writers vs Active Writers
                     </div>
                     <div className="space-x-4 flex">
                       <div className="flex items-center space-x-2">
-                        <div className="rounded-full w-3.5 h-3.5 bg-[#2ECC71]"></div>
+                        <div className="size-3.5 rounded-full bg-emerald-500" />
                         <span className="text-xs">Deployed</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="rounded-full w-3.5 h-3.5 bg-[#18A2B8]"></div>
+                        <div className="rounded-full w-3.5 h-3.5 bg-primary"></div>
                         <span className="text-xs">Active</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Tabs
-                      className="min-w-48 flex-wrap"
-                      selectedKey={String(rangeDays)}
-                      onSelectionChange={(key) => {
-                        const next = String(key) === "30" ? 30 : 365;
-                        setRangeDays(next);
-                      }}
-                    >
-                      <Tabs.ListContainer>
-                        <Tabs.List aria-label="Options" className="rounded-lg">
-                          <Tabs.Tab
-                            className="px-4 py-1 text-xs font-gotham-bold"
-                            id="30"
-                          >
-                            {"30 days"}
-                            <Tabs.Indicator className="rounded-lg" />
-                          </Tabs.Tab>
-                          <Tabs.Tab
-                            className="px-4 py-1 text-xs font-gotham-bold"
-                            id="365"
-                          >
-                            {"1 year"}
-                            <Tabs.Indicator className="rounded-lg" />
-                          </Tabs.Tab>
-                        </Tabs.List>
-                      </Tabs.ListContainer>
-                    </Tabs>
+                    <SegmentedControl
+                      className="shrink-0"
+                      segments={[
+                        { key: "30", label: "30 days" },
+                        { key: "365", label: "1 year" },
+                      ]}
+                      value={String(rangeDays)}
+                      onChange={(key) => setRangeDays(key === "30" ? 30 : 365)}
+                    />
                     {canSeeExport && (
                       <Button
-                        className="rounded-lg bg-primary text-xs font-gotham-bold"
+                        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                         size="md"
                         isDisabled={!downloadUrl}
                         onClick={async () => {
@@ -162,8 +149,8 @@ function WritersPerformace() {
                           URL.revokeObjectURL(href);
                         }}
                       >
-                        <AiOutlineExport className="w-3.5 h-3.5" />
-                        <span className="text-xs font-gotham-bold">Export Data</span>
+                        <LuUpload className="size-4" />
+                        Export
                       </Button>
                     )}
                   </div>
@@ -175,11 +162,13 @@ function WritersPerformace() {
             </div>
           )}
 
-          <div className={`${canSeeChart ? "col-span-1" : "col-span-4"} flex flex-col gap-4`}>
+          <div
+            className={`${canSeeChart ? "col-span-1" : "col-span-4"} flex flex-col gap-4`}
+          >
             {canSeeTopUpStats && (
               <InfoCard
                 variant="primary"
-                title="YTD Top-Ups"
+                title="YTD top-ups"
                 icon={LuWallet}
                 totalAmount={topUpStats?.ytd.total ?? "—"}
                 lastWeekAmount={topUpStats?.last_week.total ?? "—"}
@@ -190,7 +179,7 @@ function WritersPerformace() {
             {canSeeWinStats && (
               <InfoCard
                 variant="orange"
-                title="YTD Winnings"
+                title="YTD winnings"
                 icon={LuTrophy}
                 totalAmount={winStats?.ytd.total ?? "—"}
                 lastWeekAmount={winStats?.last_week.total ?? "—"}
@@ -199,43 +188,43 @@ function WritersPerformace() {
               />
             )}
             {canSeeBestWorst && (
-              <div className="border rounded-lg overflow-hidden flex-none">
-                <div className="px-4 py-3 bg-gray-50 border-b flex items-center gap-2">
-                  <LuMedal className="w-3.5 h-3.5 text-gray-400" />
-                  <span className="font-gotham-black text-xs text-gray-500 uppercase tracking-wide">
+              <div className="flex-none overflow-hidden rounded-2xl border border-border-subtle bg-surface">
+                <div className="flex items-center gap-2 border-b border-border-subtle px-5 py-3.5">
+                  <LuMedal className="w-3.5 h-3.5 text-zinc-400" />
+                  <span className="font-bold text-xs text-muted-foreground uppercase tracking-wider">
                     Best &amp; Worst Performance
                   </span>
                 </div>
                 <div className="p-4 flex flex-col gap-3">
-                  <div className="flex items-center justify-between gap-2 bg-green-50 rounded-lg px-3 py-2">
+                  <div className="flex items-center justify-between gap-2 bg-emerald-50 rounded-lg px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <LuTrendingUp className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                      <LuTrendingUp className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[0.6rem] text-green-600 font-gotham-black uppercase tracking-wide">
+                        <span className="text-[11px] text-emerald-600 font-bold uppercase tracking-wider">
                           Best Month
                         </span>
-                        <span className="text-xs font-gotham-regular text-gray-600">
+                        <span className="text-xs font-normal text-muted-foreground">
                           {bestWorst?.best_month?.month ?? "—"}
                         </span>
                       </div>
                     </div>
-                    <span className="text-sm font-jura-bold text-green-600">
+                    <span className="text-sm font-semibold tabular-nums text-emerald-600">
                       {bestWorst?.best_month?.performance ?? "—"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between gap-2 bg-red-50 rounded-lg px-3 py-2">
+                  <div className="flex items-center justify-between gap-2 bg-rose-50 rounded-lg px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <LuTrendingDown className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                      <LuTrendingDown className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[0.6rem] text-red-500 font-gotham-black uppercase tracking-wide">
+                        <span className="text-[11px] text-rose-500 font-bold uppercase tracking-wider">
                           Worst Month
                         </span>
-                        <span className="text-xs font-gotham-regular text-gray-600">
+                        <span className="text-xs font-normal text-muted-foreground">
                           {bestWorst?.worst_month?.month ?? "—"}
                         </span>
                       </div>
                     </div>
-                    <span className="text-sm font-jura-bold text-red-500">
+                    <span className="text-sm font-semibold tabular-nums text-rose-500">
                       {bestWorst?.worst_month?.performance ?? "—"}
                     </span>
                   </div>
@@ -250,8 +239,8 @@ function WritersPerformace() {
         <div className="grid md:grid-cols-4 gap-4">
           {canSeeTopWriters && (
             <div className="flex flex-col md:col-span-3 space-y-3">
-              <span className="font-gotham-black text-sm text-gray-500 uppercase tracking-wide">
-                Top 10 Retailers — Year to Date
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+                Top 10 retailers — year to date
               </span>
               <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
                 {top10.map((w, index) => {
@@ -259,33 +248,32 @@ function WritersPerformace() {
                     index === 0
                       ? "text-yellow-400"
                       : index === 1
-                        ? "text-gray-400"
+                        ? "text-zinc-400"
                         : index === 2
                           ? "text-amber-600"
                           : null;
                   return (
                     <div
-                      className="border rounded-lg flex items-center gap-3 px-4 py-3"
+                      className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface px-4 py-3"
                       key={w.writer_id}
                     >
                       {medalColor ? (
                         <LuMedal className={`w-4 h-4 shrink-0 ${medalColor}`} />
                       ) : (
-                        <span className="text-xs font-jura-bold text-gray-300 shrink-0 w-4 text-center">
+                        <span className="text-xs font-semibold tabular-nums text-zinc-300 shrink-0 w-4 text-center">
                           {index + 1}
                         </span>
                       )}
-                      <Avatar size="lg" className="w-8 h-8 shrink-0">
-                        <Avatar.Image alt="" src={w.photo_url ?? ""} />
-                        <Avatar.Fallback className="bg-primary text-white text-xs font-gotham-bold">
-                          {w.writer_name.charAt(0).toUpperCase()}
-                        </Avatar.Fallback>
-                      </Avatar>
+                      <Avatar
+                        name={w.writer_name}
+                        src={w.photo_url ?? undefined}
+                        size="sm"
+                      />
                       <div className="flex flex-col min-w-0">
-                        <span className="font-jura-bold text-sm truncate text-primary">
+                        <span className="font-semibold tabular-nums text-sm truncate text-primary">
                           {w.net_profit.formatted}
                         </span>
-                        <span className="font-gotham-black text-[0.6rem] uppercase truncate text-gray-500">
+                        <span className="truncate text-[11px] text-muted-foreground">
                           {w.writer_name}
                         </span>
                       </div>
@@ -297,22 +285,24 @@ function WritersPerformace() {
           )}
 
           {canSeeRetentionRate && (
-            <div className={`${canSeeTopWriters ? "md:col-span-1" : "md:col-span-4"} border rounded-lg overflow-hidden`}>
-              <div className="bg-linear-to-br from-primary to-[#5b4abf] px-4 py-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[0.6rem] font-gotham-black text-white/70 uppercase tracking-wide">
-                    YTD Retention Rate
-                  </span>
-                  <div className="bg-white/20 rounded-lg p-1.5">
-                    <LuPercent className="w-3.5 h-3.5 text-white" />
-                  </div>
+            <div
+              className={`${canSeeTopWriters ? "md:col-span-1" : "md:col-span-4"} overflow-hidden rounded-2xl border border-border-subtle bg-surface`}
+            >
+              <div className="flex items-start justify-between gap-3 border-b border-border-subtle px-5 py-4">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+                    YTD retention rate
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                    % of net earnings retained after payout
+                  </p>
                 </div>
-                <p className="text-[0.6rem] text-white/60 mt-0.5">
-                  % of net earnings retained after payout
-                </p>
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                  <LuPercent className="size-4" />
+                </span>
               </div>
-              <div className="flex items-center justify-center py-8">
-                <span className="font-jura-bold text-5xl text-primary">
+              <div className="flex items-center justify-center py-10">
+                <span className="text-5xl font-bold tracking-tight tabular-nums text-primary">
                   {retention?.retention_rate ?? "—"}
                 </span>
               </div>
@@ -343,46 +333,20 @@ const InfoCard = ({
   variant = "primary",
   icon: Icon,
 }: InfoCardProps) => {
-  const headerBg =
-    variant === "orange"
-      ? "bg-linear-to-br from-[#E17100] to-[#f09a20]"
-      : "bg-linear-to-br from-primary to-[#5b4abf]";
-
   const rows = [
-    { label: "Last Week", value: lastWeekAmount },
-    { label: "Last Month", value: lastMonthAmount },
-    { label: "Last 3 Months", value: last3MonthsAmount },
+    { label: "Last week", value: lastWeekAmount },
+    { label: "Last month", value: lastMonthAmount },
+    { label: "Last 3 months", value: last3MonthsAmount },
   ];
 
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className={`${headerBg} px-4 py-4`}>
-        <div className="flex items-center justify-between">
-          <span className="text-[0.6rem] font-gotham-black text-white/70 uppercase tracking-wide">
-            {title}
-          </span>
-          <div className="bg-white/20 rounded-lg p-1.5">
-            <Icon className="w-3.5 h-3.5 text-white" />
-          </div>
-        </div>
-        <div className="font-jura-bold text-2xl text-white mt-2">
-          {totalAmount}
-        </div>
-      </div>
-      <div className="flex flex-col divide-y divide-gray-100">
-        {rows.map(({ label, value }) => (
-          <div
-            key={label}
-            className="flex justify-between items-center px-4 py-2.5"
-          >
-            <span className="text-xs text-gray-500 font-gotham-regular">
-              {label}
-            </span>
-            <span className="text-xs font-jura-bold">{value}</span>
-          </div>
-        ))}
-      </div>
-    </div>
+    <MetricCard
+      title={title}
+      value={totalAmount}
+      icon={<Icon />}
+      tone={variant === "orange" ? "warning" : "brand"}
+      rows={rows}
+    />
   );
 };
 export default WritersPerformace;
@@ -400,15 +364,15 @@ function formatDayLabel(isoDay: string) {
 }
 
 function ActiveWritersStackedBarChart({ days }: { days: ActiveWriterDay[] }) {
-  const deployedColor = "#2ECC71";
-  const activeColor = "#18A2B8";
-  const gridColor = "#E5E7EB";
-  const axisTextColor = "#6B7280";
+  const deployedColor = ChartColors.success;
+  const activeColor = ChartColors.brand;
+  const gridColor = ChartColors.grid;
+  const axisTextColor = ChartColors.axis;
 
   if (!days?.length) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <span className="text-xs font-gotham-regular text-gray-400">
+        <span className="text-xs font-normal text-zinc-400">
           Data not available
         </span>
       </div>
@@ -470,11 +434,11 @@ function ActiveWritersStackedBarChart({ days }: { days: ActiveWriterDay[] }) {
               const deployedVal = payload.find((p) => p.dataKey === "deployed")
                 ?.value as number | undefined;
               return (
-                <div className="bg-white border rounded-lg px-3 py-2 shadow-sm">
-                  <div className="text-xs font-gotham-bold text-gray-700">
+                <div className="rounded-xl border border-border-subtle bg-surface px-3 py-2 shadow-lg shadow-zinc-200/60">
+                  <div className="text-xs font-semibold text-foreground">
                     {formatDayLabel(String(label))}
                   </div>
-                  <div className="text-xs text-gray-600 mt-1">
+                  <div className="text-xs text-muted-foreground mt-1">
                     <span className="inline-flex items-center gap-2">
                       <span
                         className="inline-block w-2 h-2 rounded-full"
@@ -483,7 +447,7 @@ function ActiveWritersStackedBarChart({ days }: { days: ActiveWriterDay[] }) {
                       Deployed: {deployedVal ?? 0}
                     </span>
                   </div>
-                  <div className="text-xs text-gray-600">
+                  <div className="text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-2">
                       <span
                         className="inline-block w-2 h-2 rounded-full"

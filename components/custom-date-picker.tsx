@@ -24,7 +24,8 @@ function CustomDatePicker({
 }: Props) {
   const todayDate = today(getLocalTimeZone());
   const [value, setValue] = useState<DateValue | null>(
-    defaultValue ?? (maxValue && todayDate.compare(maxValue) > 0 ? null : todayDate),
+    defaultValue ??
+      (maxValue && todayDate.compare(maxValue) > 0 ? null : todayDate),
   );
 
   useEffect(() => {
@@ -38,12 +39,12 @@ function CustomDatePicker({
       value={value}
       onChange={setValue}
       maxValue={maxValue}
-      className="mt-2 w-full"
+      className="w-full"
     >
       {label && (
         <Label
           className={cn(
-            "text-[0.6rem] text-gray-500 font-gotham-black",
+            "mb-1.5 block text-xs font-medium text-muted-foreground",
             labelClassName,
           )}
         >
@@ -53,54 +54,60 @@ function CustomDatePicker({
       <DateField.Group
         fullWidth
         className={cn(
-          "bg-transparent border border-black rounded-none transition-colors duration-200",
-          "focus-within:ring-0 focus-within:outline-none focus-within:border-black",
-
-          "shadow-none",
-
-          "group-data-[invalid=true]:border-transparent",
-
-          "data-[invalid=true]:border-transparent",
-
-          "data-[invalid=true]:focus-within:border-danger",
-          "py-1.5",
+          "h-11 rounded-xl border border-border bg-surface px-4 text-sm shadow-none transition-colors duration-200",
+          "focus-within:border-primary focus-within:outline-none focus-within:ring-0",
+          "data-[invalid=true]:border-destructive",
           className,
         )}
       >
-        <DateField.Input>
-          {(segment) => <DateField.Segment segment={segment} />}
+        <DateField.Input className="text-sm text-foreground">
+          {(segment) => (
+            <DateField.Segment
+              segment={segment}
+              className="rounded-md px-0.5 data-[focused=true]:bg-primary-soft data-[focused=true]:text-primary-strong data-[placeholder=true]:text-zinc-400"
+            />
+          )}
         </DateField.Input>
         <DateField.Suffix>
-          <DatePicker.Trigger>
+          <DatePicker.Trigger className="cursor-pointer text-zinc-400 transition-colors hover:text-foreground">
             <DatePicker.TriggerIndicator />
           </DatePicker.Trigger>
         </DateField.Suffix>
       </DateField.Group>
-      <DatePicker.Popover className="p-1">
-        <Calendar aria-label="Event date">
+      <DatePicker.Popover className="rounded-2xl border border-border-subtle p-2 shadow-lg shadow-zinc-200/60">
+        <Calendar aria-label="Select date">
           <Calendar.Header>
-            <Calendar.YearPickerTrigger>
-              <Calendar.YearPickerTriggerHeading className="text-xs text-black" />
-              <Calendar.YearPickerTriggerIndicator className="text-black" />
+            <Calendar.YearPickerTrigger className="cursor-pointer rounded-lg px-2 py-1 transition-colors hover:bg-subtle">
+              <Calendar.YearPickerTriggerHeading className="text-sm font-semibold text-foreground" />
+              <Calendar.YearPickerTriggerIndicator className="text-zinc-400" />
             </Calendar.YearPickerTrigger>
-            <Calendar.NavButton slot="previous" className="w-6 text-black" />
-            <Calendar.NavButton slot="next" className="w-6 text-black" />
+            <Calendar.NavButton
+              slot="previous"
+              className="w-7 cursor-pointer rounded-lg text-muted-foreground transition-colors hover:bg-subtle"
+            />
+            <Calendar.NavButton
+              slot="next"
+              className="w-7 cursor-pointer rounded-lg text-muted-foreground transition-colors hover:bg-subtle"
+            />
           </Calendar.Header>
           <Calendar.Grid>
             <Calendar.GridHeader>
-              {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+              {(day) => (
+                <Calendar.HeaderCell className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+                  {day}
+                </Calendar.HeaderCell>
+              )}
             </Calendar.GridHeader>
             <Calendar.GridBody>
               {(date) => (
                 <Calendar.Cell
                   date={date}
                   className={cn(
-                    "rounded-full",
-                    "p-0",
-                    "text-xs",
-                    "data-[selected=true]:bg-black data-[selected=true]:text-white",
-                    "data-[hovered=true]:bg-gray-100",
-                    "data-[today=true]:text-black data-[today=true]:font-black",
+                    "cursor-pointer rounded-full p-0 text-xs transition-colors",
+                    "data-[hovered=true]:bg-subtle",
+                    "data-[today=true]:font-bold data-[today=true]:text-primary",
+                    "data-[selected=true]:bg-primary data-[selected=true]:font-semibold data-[selected=true]:text-white",
+                    "data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-40",
                   )}
                 />
               )}
@@ -111,7 +118,7 @@ function CustomDatePicker({
               {({ year }) => (
                 <Calendar.YearPickerCell
                   year={year}
-                  className="text-xs data-[selected=true]:rounded-full data-[selected=true]:bg-black"
+                  className="cursor-pointer rounded-full text-xs transition-colors data-[hovered=true]:bg-subtle data-[selected=true]:bg-primary data-[selected=true]:text-white"
                 />
               )}
             </Calendar.YearPickerGridBody>

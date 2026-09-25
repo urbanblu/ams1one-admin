@@ -14,6 +14,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminUsersService from "@/api/admin-users";
 import ToastService from "@/utils/toast-service";
 import ApiError from "@/utils/api_error";
+import { LuPlus } from "react-icons/lu";
 
 type Props = {
   onCreated?: () => void;
@@ -38,7 +39,9 @@ function NewUserDrawer(payload: Props) {
     mutationFn: AdminUsersService.createAdmin,
     onSuccess: async () => {
       ToastService.success({ text: "New team member created" });
-      await queryClient.invalidateQueries({ queryKey: ["admin-users", "list"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["admin-users", "list"],
+      });
       payload.onCreated?.();
       setDrawerOpen(false);
     },
@@ -50,37 +53,42 @@ function NewUserDrawer(payload: Props) {
   return (
     <>
       <Button
-        className="rounded-lg w-full bg-primary text-xs font-gotham-bold"
+        className="h-11 w-full cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60 md:w-auto"
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
-        Add New Member
+        <LuPlus className="size-4" />
+        Add member
       </Button>
       <Drawer.Backdrop
         variant="blur"
-        className="backdrop-blur-xs"
+        className="backdrop-blur-sm"
         isOpen={drawerIsOpen}
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={() => setDrawerOpen(false)}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
-            <Drawer.Body className="text-black">
+            <Drawer.Body className="px-5 pb-6">
               <Form
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  const data = Object.fromEntries(new FormData(e.currentTarget));
+                  const data = Object.fromEntries(
+                    new FormData(e.currentTarget),
+                  );
                   const password = String(data.password ?? "");
                   const confirmPassword = String(data.confirmPassword ?? "");
                   if (password.length < 8) {
-                    ToastService.error({ text: "password: Ensure this field has at least 8 characters." });
+                    ToastService.error({
+                      text: "password: Ensure this field has at least 8 characters.",
+                    });
                     return;
                   }
                   if (password !== confirmPassword) {
@@ -88,7 +96,9 @@ function NewUserDrawer(payload: Props) {
                     return;
                   }
                   if (!roleId) {
-                    ToastService.error({ text: "Please select a dashboard role" });
+                    ToastService.error({
+                      text: "Please select a dashboard role",
+                    });
                     return;
                   }
                   await createAdmin({
@@ -102,23 +112,20 @@ function NewUserDrawer(payload: Props) {
                 }}
               >
                 <div className="flex flex-col space-y-3">
-                  <span className="text-lg font-gotham-black">New user</span>
+                  <span className="text-lg font-bold">New user</span>
                   <div className="space-y-4">
                     <CustomInputComponent
                       label="First Name"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="firstName"
                       isRequired
                     />
                     <CustomInputComponent
                       label="Surname"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="surname"
                       isRequired
                     />
                     <CustomInputComponent
                       label="Email"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="email"
                       showPlaceholder={false}
                       type="email"
@@ -126,7 +133,6 @@ function NewUserDrawer(payload: Props) {
                     />
                     <CustomInputComponent
                       label="Phone Number"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="phoneNumber"
                       type="tel"
                       isRequired
@@ -140,7 +146,6 @@ function NewUserDrawer(payload: Props) {
                       showPlaceholder={false}
                       showSuffixIcon={false}
                       showPreficIcon={false}
-                      className="p-0 border rounded-lg border-gray-300"
                       isRequired
                     />
                     <CustomInputComponent
@@ -151,12 +156,12 @@ function NewUserDrawer(payload: Props) {
                       showPlaceholder={false}
                       validate={(val) => {
                         if (!val) return "This field is required";
-                        if (val !== passwordValue) return "Passwords do not match";
+                        if (val !== passwordValue)
+                          return "Passwords do not match";
                         return null;
                       }}
                       showSuffixIcon={false}
                       showPreficIcon={false}
-                      className="p-0 border rounded-lg border-gray-300"
                       isRequired
                     />
                     <CustomSelectComponent
@@ -169,13 +174,19 @@ function NewUserDrawer(payload: Props) {
                     />
                   </div>
                   <Button
-                    className="rounded-lg bg-primary w-full text-xs font-gotham-black mt-2"
+                    className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                     type="submit"
                     isDisabled={isPending}
                     isPending={isPending}
                   >
                     {({ isPending }) => (
-                      <>{isPending ? <Spinner color="current" size="sm" /> : "Save"}</>
+                      <>
+                        {isPending ? (
+                          <Spinner color="current" size="sm" />
+                        ) : (
+                          "Save"
+                        )}
+                      </>
                     )}
                   </Button>
                 </div>

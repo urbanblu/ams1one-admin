@@ -110,10 +110,10 @@ function ManageDrawDrawer({
             placement="right"
             className="w-[420px]! max-w-[95vw] min-w-[300px] bg-white h-screen"
           >
-            <Drawer.Dialog className="rounded-none w-full flex flex-col h-full">
+            <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden flex h-full w-full flex-col">
               <Drawer.Header className="shrink-0">
                 <div className="flex justify-between items-center">
-                  <Drawer.Heading className="text-sm font-gotham-bold">
+                  <Drawer.Heading className="text-sm font-semibold">
                     Manage Pending Draws
                   </Drawer.Heading>
                   <CloseButton
@@ -135,14 +135,14 @@ function ManageDrawDrawer({
                 />
               </div>
 
-              <Drawer.Body className="flex-1 min-h-0 overflow-y-auto pb-6">
+              <Drawer.Body className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
                 {isFetching ? (
                   <div className="flex justify-center items-center h-32">
-                    <Spinner size="sm" />
+                    <Spinner size="sm" className="text-primary" />
                   </div>
                 ) : filteredPending.length === 0 ? (
                   <div className="flex justify-center items-center h-32">
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-zinc-400">
                       No pending approvals
                     </span>
                   </div>
@@ -183,27 +183,27 @@ function ManageDrawDrawer({
                     pendingAction?.type === "confirm" ? "success" : "danger"
                   }
                 />
-                <AlertDialog.Heading className="font-gotham-black text-sm">
+                <AlertDialog.Heading className="font-bold text-sm">
                   {pendingAction?.type === "confirm"
                     ? "Confirm Draw Result"
                     : "Reject Draw Result"}
                 </AlertDialog.Heading>
               </AlertDialog.Header>
               <AlertDialog.Body>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-muted-foreground">
                   {pendingAction?.type === "confirm"
                     ? "Are you sure you want to confirm the draw result? The numbers "
                     : "Are you sure you want to reject the draw result for this event?"}
                   {pendingAction?.type === "confirm" && (
-                    <span className="font-gotham-black text-gray-800">
+                    <span className="font-bold text-foreground">
                       {pendingAction?.item.numbers.join(", ")}
                     </span>
                   )}
                   {pendingAction?.type === "confirm" && " will be finalised."}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-zinc-400 mt-1">
                   Submitted by:{" "}
-                  <span className="font-gotham-black">
+                  <span className="font-bold">
                     {pendingAction?.item.submitted_by}
                   </span>
                 </p>
@@ -211,7 +211,7 @@ function ManageDrawDrawer({
               <AlertDialog.Footer>
                 <Button
                   size="sm"
-                  className="bg-transparent border text-black rounded-lg px-6 py-1 text-xs font-gotham-black"
+                  className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-subtle"
                   onPress={() => setPendingAction(null)}
                   isDisabled={isActing}
                 >
@@ -219,10 +219,10 @@ function ManageDrawDrawer({
                 </Button>
                 <Button
                   size="sm"
-                  className={`text-white rounded-lg text-xs font-gotham-black ${
+                  className={`text-white rounded-lg text-xs font-bold ${
                     pendingAction?.type === "confirm"
-                      ? "bg-green-600"
-                      : "bg-red-600"
+                      ? "bg-emerald-500"
+                      : "bg-rose-500"
                   }`}
                   onPress={() => pendingAction && executeAction(pendingAction)}
                   isPending={isActing}
@@ -261,15 +261,15 @@ const PendingCard = ({
   onReject: () => void;
 }) => {
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
       {/* Gradient header */}
-      <div className="bg-linear-to-br from-primary to-[#5b4abf] px-4 py-3">
+      <div className="bg-brand-gradient px-4 py-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-col min-w-0">
-            <span className="text-[0.6rem] font-gotham-black text-white/60 uppercase tracking-wide">
+            <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">
               {item.game_type}
             </span>
-            <span className="text-sm font-gotham-bold text-white truncate">
+            <span className="text-sm font-semibold text-white truncate">
               {item.event_name ?? "—"}
             </span>
           </div>
@@ -278,7 +278,7 @@ const PendingCard = ({
             {item.numbers.map((n, i) => (
               <span
                 key={i}
-                className="bg-white/20 text-white font-jura-bold text-xs px-2 py-1 rounded-md"
+                className="bg-white/20 text-white font-semibold tabular-nums text-xs px-2 py-1 rounded-md"
               >
                 {n}
               </span>
@@ -289,28 +289,28 @@ const PendingCard = ({
 
       {/* Meta row */}
       <div className="px-4 py-3 flex flex-col gap-1.5">
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <LuCalendar className="w-3.5 h-3.5 shrink-0" />
           <span>{item.draw_date ?? "—"}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <LuUser className="w-3.5 h-3.5 shrink-0" />
           <span>{item.submitted_by ?? "—"}</span>
         </div>
       </div>
 
       {/* Action buttons */}
-      <div className="grid grid-cols-2 border-t divide-x divide-gray-100">
+      <div className="grid grid-cols-2 divide-x divide-border-subtle border-t border-border-subtle">
         <button
           onClick={onReject}
-          className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-gotham-bold text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+          className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-semibold text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
         >
           <RiCloseCircleLine className="w-3.5 h-3.5" />
           Reject
         </button>
         <button
           onClick={onConfirm}
-          className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-gotham-bold text-green-600 hover:bg-green-50 transition-colors cursor-pointer"
+          className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-semibold text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"
         >
           <RiCheckLine className="w-3.5 h-3.5" />
           Confirm

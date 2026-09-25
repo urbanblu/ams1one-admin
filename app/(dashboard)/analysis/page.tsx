@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { Tabs } from "@heroui/react";
 import RetentionRatePerformance from "./_components/rate-performace";
 import { usePageAccess } from "@/hooks/use-page-access";
+import { PageHeader } from "@/components/ui";
 
 type Tab = "writers" | "rate";
 
@@ -24,7 +25,10 @@ function AnalysisPageView() {
     "analysis.liquidation_card",
     "analysis.settlements_card",
   );
-  const canSeeRatePerf = hasAnyPage("analysis.retention_rate", "analysis.retention_trend");
+  const canSeeRatePerf = hasAnyPage(
+    "analysis.retention_rate",
+    "analysis.retention_trend",
+  );
 
   const [userSelectedTab, setUserSelectedTab] = useState<Tab>("writers");
 
@@ -40,24 +44,32 @@ function AnalysisPageView() {
       : "rate";
 
   return (
-    <div className="flex flex-col py-5 px-5 md:px-8">
-      <div className="mb-5 shrink-0 sm:max-w-sm">
+    <div className="flex flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7">
+      <PageHeader
+        className="shrink-0"
+        title="Analysis"
+        description="Writer performance and retention trends across the network."
+      />
+      <div className="shrink-0 sm:max-w-sm">
         <Tabs
           selectedKey={activeTab}
           onSelectionChange={(key) => setUserSelectedTab(key as Tab)}
         >
           <Tabs.ListContainer>
-            <Tabs.List aria-label="Analysis view" className="rounded-lg">
+            <Tabs.List
+              aria-label="Analysis view"
+              className="gap-1 rounded-2xl p-1"
+            >
               {canSeeWritersPerf && (
-                <Tabs.Tab id="writers" className="px-5 py-1.5 text-sm">
+                <Tabs.Tab id="writers" className="h-9 rounded-xl px-4 text-sm">
                   Writers Performance
-                  <Tabs.Indicator className="rounded-md" />
+                  <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                 </Tabs.Tab>
               )}
               {canSeeRatePerf && (
-                <Tabs.Tab id="rate" className="px-5 py-1.5 text-sm">
+                <Tabs.Tab id="rate" className="h-9 rounded-xl px-4 text-sm">
                   Rate Performance
-                  <Tabs.Indicator className="rounded-md" />
+                  <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                 </Tabs.Tab>
               )}
             </Tabs.List>
@@ -75,7 +87,9 @@ export default function AnalysisPageWithSuspense() {
   return (
     <Suspense
       fallback={
-        <div className="p-5 px-7 text-sm text-gray-500">Loading analysis…</div>
+        <div className="px-5 py-6 text-sm text-muted-foreground lg:px-8">
+          Loading analysis…
+        </div>
       }
     >
       <AnalysisPageView />

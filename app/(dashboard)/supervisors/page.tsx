@@ -2,10 +2,15 @@
 
 import Image from "next/image";
 import EmptyImage from "@/public/images/new/empty-page.jpg";
-import CustomInputComponent from "@/components/custom-input-component";
-import { RiSearchLine } from "react-icons/ri";
-import { Avatar, Button, Spinner, Tabs } from "@heroui/react";
-import { AiOutlineExport } from "react-icons/ai";
+import { Tabs } from "@heroui/react";
+import {
+  Avatar,
+  Button,
+  PageHeader,
+  SearchInput,
+  Skeleton,
+} from "@/components/ui";
+import { LuUpload } from "react-icons/lu";
 import OperationalTab from "./_components/operational-tab";
 import FinancialTab from "./_components/financial-tab";
 import NewLmcDrawer from "./_components/new-supervisor-drawer";
@@ -40,90 +45,113 @@ function Lmcs() {
   }, [cards, searchTerm]);
 
   return (
-    <div className="flex flex-col p-5 px-7 pb-10 space-y-5">
-      <span className="text-sm sm:text-lg font-gotham-black uppercase">
-        {`Supervisors (${cards.length})`}
-      </span>
-      <div className="w-full flex justify-end">
-        <div className="space-x-2 items-center flex">
-          <CustomInputComponent
-            className="p-0 w-full md:w-[200px] rounded-lg border border-gray-300"
-            prefixIcon={<RiSearchLine />}
-            placeholder="Search"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Button
-            className="rounded-lg bg-transparent border text-black"
-            size="md"
-            onClick={() => {
-              ToastService.info({ text: "Feature not yet available" });
-            }}
-          >
-            <AiOutlineExport className="w-3.5 h-3.5" />
-            <span className="text-xs font-gotham-bold">Export Data</span>
-          </Button>
-          {canRegister && <NewLmcDrawer />}
-        </div>
-      </div>
+    <div className="flex flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7">
+      <PageHeader
+        title="Supervisors"
+        description={`${cards.length.toLocaleString("en-US")} local management companies`}
+        actions={
+          <>
+            <SearchInput
+              className="w-full sm:w-56"
+              placeholder="Search supervisors"
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                ToastService.info({ text: "Feature not yet available" });
+              }}
+            >
+              <LuUpload />
+              Export
+            </Button>
+            {canRegister && <NewLmcDrawer />}
+          </>
+        }
+      />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">
-        {isPending && (
-          <div className="col-span-full flex flex-row justify-center mt-10">
-            <Spinner size="sm" />
-          </div>
-        )}
+        {isPending &&
+          Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="overflow-hidden rounded-2xl border border-border-subtle bg-surface"
+            >
+              <div className="flex flex-col items-center gap-2.5 px-4 py-6">
+                <Skeleton className="size-14 rounded-full" />
+                <Skeleton className="h-3 w-28" />
+                <Skeleton className="h-2.5 w-20" />
+              </div>
+              <div className="space-y-2 border-t border-border-subtle px-4 py-4">
+                <Skeleton className="h-2.5 w-full" />
+                <Skeleton className="h-2.5 w-3/4" />
+              </div>
+            </div>
+          ))}
         {!isPending &&
           filteredCards.map((card) => {
-            const initial = card.name.charAt(0).toUpperCase();
             return (
-              <div key={card.id} className="border rounded-lg overflow-hidden">
+              <div
+                key={card.id}
+                className="flex flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface"
+              >
                 <div
-                  className={`bg-linear-to-br from-primary to-[#5b4abf] px-4 py-5 flex flex-col items-center gap-2 ${canViewDetail ? "cursor-pointer" : "cursor-default"}`}
-                  onClick={() => canViewDetail && router.push(`/supervisors/${card.id}`)}
+                  className={`relative flex flex-col items-center gap-2.5 overflow-hidden bg-brand-gradient px-4 py-6 ${
+                    canViewDetail ? "cursor-pointer" : "cursor-default"
+                  }`}
+                  onClick={() =>
+                    canViewDetail && router.push(`/supervisors/${card.id}`)
+                  }
                 >
-                  <Avatar className="w-14 h-14 ring-2 ring-white/30">
-                    <Avatar.Image alt={initial} src={card.photo_url ?? ""} />
-                    <Avatar.Fallback className="bg-white/20 text-xl text-white font-gotham-bold">
-                      {initial}
-                    </Avatar.Fallback>
-                  </Avatar>
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="font-gotham-bold text-white text-sm text-center leading-tight">
-                      {card.name}
-                    </span>
-                    <span className="font-jura-medium text-white/70 text-xs">
-                      {card.phone}
+                  <div className="pointer-events-none absolute -top-10 -right-10 size-36 rounded-full bg-white/20 blur-3xl" />
+                  <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.06]" />
+                  <div className="relative flex flex-col items-center gap-2.5">
+                    <Avatar
+                      name={card.name}
+                      src={card.photo_url ?? undefined}
+                      size="lg"
+                      className="rounded-full ring-2 ring-white/40"
+                    />
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="text-center text-sm font-semibold leading-tight text-white">
+                        {card.name}
+                      </span>
+                      <span className="text-xs tabular-nums text-white/70">
+                        {card.phone}
+                      </span>
+                    </div>
+                    <span className="rounded-full bg-white/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-white">
+                      {card.code}
                     </span>
                   </div>
-                  <span className="bg-white/20 text-white text-[0.6rem] font-gotham-black px-2.5 py-0.5 rounded-full tracking-wide uppercase">
-                    {card.code}
-                  </span>
                 </div>
-                <Tabs className="w-full px-2 mt-1">
+                <Tabs className="mt-2 w-full px-2">
                   <Tabs.ListContainer>
                     <Tabs.List
                       aria-label="Options"
-                      className="rounded-lg w-full"
+                      className="w-full gap-1 rounded-2xl p-1"
                     >
                       <Tabs.Tab
-                        className="text-xs font-gotham-bold flex-1"
+                        className="h-9 flex-1 rounded-xl text-sm font-medium"
                         id="operational"
                       >
                         Operational
-                        <Tabs.Indicator className="rounded-lg" />
+                        <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                       </Tabs.Tab>
                       <Tabs.Tab
-                        className="text-xs font-gotham-bold flex-1"
+                        className="h-9 flex-1 rounded-xl text-sm font-medium"
                         id="financial"
                       >
                         Financial
-                        <Tabs.Indicator className="rounded-lg" />
+                        <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                       </Tabs.Tab>
                     </Tabs.List>
                   </Tabs.ListContainer>
-                  <Tabs.Panel className="px-4 py-3" id="operational">
+                  <Tabs.Panel className="px-3 py-3" id="operational">
                     <OperationalTab operational={card.operational} />
                   </Tabs.Panel>
-                  <Tabs.Panel className="px-4 py-3" id="financial">
+                  <Tabs.Panel className="px-3 py-3" id="financial">
                     <FinancialTab financial={card.financial} />
                   </Tabs.Panel>
                 </Tabs>
@@ -131,21 +159,16 @@ function Lmcs() {
             );
           })}
         {!isPending && filteredCards.length === 0 && (
-          <div className="col-span-full flex flex-col items-center justify-center py-16 gap-3">
-            <div className="relative w-48 h-48">
-              <Image
-                src={EmptyImage}
-                alt="No results"
-                fill
-                className="object-contain"
-              />
+          <div className="col-span-full flex flex-col items-center justify-center gap-2 py-16">
+            <div className="relative size-44">
+              <Image src={EmptyImage} alt="" fill className="object-contain" />
             </div>
-            <p className="text-sm font-gotham-bold text-gray-700">
+            <p className="text-sm font-medium text-foreground">
               {searchTerm.trim()
                 ? "No supervisors match your search"
                 : "No supervisors yet"}
             </p>
-            <p className="text-xs font-gotham-regular text-gray-400 text-center max-w-[200px]">
+            <p className="max-w-[220px] text-center text-xs text-muted-foreground">
               {searchTerm.trim()
                 ? "Try a different name, phone number or code."
                 : "Add your first supervisor to get started."}

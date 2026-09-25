@@ -1,5 +1,5 @@
-import { Label, ListBox, Select } from "@heroui/react";
-import { IoChevronDown } from "react-icons/io5";
+import { cn, Label, ListBox, Select } from "@heroui/react";
+import { LuChevronDown } from "react-icons/lu";
 import React from "react";
 
 type Props = {
@@ -33,7 +33,7 @@ export default function CustomSelectComponent({
   endContent,
   shouldFlip,
   renderItem,
-  showDropDownIcon,
+  showDropDownIcon = true,
 }: Props) {
   const [value, setValue] = React.useState(initialItemKey);
 
@@ -65,24 +65,44 @@ export default function CustomSelectComponent({
         onSelectionChange={handleSelectionChange}
       >
         {label && (
-          <Label className={`text-xs ${labelClassName}`}>{label}</Label>
+          <Label
+            className={cn(
+              "mb-1.5 block text-xs font-medium text-muted-foreground",
+              labelClassName,
+            )}
+          >
+            {label}
+          </Label>
         )}
-        <Select.Trigger className="border border-gray-300 rounded-lg shadow-none text-xs cursor-pointer h-[2.3rem]">
-          <Select.Value className="text-xs" />
+        <Select.Trigger
+          className={cn(
+            "h-11 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm shadow-none transition-colors",
+            "data-[hovered=true]:border-zinc-300 data-[focused=true]:border-primary data-[pressed=true]:border-primary",
+            "data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-60",
+          )}
+        >
+          <Select.Value className="text-sm text-foreground" />
           {(showDropDownIcon || endContent) && (
             <Select.Indicator>
-              {endContent ?? <IoChevronDown className="w-4 h-4 text-black" />}
+              {endContent ?? <LuChevronDown className="size-4 text-zinc-400" />}
             </Select.Indicator>
           )}
         </Select.Trigger>
-        <Select.Popover shouldFlip={shouldFlip} className="rounded-lg">
-          <ListBox className="text-xs">
+        <Select.Popover
+          shouldFlip={shouldFlip}
+          className="rounded-2xl border border-border-subtle p-1.5 shadow-lg shadow-zinc-200/60"
+        >
+          <ListBox className="text-sm">
             {list.map((item) => (
               <ListBox.Item
                 key={item.key}
                 id={item.key}
                 textValue={item.label}
-                className="rounded-lg"
+                className={cn(
+                  "cursor-pointer rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors",
+                  "data-[hovered=true]:bg-subtle data-[hovered=true]:text-foreground",
+                  "data-[selected=true]:bg-primary-soft data-[selected=true]:font-semibold data-[selected=true]:text-primary-strong",
+                )}
               >
                 {renderItem ? renderItem(item) : item.label}
               </ListBox.Item>

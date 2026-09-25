@@ -102,7 +102,7 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
         createdAt: <span className="text-xs">{row.created_at}</span>,
         type: (
           <span
-            className={`text-xs capitalize font-gotham-medium ${row.is_credit ? "text-green-600" : "text-red-500"}`}
+            className={`text-xs capitalize font-medium ${row.is_credit ? "text-emerald-600" : "text-rose-500"}`}
           >
             {row.type}
           </span>
@@ -111,18 +111,20 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
           <div className="flex flex-col min-w-0">
             <span className="text-xs truncate">{row.writer_name}</span>
             {row.writer_phone && (
-              <span className="text-[10px] text-gray-500">
+              <span className="text-[10px] text-muted-foreground">
                 {row.writer_phone}
               </span>
             )}
           </div>
         ),
         reference: (
-          <span className="text-xs text-gray-500">{row.reference ?? "—"}</span>
+          <span className="text-xs text-muted-foreground">
+            {row.reference ?? "—"}
+          </span>
         ),
         amount: (
           <span
-            className={`text-xs font-jura-bold ${row.is_credit ? "text-green-600" : "text-red-500"}`}
+            className={`text-xs font-semibold tabular-nums ${row.is_credit ? "text-emerald-600" : "text-rose-500"}`}
           >
             {row.is_credit ? "+" : "-"}USD {row.amount}
           </span>
@@ -134,22 +136,28 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
   const writerRows: TableRow[] = useMemo(
     () =>
       (writersData?.results ?? []).map((row) => ({
-        name: <span className="text-xs font-gotham-medium">{row.name}</span>,
+        name: <span className="text-xs font-medium">{row.name}</span>,
         contact: (
-          <span className="text-xs text-gray-500">{row.phone}</span>
+          <span className="text-xs text-muted-foreground">{row.phone}</span>
         ),
         location: (
-          <span className="text-xs text-gray-500">{row.location_address || "—"}</span>
+          <span className="text-xs text-muted-foreground">
+            {row.location_address || "—"}
+          </span>
         ),
         dot: <span className="text-xs">{row.dot}</span>,
         ytd_sales: (
-          <span className="text-xs font-jura-bold">USD {row.ytd_sales}</span>
+          <span className="text-xs font-semibold tabular-nums">
+            USD {row.ytd_sales}
+          </span>
         ),
         ytd_topups: (
-          <span className="text-xs font-jura-bold">USD {row.ytd_topups}</span>
+          <span className="text-xs font-semibold tabular-nums">
+            USD {row.ytd_topups}
+          </span>
         ),
         status: (
-          <span className="text-xs capitalize font-gotham-medium">
+          <span className="text-xs capitalize font-medium">
             {row.status.replace("_", " ")}
           </span>
         ),
@@ -196,8 +204,8 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
   };
 
   return (
-    <div className="border rounded-lg p-5">
-      <span className="font-gotham-black">{type}</span>
+    <div className="rounded-2xl border border-border-subtle bg-surface p-5">
+      <span className="font-bold">{type}</span>
       <div className="flex flex-col sm:flex-row items-center sm:justify-between mt-3">
         <Tabs
           className="max-w-full flex-wrap"
@@ -206,15 +214,15 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
           onSelectionChange={(key) => handleTabChange(key.toString())}
         >
           <Tabs.ListContainer>
-            <Tabs.List aria-label="Options" className="rounded-lg">
+            <Tabs.List aria-label="Options" className="gap-1 rounded-2xl p-1">
               {tabs.map((i) => (
                 <Tabs.Tab
-                  className="px-4 py-1 text-xs font-gotham-bold whitespace-nowrap"
+                  className="h-9 whitespace-nowrap rounded-xl px-4 text-sm font-medium"
                   id={i}
                   key={i}
                 >
                   {i}
-                  <Tabs.Indicator className="rounded-lg" />
+                  <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                 </Tabs.Tab>
               ))}
             </Tabs.List>

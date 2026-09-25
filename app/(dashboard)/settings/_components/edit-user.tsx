@@ -80,16 +80,16 @@ function EditUserDrawer(payload: Props) {
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={() => setDrawerOpen(false)}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
-            <Drawer.Body className="text-black">
+            <Drawer.Body className="px-5 pb-6">
               <Form
                 onSubmit={async (e) => {
                   e.preventDefault();
@@ -107,23 +107,20 @@ function EditUserDrawer(payload: Props) {
                 }}
               >
                 <div key={payload.user.id} className="flex flex-col space-y-3">
-                  <span className="text-lg font-gotham-black">Edit user</span>
+                  <span className="text-lg font-bold">Edit user</span>
                   <div className="space-y-4">
                     <CustomInputComponent
                       label="First Name"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="firstName"
                       defaultValue={payload.user.first_name}
                     />
                     <CustomInputComponent
                       label="Surname"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="surname"
                       defaultValue={payload.user.last_name}
                     />
                     <CustomInputComponent
                       label="Phone Number"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="phoneNumber"
                       type="tel"
                       defaultValue={payload.user.phone}
@@ -153,7 +150,7 @@ function EditUserDrawer(payload: Props) {
                     />
                   </div>
                   <Button
-                    className="rounded-lg bg-black w-full text-xs font-gotham-black mt-2"
+                    className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                     type="submit"
                     isDisabled={isPending}
                     isPending={isPending}

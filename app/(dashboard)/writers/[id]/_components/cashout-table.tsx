@@ -54,23 +54,27 @@ function CashoutTable({ writerId }: { writerId: string }) {
         data={rows.map((r) => ({
           createdAt: r.created_at,
           provider: (
-            <span className="font-gotham-bold text-xs capitalize">
+            <span className="font-semibold text-xs capitalize">
               {r.mobile_provider}
             </span>
           ),
           mobileNumber: (
-            <span className="font-jura-bold text-xs">{r.mobile_number}</span>
+            <span className="font-semibold tabular-nums text-xs">
+              {r.mobile_number}
+            </span>
           ),
           reference: (
-            <span className="font-jura-bold text-xs">{r.reference || "—"}</span>
+            <span className="font-semibold tabular-nums text-xs">
+              {r.reference || "—"}
+            </span>
           ),
           amount: (
-            <span className="text-sm font-jura-bold">
+            <span className="text-sm font-semibold tabular-nums">
               {formatGhs(parseFloat(String(r.amount)) || 0)}
             </span>
           ),
           status: (
-            <span className="text-xs capitalize text-green-600 font-gotham-medium">
+            <span className="text-xs capitalize text-emerald-600 font-medium">
               {r.status}
             </span>
           ),

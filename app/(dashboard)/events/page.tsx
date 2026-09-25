@@ -2,13 +2,15 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button, cn, Spinner } from "@heroui/react";
+import { LuCalendarDays, LuMapPin, LuScanLine, LuTicket } from "react-icons/lu";
 import {
-  LuCalendarDays,
-  LuMapPin,
-  LuScanLine,
-  LuTicket,
-} from "react-icons/lu";
+  Badge,
+  Button,
+  EmptyState,
+  PageHeader,
+  SegmentedControl,
+  Skeleton,
+} from "@/components/ui";
 import EventsService from "@/api/events";
 import type { IEvent } from "@/interfaces/events.interface";
 import CreateEventModal from "./_components/create-event-modal";
@@ -40,48 +42,44 @@ function EventCard({
   canManage: boolean;
 }) {
   return (
-    <div className="border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4 hover:border-gray-300 transition-colors bg-white">
-      <div className="flex-1 min-w-0 flex flex-col gap-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm font-gotham-black text-gray-900 truncate">
+    <div className="flex flex-col gap-4 rounded-2xl border border-border-subtle bg-surface p-4 transition-colors hover:border-border sm:flex-row sm:items-center">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+        <LuCalendarDays className="size-5" />
+      </span>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="truncate text-sm font-semibold text-foreground">
             {event.name}
           </span>
-          <span
-            className={cn(
-              "px-2 py-0.5 rounded-full text-[10px] font-gotham-bold uppercase shrink-0",
-              event.is_active
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-500",
-            )}
-          >
+          <Badge tone={event.is_active ? "success" : "neutral"} dot>
             {event.is_active ? "Active" : "Inactive"}
-          </span>
+          </Badge>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-0.5">
-          <span className="flex items-center gap-1 text-xs text-gray-500">
-            <LuCalendarDays className="w-3 h-3 shrink-0" />
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <LuCalendarDays className="size-3 shrink-0" />
             {formatDate(event.event_date)}
           </span>
           {event.venue && (
-            <span className="flex items-center gap-1 text-xs text-gray-400 truncate max-w-xs">
-              <LuMapPin className="w-3 h-3 shrink-0" />
+            <span className="flex max-w-xs items-center gap-1.5 truncate text-xs text-zinc-400">
+              <LuMapPin className="size-3 shrink-0" />
               {event.venue}
             </span>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-3 shrink-0">
-        <div className="flex items-center gap-1.5 text-gray-500">
-          <LuTicket className="w-4 h-4" />
-          <span className="text-sm font-gotham-bold">{event.ticket_count}</span>
-          <span className="text-xs text-gray-400">tickets</span>
+
+      <div className="flex shrink-0 items-center gap-4">
+        <div className="flex items-center gap-1.5">
+          <LuTicket className="size-4 text-zinc-400" />
+          <span className="text-sm font-semibold tabular-nums text-foreground">
+            {event.ticket_count}
+          </span>
+          <span className="text-xs text-zinc-400">tickets</span>
         </div>
         {canManage && (
-          <Button
-            size="sm"
-            onPress={() => onManage(event)}
-            className="text-xs font-gotham-bold bg-primary/10 text-primary rounded-lg hover:bg-primary/15"
-          >
+          <Button variant="secondary" size="sm" onClick={() => onManage(event)}>
             Manage
           </Button>
         )}
@@ -103,14 +101,25 @@ function EventsList({ canManage }: { canManage: boolean }) {
     <>
       <div className="flex flex-col gap-3">
         {isPending ? (
-          <div className="flex justify-center py-12">
-            <Spinner size="md" />
-          </div>
+          Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-4 rounded-2xl border border-border-subtle bg-surface p-4"
+            >
+              <Skeleton className="size-11 rounded-xl" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-3 w-48" />
+                <Skeleton className="h-2.5 w-32" />
+              </div>
+              <Skeleton className="h-8 w-20 rounded-xl" />
+            </div>
+          ))
         ) : events.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
-            <LuCalendarDays className="w-10 h-10" />
-            <p className="text-sm">No events yet. Create one to get started.</p>
-          </div>
+          <EmptyState
+            icon={<LuCalendarDays />}
+            title="No events yet"
+            description="Create your first event to start issuing QR tickets."
+          />
         ) : (
           events.map((event) => (
             <EventCard
@@ -149,50 +158,41 @@ export default function EventsPage() {
   const showScannerTab = canScan;
 
   return (
-    <div className="flex flex-col px-7 pt-5 pb-5 gap-5 h-full overflow-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
-        <span className="text-sm sm:text-lg font-gotham-black uppercase">
-          Events &amp; QR Tickets
-        </span>
-        <div className="flex items-center gap-2">
-          {tab === "events" && canCreate && <CreateEventModal />}
-        </div>
-      </div>
-
-      {/* Tab switcher — only render the container if at least one tab is visible */}
-      {(showEventTab || showScannerTab) && (
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit shrink-0">
-          {showEventTab && (
-            <button
-              onClick={() => setTab("events")}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-gotham-bold transition-all",
-                tab === "events"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700",
-              )}
-            >
-              <LuCalendarDays className="w-3.5 h-3.5" />
-              Events
-            </button>
-          )}
-          {showScannerTab && (
-            <button
-              onClick={() => setTab("scanner")}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-gotham-bold transition-all",
-                tab === "scanner"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700",
-              )}
-            >
-              <LuScanLine className="w-3.5 h-3.5" />
-              Gate Scanner
-            </button>
-          )}
-        </div>
-      )}
+    <div className="flex h-full flex-col gap-5 overflow-auto px-5 py-6 lg:px-8 lg:py-7">
+      <PageHeader
+        className="shrink-0"
+        title="Events & QR tickets"
+        description="Publish events, issue tickets and scan them at the gate."
+        actions={
+          <>
+            {(showEventTab || showScannerTab) && (
+              <SegmentedControl
+                segments={
+                  [
+                    showEventTab && {
+                      key: "events" as const,
+                      label: "Events",
+                      icon: <LuCalendarDays />,
+                    },
+                    showScannerTab && {
+                      key: "scanner" as const,
+                      label: "Gate scanner",
+                      icon: <LuScanLine />,
+                    },
+                  ].filter(Boolean) as {
+                    key: Tab;
+                    label: string;
+                    icon: React.ReactNode;
+                  }[]
+                }
+                value={tab}
+                onChange={setTab}
+              />
+            )}
+            {tab === "events" && canCreate && <CreateEventModal />}
+          </>
+        }
+      />
 
       {/* Content */}
       {tab === "events" && showEventTab && <EventsList canManage={canManage} />}

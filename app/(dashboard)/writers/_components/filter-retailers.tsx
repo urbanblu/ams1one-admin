@@ -1,7 +1,8 @@
 import CustomInputComponent from "@/components/custom-input-component";
-import { Button, Form, Popover } from "@heroui/react";
+import { Button } from "@/components/ui";
+import { Form, Popover } from "@heroui/react";
 import React from "react";
-import { IoFilter } from "react-icons/io5";
+import { LuFilter } from "react-icons/lu";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 type Props = {
@@ -45,58 +46,58 @@ function FilterRetailers({ onFilterTap }: Props) {
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger>
         <Button
-          className={`rounded-lg border text-xs font-gotham-bold ${"bg-transparent text-black"}`}
-          size="md"
+          variant={hasActiveFilter ? "secondary" : "outline"}
+          size="sm"
           onClick={() => setIsOpen(true)}
         >
-          <IoFilter className="h-4 w-4" />
-          <span>Filter</span>
+          <LuFilter />
+          Filter
           {hasActiveFilter && (
-            <div className="rounded-full w-[12px] h-[12px] bg-red-600 text-[10px] text-white">
+            <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
               {filtersCount}
-            </div>
+            </span>
           )}
         </Button>
       </Popover.Trigger>
       <Popover.Content
-        className="rounded-lg shadow-lg border border-gray-100 w-72 p-0"
+        className="w-80 rounded-2xl border border-border-subtle p-0 shadow-lg shadow-zinc-200/60"
         placement="bottom right"
       >
         <Popover.Dialog className="w-full p-0">
           {/* key forces inputs to re-render with fresh defaultValues when params change */}
           <Form key={`${currentName}-${currentPhone}`} onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-4 p-4 w-full">
-              <span className="text-sm font-gotham-black">
-                Filter Retailers
-              </span>
+            <div className="flex w-full flex-col gap-4 p-5">
+              <p className="text-sm font-semibold text-foreground">
+                Filter retailers
+              </p>
               <CustomInputComponent
                 label="Name"
-                className="p-0 border rounded-lg border-gray-300"
                 name="name"
+                placeholder="e.g. Kwame Mensah"
                 defaultValue={currentName}
               />
               <CustomInputComponent
-                label="Phone Number"
-                className="p-0 border rounded-lg border-gray-300"
+                label="Phone number"
                 name="phoneNumber"
                 type="tel"
+                placeholder="e.g. 0501234567"
                 defaultValue={currentPhone}
               />
-              <Button
-                className="rounded-lg bg-primary w-full text-xs font-gotham-black text-white"
-                type="submit"
-              >
-                Apply Filter
-              </Button>
-              {hasActiveFilter && (
-                <Button
-                  className="rounded-lg border bg-transparent w-full text-xs font-gotham-black text-gray-600"
-                  type="button"
-                  onClick={handleReset}
-                >
-                  Reset
+              <div className="flex flex-col gap-2">
+                <Button type="submit" fullWidth>
+                  Apply filter
                 </Button>
-              )}
+                {hasActiveFilter && (
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    fullWidth
+                    onClick={handleReset}
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
             </div>
           </Form>
         </Popover.Dialog>

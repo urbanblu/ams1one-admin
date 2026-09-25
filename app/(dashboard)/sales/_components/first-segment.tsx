@@ -4,7 +4,8 @@ import CustomTable, { TableRow } from "@/components/custom-table";
 import { useMemo, useState } from "react";
 import { CloseButton, Popover, Separator } from "@heroui/react";
 import CustomCheckboxItem from "@/components/custom-checkbox";
-import { IoMdMore } from "react-icons/io";
+import { HeroPanel, HeroStat } from "@/components/ui";
+import { LuEllipsisVertical, LuReceipt, LuFilter } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import SalesService from "@/api/sales";
 import GamesService from "@/api/games";
@@ -109,9 +110,6 @@ function FirstSalesSegment() {
 
   const loading = salesPending || gamesPending || ticketsPending;
   const headerAmount = todaySales ? formatGhs(todaySales.total_sales) : "—";
-  const ticketLine = todaySales
-    ? `${todaySales.ticket_count.toLocaleString("en-US")} tickets`
-    : "—";
 
   const tableData: TableRow[] = filteredTickets.map((ticket) => {
     const first = ticket.stakes[0];
@@ -119,7 +117,7 @@ function FirstSalesSegment() {
       ticket: (
         <div className="flex flex-col items-start space-y-1">
           <span>{ticket.ticket_no}</span>
-          <span className="text-[10px] font-gotham-black text-gray-400">
+          <span className="text-[10px] font-bold text-zinc-400">
             {first?.writer?.name ?? "—"}
           </span>
         </div>
@@ -127,40 +125,43 @@ function FirstSalesSegment() {
       play: ticket.play_group || first?.play || "—",
       stakes: String(ticket.total_stake ?? ticket.stakes.length ?? 0),
       amount: (
-        <span className="font-jura-bold text-sm">
+        <span className="font-semibold tabular-nums text-foreground">
           {formatGhs(parseStakeAmount(ticket.total_stake_amount))}
         </span>
       ),
       time: (
-        <div className="flex space-x-2 items-center">
-          <span className="font-jura-bold text-sm">
+        <div className="flex items-center gap-1.5">
+          <span className="font-medium tabular-nums">
             {formatTime(ticket.time)}
           </span>
           <Popover>
-            <CloseButton className="bg-transparent">
-              <IoMdMore size={30} />
+            <CloseButton
+              aria-label="View stakes"
+              className="flex size-7 items-center justify-center rounded-full bg-transparent text-zinc-400 transition-colors hover:bg-subtle hover:text-foreground"
+            >
+              <LuEllipsisVertical className="size-4" />
             </CloseButton>
             <Popover.Content
-              className="rounded-lg shadow-sm border w-full sm:max-w-lg"
+              className="w-full rounded-2xl border border-border-subtle shadow-lg shadow-zinc-200/60 sm:max-w-lg"
               placement="bottom right"
             >
               <Popover.Dialog className="w-full p-0">
-                <div className="space-y-5 max-h-72 overflow-y-auto custom-scrollbar py-5">
+                <div className="max-h-72 space-y-5 overflow-y-auto py-5">
                   {ticket.stakes.map((stake, index) => {
                     const nums = stake.numbers.split(",").map((n) => n.trim());
                     const isLast = index === ticket.stakes.length - 1;
                     return (
                       <div key={stake.stake_id}>
-                        <div className="flex flex-row justify-between items-center w-full px-5 gap-2">
-                          <div className="flex flex-col items-start space-y-1 min-w-0">
-                            <span className="text-[12px] truncate">
+                        <div className="flex w-full flex-row items-center justify-between gap-2 px-5">
+                          <div className="flex min-w-0 flex-col items-start">
+                            <span className="truncate text-xs font-medium text-foreground">
                               {stake.writer?.name}
                             </span>
-                            <span className="text-[10px] font-gotham-medium text-gray-500">
+                            <span className="mt-0.5 text-[10px] text-zinc-400">
                               {stake.writer?.phone}
                             </span>
                           </div>
-                          <span className="text-[12px] shrink-0">
+                          <span className="shrink-0 text-xs text-muted-foreground">
                             {stake.play}
                           </span>
                           <div className="flex flex-col items-center space-y-1">
@@ -168,24 +169,26 @@ function FirstSalesSegment() {
                               {nums.map((num, ni) => (
                                 <div
                                   key={ni}
-                                  className="bg-primary text-white font-jura-bold text-xs h-[24px] flex justify-center items-center w-[24px] text-center rounded-sm"
+                                  className="bg-primary text-white font-semibold tabular-nums text-xs h-[24px] flex justify-center items-center w-[24px] text-center rounded-sm"
                                 >
                                   {num}
                                 </div>
                               ))}
                             </div>
-                            <span className="text-[10px] text-gray-600">
+                            <span className="text-[10px] text-zinc-400">
                               {stake.game?.name}
                             </span>
                           </div>
-                          <span className="text-xs font-jura-bold shrink-0">
+                          <span className="shrink-0 text-xs font-semibold tabular-nums text-foreground">
                             {formatGhs(parseStakeAmount(stake.stake_amount))}
                           </span>
-                          <span className="text-xs font-jura-bold shrink-0">
+                          <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
                             {formatTime(stake.created_at)}
                           </span>
                         </div>
-                        {!isLast && <Separator className="w-full mt-5" />}
+                        {!isLast && (
+                          <Separator className="mt-5 w-full bg-border-subtle" />
+                        )}
                       </div>
                     );
                   })}
@@ -199,29 +202,58 @@ function FirstSalesSegment() {
   });
 
   return (
-    <div className="flex flex-col gap-3 h-full min-h-0">
-      <div className="flex flex-col shrink-0 gap-2">
-        {/* Colorful sales summary */}
+    <div className="flex h-full min-h-0 flex-col gap-4">
+      <div className="flex shrink-0 flex-col gap-3">
+        {/* Today's sales */}
         {canSeeSalesCard && (
-          <div className="bg-linear-to-br from-primary to-[#5b4abf] rounded-lg px-5 py-4">
-            <div className="flex flex-col text-white">
-              <span className="text-[0.65rem] font-gotham-bold text-white/70 uppercase tracking-wide">
-                Today&apos;s total sales
-              </span>
-              <span className="font-jura-bold text-2xl">{headerAmount}</span>
-              <span className="text-[0.65rem] text-white/70">
-                {"from "}
-                <span className="font-gotham-bold text-white">
-                  {ticketLine}
-                </span>
-              </span>
+          <HeroPanel className="py-6">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <HeroStat
+                icon={<LuReceipt />}
+                label="Today’s total sales"
+                value={headerAmount}
+                isLoading={salesPending}
+              />
+
+              <div className="flex items-end gap-8 sm:gap-10">
+                <div>
+                  <p className="mb-1.5 text-[10px] uppercase tracking-widest text-white/60">
+                    Tickets
+                  </p>
+                  {salesPending ? (
+                    <div className="h-6 w-16 animate-pulse rounded-lg bg-white/20" />
+                  ) : (
+                    <p className="text-lg font-bold leading-none tracking-tight text-white">
+                      {todaySales
+                        ? todaySales.ticket_count.toLocaleString("en-US")
+                        : "—"}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <p className="mb-1.5 text-[10px] uppercase tracking-widest text-white/60">
+                    Date
+                  </p>
+                  <p className="text-lg font-bold leading-none tracking-tight text-white">
+                    {new Date().toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
+          </HeroPanel>
         )}
+
         {/* Game filter row */}
-        {canSeeGameTypes && (
-          <div className="flex justify-end">
-            <div className="border rounded-lg bg-gray-50 px-3 py-2.5 flex flex-wrap gap-2">
+        {canSeeGameTypes && gameTypes.length > 0 && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-border-subtle bg-surface px-4 py-3">
+            <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+              <LuFilter className="size-3" />
+              Game types
+            </span>
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
               {gameTypes.map((g) => (
                 <CustomCheckboxItem
                   key={g.code}
@@ -237,7 +269,7 @@ function FirstSalesSegment() {
         )}
       </div>
       {canSeeTickets && (
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="min-h-0 flex-1 overflow-hidden">
           <div className="h-full">
             <CustomTable
               columns={[

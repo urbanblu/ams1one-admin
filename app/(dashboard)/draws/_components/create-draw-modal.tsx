@@ -8,7 +8,7 @@ import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ApiError from "@/utils/api_error";
 import type { IAutoDrawResult } from "@/interfaces/games.interface";
-import { LuDices } from "react-icons/lu";
+import { LuDices, LuPlus } from "react-icons/lu";
 import DrawRevealScreen from "./draw-reveal-screen";
 
 function CreateDrawModal() {
@@ -73,11 +73,12 @@ function CreateDrawModal() {
   return (
     <>
       <Button
-        className="rounded-lg bg-transparent border text-black text-xs font-gotham-bold"
+        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
         size="md"
         onClick={() => setIsOpen(true)}
       >
-        Create Draw
+        <LuPlus className="size-4" />
+        New draw
       </Button>
 
       <Modal.Backdrop
@@ -89,15 +90,15 @@ function CreateDrawModal() {
         isKeyboardDismissDisabled={isSubmitting}
       >
         <Modal.Container placement="center" size="sm">
-          <Modal.Dialog>
+          <Modal.Dialog className="rounded-3xl">
             <Modal.Header>
-              <Modal.Icon className="bg-primary/10 text-primary">
+              <Modal.Icon className="rounded-2xl bg-primary-soft text-primary">
                 <LuDices className="w-5 h-5" />
               </Modal.Icon>
-              <Modal.Heading className="font-gotham-black">
+              <Modal.Heading className="text-lg font-semibold tracking-tight">
                 Create Draw
               </Modal.Heading>
-              <p className="text-sm text-gray-500 mb-2">
+              <p className="text-sm text-muted-foreground mb-2">
                 Select an event to run the auto-draw algorithm.
               </p>
             </Modal.Header>
@@ -112,7 +113,7 @@ function CreateDrawModal() {
                 onSelectionChange={(item) => setSelectedEventId(item.key)}
               />
               {!eventsPending && eventOptions.length === 0 && (
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-zinc-400 mt-1">
                   No drawable events available for today.
                 </p>
               )}
@@ -121,14 +122,13 @@ function CreateDrawModal() {
             <Modal.Footer>
               <Button
                 slot="close"
-                variant="danger"
-                className="text-xs font-gotham-bold"
+                className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground"
                 isDisabled={isSubmitting}
               >
                 Cancel
               </Button>
               <Button
-                className="bg-primary text-xs font-gotham-black"
+                className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                 isPending={isSubmitting}
                 isDisabled={isSubmitting || !selectedEventId}
                 onClick={handleSubmit}

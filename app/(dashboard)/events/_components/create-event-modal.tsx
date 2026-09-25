@@ -3,7 +3,7 @@
 import React from "react";
 import { Button, Form, Modal, Spinner } from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LuCalendarDays } from "react-icons/lu";
+import { LuCalendarDays, LuPlus } from "react-icons/lu";
 import EventsService from "@/api/events";
 import ApiError from "@/utils/api_error";
 import ToastService from "@/utils/toast-service";
@@ -39,27 +39,32 @@ export default function CreateEventModal() {
   return (
     <>
       <Button
-        className="rounded-lg bg-transparent border text-black text-xs font-gotham-bold"
+        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
         size="md"
         onClick={() => setIsOpen(true)}
       >
-        Create Event
+        <LuPlus className="size-4" />
+        New event
       </Button>
 
       <Modal.Backdrop
         isOpen={isOpen}
-        onOpenChange={(open) => { if (!open && !isPending) setIsOpen(false); }}
+        onOpenChange={(open) => {
+          if (!open && !isPending) setIsOpen(false);
+        }}
         isDismissable={!isPending}
         isKeyboardDismissDisabled={isPending}
       >
         <Modal.Container placement="center" size="sm">
-          <Modal.Dialog>
+          <Modal.Dialog className="rounded-3xl">
             <Modal.Header>
-              <Modal.Icon className="bg-primary/10 text-primary">
+              <Modal.Icon className="rounded-2xl bg-primary-soft text-primary">
                 <LuCalendarDays className="w-5 h-5" />
               </Modal.Icon>
-              <Modal.Heading className="font-gotham-black">Create Event</Modal.Heading>
-              <p className="text-sm text-gray-500 mb-2">
+              <Modal.Heading className="text-lg font-semibold tracking-tight">
+                Create Event
+              </Modal.Heading>
+              <p className="text-sm text-muted-foreground mb-2">
                 Create an invite-only event and issue QR tickets via SMS.
               </p>
             </Modal.Header>
@@ -86,12 +91,14 @@ export default function CreateEventModal() {
                   placeholder="e.g. La Palm Royal Beach Hotel, Accra"
                 />
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs text-gray-600">Description</label>
+                  <label className="text-xs text-muted-foreground">
+                    Description
+                  </label>
                   <textarea
                     name="description"
                     placeholder="Optional event description"
                     rows={2}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-primary resize-none"
+                    className="w-full border border-border rounded-md px-3 py-2 text-xs focus:outline-none focus:border-primary resize-none"
                   />
                 </div>
               </Modal.Body>
@@ -103,7 +110,7 @@ export default function CreateEventModal() {
                   size="sm"
                   onClick={() => setIsOpen(false)}
                   isDisabled={isPending}
-                  className="font-gotham-bold text-xs"
+                  className="font-semibold text-xs"
                 >
                   Cancel
                 </Button>
@@ -112,7 +119,7 @@ export default function CreateEventModal() {
                   size="sm"
                   isPending={isPending}
                   isDisabled={isPending}
-                  className="bg-primary text-white font-gotham-bold text-xs"
+                  className="bg-primary text-white font-semibold text-xs"
                 >
                   {isPending ? <Spinner size="sm" color="current" /> : "Create"}
                 </Button>

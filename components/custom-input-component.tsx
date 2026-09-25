@@ -9,10 +9,7 @@ import {
   TextField,
 } from "@heroui/react";
 import React, { useCallback, useRef, useState } from "react";
-import { FaEye } from "react-icons/fa";
-import { IoMdEyeOff } from "react-icons/io";
-import { LuMail } from "react-icons/lu";
-import { RiLockPasswordLine } from "react-icons/ri";
+import { LuEye, LuEyeOff, LuLock, LuMail } from "react-icons/lu";
 
 type Props = {
   id?: string;
@@ -109,11 +106,11 @@ function CustomInputComponent({
     if (!showPreficIcon) return undefined;
 
     if (type == "email") {
-      return <LuMail className="text-gray-400" />;
+      return <LuMail className="size-4 text-zinc-400" />;
     }
 
     if (type == "password") {
-      return <RiLockPasswordLine className="text-gray-400" />;
+      return <LuLock className="size-4 text-zinc-400" />;
     }
 
     return prefixIcon;
@@ -125,14 +122,14 @@ function CustomInputComponent({
     if (type == "password") {
       return (
         <CloseButton
-          className={"mr-1 bg-transparent text-gray-400"}
+          className="mr-1 bg-transparent text-zinc-400 transition-colors hover:text-zinc-600"
           onPress={() => showPassword(!showing)}
         >
           <InputGroup.Suffix>
             {showing ? (
-              <IoMdEyeOff className="w-[12px] text-gray-400" />
+              <LuEyeOff className="size-4" />
             ) : (
-              <FaEye className="w-[12px] text-gray-400" />
+              <LuEye className="size-4" />
             )}
           </InputGroup.Suffix>
         </CloseButton>
@@ -192,7 +189,12 @@ function CustomInputComponent({
           <>
             {labelText && (
               <Label
-                className={cn("text-xs text-gray-600", showInvalidState ? "text-red!" : "")}
+                className={cn(
+                  "mb-1.5 block text-xs font-medium",
+                  showInvalidState
+                    ? "text-destructive!"
+                    : "text-muted-foreground",
+                )}
                 htmlFor={id}
               >
                 {labelText}
@@ -200,11 +202,11 @@ function CustomInputComponent({
             )}
             <InputGroup
               className={cn(
-                "bg-transparent border border-solid rounded-md transition-colors duration-200",
-                "focus-within:ring-0 focus-within:outline-none shadow-none py-1.5",
+                "bg-surface border border-solid rounded-xl px-1 py-2.5 transition-colors duration-200",
+                "focus-within:ring-0 focus-within:outline-none shadow-none",
                 showInvalidState
-                  ? "border-red! focus-within:border-red!"
-                  : "border-gray-300 focus-within:border-primary",
+                  ? "border-destructive! focus-within:border-destructive!"
+                  : "border-border focus-within:border-primary",
                 className,
               )}
             >
@@ -223,7 +225,17 @@ function CustomInputComponent({
                         const allowed = /^[0-9+\-\s()]$/;
                         if (
                           !allowed.test(e.key) &&
-                          !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab", "Home", "End"].includes(e.key) &&
+                          ![
+                            "Backspace",
+                            "Delete",
+                            "ArrowLeft",
+                            "ArrowRight",
+                            "ArrowUp",
+                            "ArrowDown",
+                            "Tab",
+                            "Home",
+                            "End",
+                          ].includes(e.key) &&
                           !e.metaKey &&
                           !e.ctrlKey
                         ) {
@@ -245,10 +257,11 @@ function CustomInputComponent({
                           el.value.slice(0, start) +
                           sanitized +
                           el.value.slice(end);
-                        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                          window.HTMLInputElement.prototype,
-                          "value",
-                        )?.set;
+                        const nativeInputValueSetter =
+                          Object.getOwnPropertyDescriptor(
+                            window.HTMLInputElement.prototype,
+                            "value",
+                          )?.set;
                         nativeInputValueSetter?.call(el, next);
                         el.dispatchEvent(new Event("input", { bubbles: true }));
                         el.setSelectionRange(
@@ -258,13 +271,17 @@ function CustomInputComponent({
                       }
                     : undefined
                 }
-                className="placeholder:text-xs focus:outline-none focus:ring-0 shadow-none text-xs"
+                className="text-sm text-foreground placeholder:text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-0 shadow-none"
               />
               {!!endContent && endContent}
             </InputGroup>
-            {description && <Description>{description}</Description>}
+            {description && (
+              <Description className="mt-1.5 text-[11px] text-muted-foreground">
+                {description}
+              </Description>
+            )}
             {(formAssociation === "outside" || hasSubmittedParentForm) && (
-              <FieldError />
+              <FieldError className="mt-1.5 text-[11px] text-destructive" />
             )}
           </>
         );

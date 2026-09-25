@@ -1,6 +1,16 @@
 "use client";
 
-import { Avatar, Button, CloseButton, Spinner, Tabs } from "@heroui/react";
+import { Tabs } from "@heroui/react";
+import {
+  Avatar,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  IconButton,
+  StatTile,
+  StatusBadge,
+} from "@/components/ui";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
@@ -10,9 +20,9 @@ import TopUpTable from "./_components/topup-table";
 import SalesTable from "./_components/sales-table";
 import WinningsTable from "./_components/winnings-table";
 import CashoutTable from "./_components/cashout-table";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import { usePageAccess } from "@/hooks/use-page-access";
 import {
+  LuArrowLeft,
   LuBuilding2,
   LuCalendar,
   LuClock,
@@ -20,8 +30,10 @@ import {
   LuMapPin,
   LuMail,
   LuPhone,
+  LuIdCard,
   LuShieldCheck,
   LuShieldOff,
+  LuTrophy,
   LuSmartphone,
   LuTrendingUp,
   LuWallet,
@@ -41,15 +53,6 @@ function formatDate(iso: string) {
   });
 }
 
-function statusClasses(status: string) {
-  const s = status.toLowerCase();
-  if (s === "active") return "text-green-700 bg-green-50 border-green-200";
-  if (s === "inactive") return "text-red-500 bg-red-50 border-red-200";
-  if (s === "suspended")
-    return "text-orange-600 bg-orange-50 border-orange-200";
-  return "text-gray-500 bg-gray-50 border-gray-200";
-}
-
 // ─── Left sidebar row with icon ───────────────────────────────────────────────
 function InfoRow({
   icon: Icon,
@@ -63,47 +66,13 @@ function InfoRow({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className={`${iconBg} rounded-md p-1 shrink-0`}>
-        <Icon className={`w-3 h-3 ${iconColor}`} />
-      </div>
-      <span className="text-xs text-gray-600 truncate">{value}</span>
-    </div>
-  );
-}
-
-// ─── Gradient stat card ────────────────────────────────────────────────────────
-const variantMap = {
-  primary: "bg-linear-to-br from-primary to-[#5b4abf]",
-  teal: "bg-linear-to-br from-teal-500 to-teal-700",
-  orange: "bg-linear-to-br from-[#E17100] to-[#f09a20]",
-  indigo: "bg-linear-to-br from-indigo-500 to-indigo-700",
-};
-
-function MiniStatCard({
-  label,
-  value,
-  sub,
-  variant = "primary",
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  variant?: keyof typeof variantMap;
-}) {
-  return (
-    <div className={`${variantMap[variant]} rounded-lg px-4 py-4`}>
-      <span className="text-[0.6rem] font-gotham-black text-white/70 uppercase tracking-wide block">
-        {label}
+    <div className="flex items-center gap-2.5">
+      <span
+        className={`flex size-7 shrink-0 items-center justify-center rounded-lg ${iconBg}`}
+      >
+        <Icon className={`size-3.5 ${iconColor}`} />
       </span>
-      <div className="font-jura-bold text-base text-white mt-1.5 truncate">
-        {value}
-      </div>
-      {sub && (
-        <span className="text-[0.6rem] text-white/60 mt-0.5 font-gotham-bold block truncate">
-          {sub}
-        </span>
-      )}
+      <span className="truncate text-xs text-muted-foreground">{value}</span>
     </div>
   );
 }
@@ -128,7 +97,8 @@ function RetailerDetailView() {
     enabled: !!writerId,
   });
 
-  const isBlocked = profile?.status === "inactive" || profile?.status === "no_use";
+  const isBlocked =
+    profile?.status === "inactive" || profile?.status === "no_use";
 
   const { mutate: block, isPending: blocking } = useMutation({
     mutationFn: () => WritersService.blockWriter(writerId),
@@ -155,100 +125,87 @@ function RetailerDetailView() {
   });
 
   if (!writerId) {
-    return <div className="p-6 text-sm text-gray-500">Invalid writer id.</div>;
+    return (
+      <div className="px-5 py-6 text-sm text-muted-foreground lg:px-8">
+        Invalid writer id.
+      </div>
+    );
   }
 
   if (isPending || !profile) {
-    return <div className="p-6 text-sm text-gray-500">Loading writer…</div>;
+    return (
+      <div className="px-5 py-6 text-sm text-muted-foreground lg:px-8">
+        Loading writer…
+      </div>
+    );
   }
 
-  const initial = profile.name.charAt(0).toUpperCase();
-
   return (
-    <div className="px-7 py-5 pb-10 overflow-x-hidden">
+    <div className="overflow-x-hidden px-5 py-6 lg:px-8 lg:py-7">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-5 min-w-0">
-        <CloseButton
-          className="bg-transparent shrink-0"
-          onClick={() => router.back()}
-        >
-          <IoMdArrowRoundBack className="w-[25px] h-[25px] text-black" />
-        </CloseButton>
+      <div className="mb-5 flex min-w-0 items-center gap-3">
+        <IconButton label="Go back" onClick={() => router.back()}>
+          <LuArrowLeft />
+        </IconButton>
+
         {profile.photo_url ? (
-          <a href={profile.photo_url} target="_blank" rel="noopener noreferrer" className="shrink-0">
-            <Avatar size="sm" className="w-12 h-12 cursor-pointer ring-2 ring-transparent hover:ring-primary transition-all">
-              <Avatar.Image alt={initial} src={profile.photo_url} />
-              <Avatar.Fallback className="bg-primary text-xl font-gotham-bold text-white">
-                {initial}
-              </Avatar.Fallback>
-            </Avatar>
+          <a
+            href={profile.photo_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 rounded-full ring-2 ring-transparent transition-all hover:ring-primary"
+          >
+            <Avatar name={profile.name} src={profile.photo_url} size="lg" />
           </a>
         ) : (
-          <Avatar size="sm" className="w-12 h-12 shrink-0">
-            <Avatar.Fallback className="bg-primary text-xl font-gotham-bold text-white">
-              {initial}
-            </Avatar.Fallback>
-          </Avatar>
+          <Avatar name={profile.name} size="lg" gradient />
         )}
+
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="font-gotham-black text-2xl truncate min-w-0">
+          <div className="flex min-w-0 items-center gap-2">
+            <h1 className="min-w-0 truncate text-xl font-bold tracking-tight text-foreground">
               {profile.name}
-            </span>
+            </h1>
             <EditRetailerUserDrawer writerId={writerId} />
           </div>
-          <span className="text-xs text-gray-400 font-jura-bold">
-            ID: {String(profile.writer_id)}
-          </span>
+          <p className="mt-0.5 text-xs tabular-nums text-zinc-400">
+            ID {String(profile.writer_id)}
+          </p>
         </div>
 
         {/* Block / Unblock */}
         {isBlocked ? (
           <Button
+            variant="secondary"
             size="sm"
-            isDisabled={unblocking}
+            className="shrink-0 bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+            isPending={unblocking}
             onClick={() => unblock()}
-            className="shrink-0 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100"
           >
-            {unblocking ? (
-              <Spinner size="sm" color="current" />
-            ) : (
-              <LuShieldCheck className="w-3.5 h-3.5" />
-            )}
-            <span className="text-xs font-gotham-bold">
-              {unblocking ? "Unblocking…" : "Unblock Account"}
-            </span>
+            {!unblocking && <LuShieldCheck />}
+            {unblocking ? "Unblocking…" : "Unblock account"}
           </Button>
         ) : (
           <Button
+            variant="danger"
             size="sm"
-            isDisabled={blocking}
+            className="shrink-0"
+            isPending={blocking}
             onClick={() => block()}
-            className="shrink-0 rounded-lg bg-red-50 border border-red-200 text-red-500 hover:bg-red-100"
           >
-            {blocking ? (
-              <Spinner size="sm" color="current" />
-            ) : (
-              <LuShieldOff className="w-3.5 h-3.5" />
-            )}
-            <span className="text-xs font-gotham-bold">
-              {blocking ? "Blocking…" : "Block Account"}
-            </span>
+            {!blocking && <LuShieldOff />}
+            {blocking ? "Blocking…" : "Block account"}
           </Button>
         )}
       </div>
 
-      <div className="grid md:grid-cols-5 gap-5 items-start">
+      <div className="grid items-start gap-4 md:grid-cols-5">
         {/* ── Left sidebar ── */}
-        <div className="col-span-5 md:col-span-1 space-y-4">
+        <div className="col-span-5 space-y-4 md:col-span-1">
           {/* Contact */}
-          <div className="border rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b bg-gray-50">
-              <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
-                Contact
-              </span>
-            </div>
-            <div className="px-4 py-3 flex flex-col gap-2.5">
+          <Card>
+            <CardHeader icon={<LuPhone />} title="Contact" />
+            <CardBody className="flex flex-col gap-3">
               <InfoRow
                 icon={LuBuilding2}
                 iconBg="bg-indigo-50"
@@ -257,8 +214,8 @@ function RetailerDetailView() {
               />
               <InfoRow
                 icon={LuPhone}
-                iconBg="bg-green-100"
-                iconColor="text-green-600"
+                iconBg="bg-emerald-100"
+                iconColor="text-emerald-600"
                 value={profile.phone}
               />
               <InfoRow
@@ -269,113 +226,70 @@ function RetailerDetailView() {
               />
               <InfoRow
                 icon={LuMapPin}
-                iconBg="bg-red-100"
-                iconColor="text-red-400"
+                iconBg="bg-rose-100"
+                iconColor="text-rose-400"
                 value={profile.location_address || "—"}
               />
               <InfoRow
                 icon={LuCalendar}
-                iconBg="bg-gray-100"
-                iconColor="text-gray-500"
+                iconBg="bg-subtle"
+                iconColor="text-muted-foreground"
                 value={`DOB: ${profile.date_of_birth || "—"}`}
               />
               <InfoRow
                 icon={LuHash}
-                iconBg="bg-gray-100"
-                iconColor="text-gray-400"
+                iconBg="bg-subtle"
+                iconColor="text-zinc-400"
                 value={`Joined ${formatDate(profile.created_at)}`}
               />
-            </div>
-          </div>
+            </CardBody>
+          </Card>
 
           {/* Status & performance */}
-          <div className="border rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b bg-gray-50">
-              <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
-                Status
-              </span>
-            </div>
-            <div className="px-4 py-3 flex flex-col gap-2.5">
-              <div>
-                <span
-                  className={`text-[0.65rem] font-gotham-black px-2 py-0.5 rounded-full border capitalize ${statusClasses(profile.status)}`}
-                >
-                  {profile.status}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="bg-gray-100 rounded-md p-1">
-                    <LuClock className="w-3 h-3 text-gray-500" />
-                  </div>
-                  <span className="text-xs font-gotham-bold text-gray-600">
-                    Days on Task
-                  </span>
-                </div>
-                <span className="text-xs font-jura-bold">
-                  {profile.days_on_task}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="bg-gray-100 rounded-md p-1">
-                    <LuTrendingUp className="w-3 h-3 text-gray-500" />
-                  </div>
-                  <span className="text-xs font-gotham-bold text-gray-600">
-                    LT Avg. Sale
-                  </span>
-                </div>
-                <span className="text-xs font-jura-bold">
-                  {formatGhs(parseFloat(profile.lifetime_avg_sale) || 0)}
-                </span>
-              </div>
-            </div>
-          </div>
+          <Card>
+            <CardHeader
+              icon={<LuTrendingUp />}
+              title="Status"
+              action={<StatusBadge status={profile.status} />}
+            />
+            <CardBody className="flex flex-col gap-3">
+              <MetaRow
+                icon={LuClock}
+                label="Days on task"
+                value={String(profile.days_on_task)}
+              />
+              <MetaRow
+                icon={LuTrendingUp}
+                label="LT avg. sale"
+                value={formatGhs(parseFloat(profile.lifetime_avg_sale) || 0)}
+              />
+            </CardBody>
+          </Card>
 
           {/* Wallets */}
-          <div className="border rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b bg-gray-50">
-              <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
-                Wallets
-              </span>
-            </div>
-            <div className="px-4 py-3 flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="bg-orange-100 rounded-md p-1">
-                    <LuSmartphone className="w-3 h-3 text-orange-500" />
-                  </div>
-                  <span className="text-xs font-gotham-bold text-gray-600">
-                    Airtime
-                  </span>
-                </div>
-                <span className="text-xs font-jura-bold">
-                  USD {profile.airtime_balance}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="bg-primary/10 rounded-md p-1">
-                    <LuWallet className="w-3 h-3 text-primary" />
-                  </div>
-                  <span className="text-xs font-gotham-bold text-gray-600">
-                    Claims
-                  </span>
-                </div>
-                <span className="text-xs font-jura-bold">
-                  USD {profile.claims_balance}
-                </span>
-              </div>
-            </div>
-          </div>
+          <Card>
+            <CardHeader icon={<LuWallet />} title="Wallets" />
+            <CardBody className="flex flex-col gap-3">
+              <MetaRow
+                icon={LuSmartphone}
+                iconBg="bg-amber-50"
+                iconColor="text-amber-500"
+                label="Airtime"
+                value={`USD ${profile.airtime_balance}`}
+              />
+              <MetaRow
+                icon={LuWallet}
+                iconBg="bg-primary-soft"
+                iconColor="text-primary"
+                label="Claims"
+                value={`USD ${profile.claims_balance}`}
+              />
+            </CardBody>
+          </Card>
 
           {/* ID Card */}
-          <div className="border rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b bg-gray-50">
-              <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
-                ID Card
-              </span>
-            </div>
+          <Card>
+            <CardHeader icon={<LuIdCard />} title="ID card" />
             <div className="p-3">
               {profile.id_card_image_url ? (
                 <a
@@ -384,53 +298,62 @@ function RetailerDetailView() {
                   rel="noopener noreferrer"
                   className="block"
                 >
-                  <div className="relative w-full rounded-lg overflow-hidden" style={{ aspectRatio: "16/10" }}>
+                  <div
+                    className="relative w-full overflow-hidden rounded-xl"
+                    style={{ aspectRatio: "16/10" }}
+                  >
                     <Image
                       src={profile.id_card_image_url}
-                      alt="ID Card"
+                      alt="ID card"
                       fill
-                      className="object-cover hover:scale-105 transition-transform duration-200"
+                      className="object-cover transition-transform duration-200 hover:scale-105"
                     />
                   </div>
-                  <p className="text-[0.6rem] text-gray-400 text-center mt-1.5">
+                  <p className="mt-2 text-center text-[11px] text-zinc-400">
                     Click to view full size
                   </p>
                 </a>
               ) : (
-                <div className="flex items-center justify-center py-6 text-gray-300">
-                  <span className="text-xs">No ID card uploaded</span>
+                <div className="flex items-center justify-center py-8">
+                  <span className="text-xs text-muted-foreground">
+                    No ID card uploaded
+                  </span>
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* ── Right column ── */}
-        <div className="col-span-5 md:col-span-4 flex flex-col gap-4 min-w-0">
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <MiniStatCard
-              label="YTD Sales"
+        <div className="col-span-5 flex min-w-0 flex-col gap-4 md:col-span-4">
+          {/* Stat tiles */}
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <StatTile
+              label="YTD sales"
               value={formatGhs(parseFloat(String(profile.ytd_sales)) || 0)}
-              sub={`This month: ${formatGhs(parseFloat(String(profile.month_sales)) || 0)}`}
-              variant="primary"
+              hint={`This month ${formatGhs(parseFloat(String(profile.month_sales)) || 0)}`}
+              icon={<LuTrendingUp />}
+              iconClassName="bg-primary-soft text-primary"
             />
-            <MiniStatCard
-              label="YTD Top-Ups"
+            <StatTile
+              label="YTD top-ups"
               value={formatGhs(parseFloat(String(profile.ytd_topups)) || 0)}
-              sub={`This month: ${formatGhs(parseFloat(String(profile.month_topups)) || 0)}`}
-              variant="teal"
+              hint={`This month ${formatGhs(parseFloat(String(profile.month_topups)) || 0)}`}
+              icon={<LuWallet />}
+              iconClassName="bg-emerald-50 text-emerald-500"
             />
-            <MiniStatCard
-              label="YTD Winnings"
+            <StatTile
+              label="YTD winnings"
               value={formatGhs(parseFloat(String(profile.ytd_winnings)) || 0)}
-              variant="orange"
+              icon={<LuTrophy />}
+              iconClassName="bg-amber-50 text-amber-500"
             />
-            <MiniStatCard
+            <StatTile
               label="Tier"
               value={profile.tier}
-              sub={`Avg Top-Up: ${formatGhs(parseFloat(String(profile.avg_topup)) || 0)}`}
-              variant="indigo"
+              hint={`Avg top-up ${formatGhs(parseFloat(String(profile.avg_topup)) || 0)}`}
+              icon={<LuHash />}
+              iconClassName="bg-blue-50 text-blue-500"
             />
           </div>
 
@@ -445,37 +368,37 @@ function RetailerDetailView() {
                   {canSeeTopUps && (
                     <Tabs.Tab
                       id="topups"
-                      className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
+                      className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
                     >
                       Top-ups
-                      <Tabs.Indicator className="bg-black" />
+                      <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                     </Tabs.Tab>
                   )}
                   {canSeeSales && (
                     <Tabs.Tab
                       id="sales"
-                      className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
+                      className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
                     >
                       Sales
-                      <Tabs.Indicator className="bg-black" />
+                      <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                     </Tabs.Tab>
                   )}
                   {canSeeWinnings && (
                     <Tabs.Tab
                       id="winnings"
-                      className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
+                      className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
                     >
                       Winnings
-                      <Tabs.Indicator className="bg-black" />
+                      <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                     </Tabs.Tab>
                   )}
                   {canSeeCashouts && (
                     <Tabs.Tab
                       id="cashout"
-                      className="text-xs font-gotham-black whitespace-nowrap w-auto! flex-none!"
+                      className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
                     >
                       Cashout
-                      <Tabs.Indicator className="bg-black" />
+                      <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
                     </Tabs.Tab>
                   )}
                 </Tabs.List>
@@ -522,3 +445,33 @@ function RetailerDetailView() {
 }
 
 export default RetailerDetailView;
+
+function MetaRow({
+  icon: Icon,
+  label,
+  value,
+  iconBg = "bg-subtle",
+  iconColor = "text-zinc-400",
+}: {
+  icon: ElementType;
+  label: string;
+  value: string;
+  iconBg?: string;
+  iconColor?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 items-center gap-2.5">
+        <span
+          className={`flex size-7 shrink-0 items-center justify-center rounded-lg ${iconBg}`}
+        >
+          <Icon className={`size-3.5 ${iconColor}`} />
+        </span>
+        <span className="truncate text-xs text-muted-foreground">{label}</span>
+      </div>
+      <span className="shrink-0 text-xs font-semibold tabular-nums text-foreground">
+        {value}
+      </span>
+    </div>
+  );
+}

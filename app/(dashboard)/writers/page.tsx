@@ -1,6 +1,7 @@
 "use client";
 
-import { Avatar, Button, Popover } from "@heroui/react";
+import { Popover } from "@heroui/react";
+import { Avatar, Button, PageHeader, StatusBadge } from "@/components/ui";
 import { Suspense } from "react";
 import FilterRetailers from "./_components/filter-retailers";
 import CustomTable, { TableRow } from "@/components/custom-table";
@@ -30,14 +31,6 @@ function formatDate(iso: string) {
     month: "long",
     year: "numeric",
   });
-}
-
-function statusClass(status: string) {
-  const s = status.toLowerCase();
-  if (s === "active") return "border-green-600 text-green-700";
-  if (s === "no_use" || s === "no use")
-    return "border-[#E74C3D] text-[#E74C3D]";
-  return "border-gray-400 text-gray-600";
 }
 
 function WriterActionMenu({
@@ -89,13 +82,13 @@ function WriterActionMenu({
             e.stopPropagation();
             setOpen((v) => !v);
           }}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-gray-600"
+          className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground"
         >
-          <span className="text-[10px] font-gotham-bold">Actions</span>
-          <LuChevronDown className="w-3 h-3" />
+          <span className="text-[11px] font-semibold">Actions</span>
+          <LuChevronDown className="size-3" />
         </button>
       </Popover.Trigger>
-      <Popover.Content className="rounded-lg shadow-lg border border-gray-100 w-40 p-1">
+      <Popover.Content className="w-44 rounded-2xl border border-border-subtle p-1.5 shadow-lg shadow-zinc-200/60">
         <Popover.Dialog className="p-0">
           {isBlocked ? (
             <button
@@ -104,9 +97,9 @@ function WriterActionMenu({
                 e.stopPropagation();
                 unblock();
               }}
-              className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-md text-xs text-green-600 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50"
+              className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-50 disabled:opacity-50"
             >
-              <LuShieldCheck className="w-3.5 h-3.5 shrink-0" />
+              <LuShieldCheck className="size-3.5 shrink-0" />
               {unblocking ? "Unblocking…" : "Unblock Writer"}
             </button>
           ) : (
@@ -116,9 +109,9 @@ function WriterActionMenu({
                 e.stopPropagation();
                 block();
               }}
-              className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-md text-xs text-red-500 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
+              className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-rose-500 transition-colors hover:bg-rose-50 disabled:opacity-50"
             >
-              <LuShieldOff className="w-3.5 h-3.5 shrink-0" />
+              <LuShieldOff className="size-3.5 shrink-0" />
               {blocking ? "Blocking…" : "Block Writer"}
             </button>
           )}
@@ -183,50 +176,36 @@ function RetailersView() {
     : { pageNumber: 1, pageSize: currentPageSize, totalCount: 0 };
 
   const tableData: TableRow[] = rows.map((w) => {
-    const initial = w.name
-      .split(" ")
-      .map((i) => i.charAt(0))
-      .join("");
-
     const ytdSales = parseFloat(w.ytd_sales);
     const ytdTop = parseFloat(w.ytd_topups);
     return {
-      id: <span className="text-xs font-jura-medium">{w.writer_id}</span>,
+      id: (
+        <span className="font-medium tabular-nums text-foreground">
+          {w.writer_id}
+        </span>
+      ),
       name: (
-        <div className="text-xs flex items-center gap-x-2">
-          <Avatar size="sm">
-            <Avatar.Image alt={initial} src={w.photo_url ?? ""} />
-            <Avatar.Fallback className="bg-primary text-sm font-gotham-bold text-white">
-              {initial}
-            </Avatar.Fallback>
-          </Avatar>
-          {w.name}
+        <div className="flex items-center gap-2.5">
+          <Avatar name={w.name} src={w.photo_url ?? undefined} size="sm" />
+          <span className="truncate font-medium text-foreground">{w.name}</span>
         </div>
       ),
-      contact: <span className="text-sm font-jura-bold">{w.phone}</span>,
+      contact: <span className="tabular-nums">{w.phone}</span>,
       signUpDate: formatDate(w.created_at),
-      dop: <span className="text-sm font-jura-bold">{w.days_on_task}</span>,
-      dot: <span className="text-sm font-jura-bold">{w.days_on_task}</span>,
+      dop: <span className="tabular-nums">{w.days_on_task}</span>,
+      dot: <span className="tabular-nums">{w.days_on_task}</span>,
       ytdSales: (
-        <span className="text-sm font-jura-bold">
+        <span className="font-semibold tabular-nums text-foreground">
           {formatGhs(Number.isFinite(ytdSales) ? ytdSales : 0)}
         </span>
       ),
       ytdTopUps: (
-        <span className="text-sm font-jura-bold">
+        <span className="font-semibold tabular-nums text-foreground">
           {formatGhs(Number.isFinite(ytdTop) ? ytdTop : 0)}
         </span>
       ),
       lastTransDate: w.last_transaction ? formatDate(w.last_transaction) : "—",
-      status: (
-        <div
-          className={`rounded-sm text-white ${w.status.includes("inactive") ? "bg-red-600" : "bg-green-600"} font-medium text-center text-xs py-[2px] px-2 ${statusClass(w.status)}`}
-        >
-          <span className="text-[.6rem] capitalize">
-            {w.status.replace(/_/g, " ")}
-          </span>
-        </div>
-      ),
+      status: <StatusBadge status={w.status} />,
       actions: (
         <div onClick={(e) => e.stopPropagation()}>
           <WriterActionMenu
@@ -240,39 +219,30 @@ function RetailersView() {
   });
 
   return (
-    <div className="flex flex-col p-5 px-7 pb-10 space-y-5 h-auto sm:h-[calc(110vh-6rem)] sm:overflow-hidden">
-      <span className="text-sm sm:text-lg font-gotham-black uppercase">
-        {`Retailers & Writers (${data?.count ?? 0})`}
-      </span>
-      <div className="w-full flex justify-end">
-        <div className="space-x-2 items-center flex">
-          {/* <Button
-          className="rounded-lg bg-transparent border text-black"
-          size="md"
-          onClick={() => {
-            ToastService.info({ text: "Feature not yet available" });
-          }}
-        >
-          <AiOutlineExport className="w-3.5 h-3.5" />
-          <span className="text-xs font-gotham-bold">Export Data</span>
-        </Button> */}
-          <Button
-            size="sm"
-            onClick={() => setMapOpen(true)}
-            className="rounded-lg bg-transparent border border-gray-200 text-gray-700"
-          >
-            <LuMap className="w-3.5 h-3.5" />
-            <span className="text-xs font-gotham-bold">Show Map</span>
-          </Button>
-          <FilterRetailers onFilterTap={() => setCurrentPage(1)} />
-          {canRegister && <NewRetailerDrawer />}
-          {/* <SetCreditPromiseDrawer /> */}
-        </div>
-      </div>
+    <div className="flex h-auto flex-col gap-5 px-5 py-6 lg:px-8 lg:py-7 sm:h-full sm:overflow-hidden">
+      <PageHeader
+        className="shrink-0"
+        title="Retailers & Writers"
+        description={`${(data?.count ?? 0).toLocaleString("en-US")} registered across the network`}
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setMapOpen(true)}
+            >
+              <LuMap />
+              Show map
+            </Button>
+            <FilterRetailers onFilterTap={() => setCurrentPage(1)} />
+            {canRegister && <NewRetailerDrawer />}
+          </>
+        }
+      />
 
       <DeviceMapDrawer isOpen={mapOpen} onClose={() => setMapOpen(false)} />
 
-      <div className="h-[500px] sm:h-full sm:flex-1 sm:min-h-0 mt-2">
+      <div className="h-[500px] sm:h-full sm:min-h-0 sm:flex-1">
         <div className="h-full overflow-hidden">
           <CustomTable
             columns={[

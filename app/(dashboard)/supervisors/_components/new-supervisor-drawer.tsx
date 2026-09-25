@@ -15,8 +15,9 @@ import {
 import Image from "next/image";
 import React from "react";
 import { IoCameraOutline } from "react-icons/io5";
-import { RiAddLine, RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import ApiError from "@/utils/api_error";
+import { LuPlus } from "react-icons/lu";
 
 type Props = {
   onFilterTap?: (payload: { name: string; phoneNumber: string }) => void;
@@ -63,30 +64,30 @@ function NewLmcDrawer(payload: Props) {
   return (
     <>
       <Button
-        className="rounded-lg bg-primary text-xs font-gotham-bold"
+        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
         size="md"
         onClick={() => setDrawerOpen(true)}
       >
-        <RiAddLine />
-        New Supervisor
+        <LuPlus className="size-4" />
+        New supervisor
       </Button>
       <Drawer.Backdrop
         variant="blur"
-        className={"backdrop-blur-xs"}
+        className="backdrop-blur-sm"
         isOpen={drawerIsOpen}
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={() => setDrawerOpen(false)}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
-            <Drawer.Body className="text-black">
+            <Drawer.Body className="px-5 pb-6">
               <Form
                 onSubmit={async (e) => {
                   e.preventDefault();
@@ -124,9 +125,7 @@ function NewLmcDrawer(payload: Props) {
                 }}
               >
                 <div className="flex flex-col space-y-3">
-                  <span className="text-lg font-gotham-black">
-                    NEW SUPERVISOR
-                  </span>
+                  <span className="text-lg font-bold">NEW SUPERVISOR</span>
                   <div className="space-y-4">
                     <InputComponent />
                     <div className="w-full flex justify-center">
@@ -162,24 +161,15 @@ function NewLmcDrawer(payload: Props) {
                             }}
                             className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
                           >
-                            <RiDeleteBin6Line className="text-red-500" />
+                            <RiDeleteBin6Line className="text-rose-500" />
                           </span>
                         )}
                       </div>
                     </div>
-                    <CustomInputComponent
-                      label="First Name"
-                      className="p-0 border rounded-lg border-gray-300"
-                      name="firstName"
-                    />
-                    <CustomInputComponent
-                      label="Last Name"
-                      className="p-0 border rounded-lg border-gray-300"
-                      name="lastName"
-                    />
+                    <CustomInputComponent label="First Name" name="firstName" />
+                    <CustomInputComponent label="Last Name" name="lastName" />
                     <CustomInputComponent
                       label="Email"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="email"
                       type="email"
                       showPreficIcon={false}
@@ -188,22 +178,16 @@ function NewLmcDrawer(payload: Props) {
                     />
                     <CustomInputComponent
                       label="Phone Number"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="phoneNumber"
                       type="tel"
                     />
-                    <CustomInputComponent
-                      label="Location"
-                      className="p-0 border rounded-lg border-gray-300"
-                      name="location"
-                    />
+                    <CustomInputComponent label="Location" name="location" />
                     <CustomInputComponent
                       type="password"
                       name="password"
                       label="Password"
                       minLength={8}
                       onChange={(e) => setPasswordValue(e.target.value)}
-                      className="p-0 border rounded-lg border-gray-300"
                     />
                     <CustomInputComponent
                       type="password"
@@ -215,11 +199,10 @@ function NewLmcDrawer(payload: Props) {
                           return "Passwords do not match";
                         return null;
                       }}
-                      className="p-0 border rounded-lg border-gray-300"
                     />
                   </div>
                   <Button
-                    className="rounded-lg bg-primary w-full text-xs font-gotham-black mt-2"
+                    className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                     type="submit"
                     isDisabled={isPending}
                     isPending={isPending}

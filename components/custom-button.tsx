@@ -7,12 +7,12 @@
 //   variants: {
 //     intent: {
 //       primary: "bg-blue-500 hover:bg-blue-600 text-white",
-//       secondary: "bg-gray-200 hover:bg-gray-300",
-//       danger: "hover:bg-red-600 text-white",
+//       secondary: "bg-zinc-200 hover:bg-zinc-300",
+//       danger: "hover:bg-rose-500 text-white",
 //     },
 //     variant: {
 //       outline: "border-red",
-//       primary: "bg-red-400",
+//       primary: "bg-rose-400",
 //     },
 //     size: {
 //       small: "text-sm px-2 py-1",

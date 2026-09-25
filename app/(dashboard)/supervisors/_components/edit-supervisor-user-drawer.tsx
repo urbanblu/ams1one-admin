@@ -87,7 +87,7 @@ function EditLmcUserDrawer({
   return (
     <Drawer>
       <Button
-        className="bg-primary px-5 text-white rounded-lg text-xs font-gotham-black"
+        className="bg-primary px-5 text-white rounded-lg text-xs font-bold"
         size="sm"
         onClick={() => setDrawerOpen(true)}
       >
@@ -101,21 +101,19 @@ function EditLmcUserDrawer({
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={() => setDrawerOpen(false)}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
-            <Drawer.Body className="text-black">
+            <Drawer.Body className="px-5 pb-6">
               <Form onSubmit={handleSubmit}>
                 <div className="flex flex-col space-y-3">
-                  <span className="text-lg font-gotham-black">
-                    Edit Supervisor
-                  </span>
+                  <span className="text-lg font-bold">Edit Supervisor</span>
                   <div key={info?.name ?? "loading"} className="space-y-4">
                     <SelfieInputComponent />
                     <div className="w-full flex justify-center">
@@ -152,35 +150,32 @@ function EditLmcUserDrawer({
                             }}
                             className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
                           >
-                            <RiDeleteBin6Line className="text-red-500" />
+                            <RiDeleteBin6Line className="text-rose-500" />
                           </span>
                         )}
                       </div>
                     </div>
                     <CustomInputComponent
                       label="First Name"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="firstName"
                       defaultValue={defaultFirstName}
                       isRequired
                     />
                     <CustomInputComponent
                       label="Last Name"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="lastName"
                       defaultValue={defaultLastName}
                       isRequired
                     />
                     <CustomInputComponent
                       label="Phone Number"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="phoneNumber"
                       type="tel"
                       defaultValue={info?.phone}
                     />
                   </div>
                   <Button
-                    className="rounded-lg bg-primary w-full text-xs font-gotham-black mt-2"
+                    className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                     type="submit"
                     isDisabled={isPending}
                   >

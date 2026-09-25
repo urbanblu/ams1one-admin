@@ -5,20 +5,13 @@ import LmcService from "@/api/lmc";
 import WritersService from "@/api/writers";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import ToastService from "@/utils/toast-service";
-import {
-  Button,
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Form,
-  Spinner,
-} from "@heroui/react";
+import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
+import { Button as UiButton } from "@/components/ui";
 import { DateValue, getLocalTimeZone, today } from "@internationalized/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import React, { useState } from "react";
-import { IoCameraOutline } from "react-icons/io5";
-import { RiAddLine, RiDeleteBin6Line } from "react-icons/ri";
+import { LuCamera, LuPlus, LuTrash2 } from "react-icons/lu";
 
 type Props = {
   onFilterTap?: (payload: { name: string; phoneNumber: string }) => void;
@@ -85,31 +78,27 @@ function NewRetailerDrawer(payload: Props) {
 
   return (
     <Drawer>
-      <Button
-        className="rounded-lg bg-primary text-xs font-gotham-bold"
-        size="md"
-        onClick={() => setDrawerOpen(true)}
-      >
-        <RiAddLine />
-        New Writer
-      </Button>
+      <UiButton size="sm" onClick={() => setDrawerOpen(true)}>
+        <LuPlus />
+        New writer
+      </UiButton>
       <Drawer.Backdrop
         variant="blur"
-        className={"backdrop-blur-xs"}
+        className="backdrop-blur-sm"
         isOpen={drawerIsOpen}
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={() => setDrawerOpen(false)}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
-            <Drawer.Body className="text-black">
+            <Drawer.Body className="px-5 pb-6">
               <Form
                 onSubmit={async (e) => {
                   e.preventDefault();
@@ -164,48 +153,50 @@ function NewRetailerDrawer(payload: Props) {
                   }
                 }}
               >
-                <div className="flex flex-col space-y-3">
-                  <span className="text-lg font-gotham-black">
-                    Add New Writer
-                  </span>
-                  <div className="space-y-4 mt-4">
+                <div className="flex flex-col">
+                  <p className="text-lg font-semibold tracking-tight text-foreground">
+                    Add new writer
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Register a retailer and issue their login credentials.
+                  </p>
+                  <div className="mt-5 space-y-4">
                     <InputComponent />
                     <IdCardInputComponent />
                     {/* Profile photo */}
-                    <div className="w-full flex justify-center">
+                    <div className="flex w-full justify-center">
                       <div
-                        className={`relative rounded-full w-35 h-35 ${files.length === 0 ? "border" : ""} justify-center flex flex-col`}
+                        className={`relative flex size-32 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full transition-colors ${
+                          files.length === 0
+                            ? "border border-dashed border-border bg-surface-muted hover:border-primary"
+                            : ""
+                        }`}
                         onClick={onPhotoUploadClick}
                       >
-                        <div
-                          className={`flex flex-col items-center ${files.length === 0 ? "p-3" : ""} space-y-2`}
-                        >
-                          {files.length === 0 ? (
-                            <>
-                              <IoCameraOutline size={25} />
-                              <span className="text-center text-xs text-gray-500">
-                                Click to add photo
-                              </span>
-                            </>
-                          ) : (
-                            <Image
-                              src={URL.createObjectURL(files[0])}
-                              alt="Profile"
-                              className="w-35 h-35 object-cover rounded-full"
-                              width={0}
-                              height={0}
-                            />
-                          )}
-                        </div>
+                        {files.length === 0 ? (
+                          <div className="flex flex-col items-center gap-1.5 px-4 text-center">
+                            <LuCamera className="size-5 text-zinc-400" />
+                            <span className="text-[11px] text-muted-foreground">
+                              Click to add photo
+                            </span>
+                          </div>
+                        ) : (
+                          <Image
+                            src={URL.createObjectURL(files[0])}
+                            alt="Profile"
+                            fill
+                            className="object-cover"
+                          />
+                        )}
                         {files.length > 0 && (
                           <span
                             onClick={(e) => {
                               e.stopPropagation();
                               removeFile(0);
                             }}
-                            className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                            className="absolute right-1 top-1 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
                           >
-                            <RiDeleteBin6Line className="text-red-500" />
+                            <LuTrash2 className="size-3.5 text-rose-500" />
                           </span>
                         )}
                       </div>
@@ -213,17 +204,23 @@ function NewRetailerDrawer(payload: Props) {
 
                     {/* ID card image */}
                     <div className="flex flex-col gap-1.5">
-                      <span className="text-xs font-gotham-bold text-gray-600">ID Card Image</span>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        ID card image
+                      </span>
                       <div
-                        className="relative w-full rounded-xl border border-dashed border-gray-300 overflow-hidden cursor-pointer hover:border-primary transition-colors"
+                        className="relative w-full cursor-pointer overflow-hidden rounded-xl border border-dashed border-border bg-surface-muted transition-colors hover:border-primary"
                         style={{ minHeight: 120 }}
                         onClick={onIdCardUploadClick}
                       >
                         {idCardFiles.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center gap-2 py-8 text-gray-400">
-                            <IoCameraOutline size={28} />
-                            <span className="text-xs">Click to upload ID card image</span>
-                            <span className="text-[10px] text-gray-300">JPG, PNG — max 10 MB</span>
+                          <div className="flex flex-col items-center justify-center gap-1.5 py-8">
+                            <LuCamera className="size-6 text-zinc-400" />
+                            <span className="text-xs text-muted-foreground">
+                              Click to upload ID card image
+                            </span>
+                            <span className="text-[10px] text-zinc-400">
+                              JPG, PNG — max 10 MB
+                            </span>
                           </div>
                         ) : (
                           <Image
@@ -241,36 +238,32 @@ function NewRetailerDrawer(payload: Props) {
                               e.stopPropagation();
                               removeIdCardFile(0);
                             }}
-                            className="absolute top-2 right-2 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
+                            className="absolute right-2 top-2 z-10 flex size-7 cursor-pointer items-center justify-center rounded-full bg-surface shadow-sm"
                           >
-                            <RiDeleteBin6Line className="text-red-500" />
+                            <LuTrash2 className="size-3.5 text-rose-500" />
                           </span>
                         )}
                       </div>
                     </div>
                     <CustomInputComponent
-                      label="First Name"
-                      className="p-0 border rounded-lg border-gray-300"
+                      label="First name"
                       name="firstName"
                       isRequired
                     />
                     <CustomInputComponent
-                      label="Last Name"
-                      className="p-0 border rounded-lg border-gray-300"
+                      label="Last name"
                       name="lastName"
                       isRequired
                     />
                     <CustomInputComponent
                       label="Email"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="email"
                       showPlaceholder={false}
                       showPreficIcon={false}
                       type="email"
                     />
                     <CustomInputComponent
-                      label="Phone Number"
-                      className="p-0 border rounded-lg border-gray-300"
+                      label="Phone number"
                       name="phoneNumber"
                       type="tel"
                     />
@@ -280,19 +273,17 @@ function NewRetailerDrawer(payload: Props) {
                       label="Password"
                       minLength={8}
                       onChange={(e) => setPasswordValue(e.target.value)}
-                      className="p-0 border rounded-lg border-gray-300"
                     />
                     <CustomInputComponent
                       type="password"
                       name="confirmPassword"
-                      label="Confirm Password"
+                      label="Confirm password"
                       validate={(val) => {
                         if (!val) return "This field is required";
                         if (val !== passwordValue)
                           return "Passwords do not match";
                         return null;
                       }}
-                      className="p-0 border rounded-lg border-gray-300"
                     />
                     <CustomSelectComponent
                       label="Supervisor"
@@ -303,8 +294,8 @@ function NewRetailerDrawer(payload: Props) {
                       onSelectionChange={(val) => setSelectedLmcId(val.key)}
                     />
                     <CustomDatePicker
-                      label="Date of Birth"
-                      className="border rounded-lg border-gray-300 w-full"
+                      label="Date of birth"
+                      className="w-full"
                       maxValue={today(getLocalTimeZone()).subtract({ days: 1 })}
                       onDatePicked={(date: DateValue) =>
                         setSelectedDate(date.toString())
@@ -334,22 +325,15 @@ function NewRetailerDrawer(payload: Props) {
                       onSelectionChange={(val) => setSelectedCounty(val.key)}
                     />
                   </div>
-                  <Button
-                    className="rounded-lg bg-primary w-full text-xs font-gotham-black mt-2"
+                  <UiButton
+                    className="mt-5"
+                    size="lg"
                     type="submit"
-                    isDisabled={writerPending}
+                    fullWidth
                     isPending={writerPending}
                   >
-                    {({ isPending }) => (
-                      <>
-                        {isPending ? (
-                          <Spinner color="current" size="sm" />
-                        ) : (
-                          "Save"
-                        )}
-                      </>
-                    )}
-                  </Button>
+                    {writerPending ? "Saving…" : "Save writer"}
+                  </UiButton>
                 </div>
               </Form>
             </Drawer.Body>

@@ -5,6 +5,7 @@ import L from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useEffect } from "react";
 import type { IPOSDeviceLocation } from "@/interfaces/writers.interface";
+import ChartColors from "@/utils/chart-colors";
 
 // Fix leaflet's default marker icon broken by webpack
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)
@@ -18,9 +19,9 @@ L.Icon.Default.mergeOptions({
 
 function statusColor(writerStatus: string): string {
   const s = writerStatus.toLowerCase();
-  if (s === "active") return "#16a34a";
-  if (s === "no_use" || s === "no use") return "#dc2626";
-  return "#6b7280";
+  if (s === "active") return ChartColors.success;
+  if (s === "no_use" || s === "no use") return ChartColors.danger;
+  return ChartColors.axis;
 }
 
 function makeIcon(writerStatus: string) {
@@ -92,43 +93,45 @@ export default function DeviceMapInner({ devices, onWriterClick }: Props) {
             <div className="text-xs space-y-1.5 py-1">
               <button
                 onClick={() => onWriterClick(d.writer.id)}
-                className="font-semibold text-sm text-gray-900 underline underline-offset-2 decoration-gray-400 hover:text-primary hover:decoration-primary transition-colors text-left cursor-pointer"
+                className="font-semibold text-sm text-foreground underline underline-offset-2 decoration-gray-400 hover:text-primary hover:decoration-primary transition-colors text-left cursor-pointer"
               >
                 {d.writer.name}
               </button>
-              <p className="text-gray-500">Writer #{d.writer.writer_id}</p>
+              <p className="text-muted-foreground">
+                Writer #{d.writer.writer_id}
+              </p>
               {d.writer.phone && (
-                <p className="text-gray-600">{d.writer.phone}</p>
+                <p className="text-muted-foreground">{d.writer.phone}</p>
               )}
               <div className="flex items-center gap-1.5">
                 <span
                   className="inline-block w-2 h-2 rounded-full"
                   style={{ background: statusColor(d.writer.status) }}
                 />
-                <span className="capitalize text-gray-700">
+                <span className="capitalize text-foreground">
                   {d.writer.status.replace(/_/g, " ")}
                 </span>
               </div>
-              <hr className="border-gray-200 my-1" />
-              <p className="text-gray-600">
+              <hr className="border-border my-1" />
+              <p className="text-muted-foreground">
                 <span className="font-medium">Device Serial No:</span>{" "}
                 {d.serial_number}
               </p>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 <span className="font-medium">Type:</span>{" "}
                 <span className="uppercase">{d.device_type}</span>
               </p>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 <span className="font-medium">Status:</span>{" "}
                 <span className="capitalize">{d.status}</span>
               </p>
               {d.location_accuracy_m && (
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   <span className="font-medium">Accuracy:</span> ±
                   {d.location_accuracy_m}m
                 </p>
               )}
-              <p className="text-gray-400 text-[11px]">
+              <p className="text-zinc-400 text-[11px]">
                 Last seen {timeSince(d.location_reported_at)}
               </p>
             </div>

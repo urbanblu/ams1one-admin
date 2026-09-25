@@ -5,16 +5,12 @@ import CustomSelectComponent from "@/components/custom-select-component";
 import PayoutsService, { IAdminPayout } from "@/api/payouts";
 import ToastService from "@/utils/toast-service";
 import ApiError from "@/utils/api_error";
-import { Button, Form, Spinner } from "@heroui/react";
+import { Form } from "@heroui/react";
+import { Badge, Button, Card, PageHeader } from "@/components/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { usePageAccess } from "@/hooks/use-page-access";
-import {
-  LuBanknote,
-  LuCheck,
-  LuTriangleAlert,
-  LuClock,
-} from "react-icons/lu";
+import { LuBanknote, LuCheck, LuTriangleAlert, LuClock } from "react-icons/lu";
 
 const PROVIDERS = [
   { key: "MTN", label: "MTN Mobile Money" },
@@ -25,23 +21,23 @@ const PROVIDERS = [
 function statusBadge(status: IAdminPayout["status"]) {
   if (status === "success")
     return (
-      <span className="flex items-center gap-1.5 text-green-700 bg-green-50 border border-green-200 text-xs font-gotham-bold px-2.5 py-1 rounded-full">
-        <LuCheck className="w-3.5 h-3.5" />
+      <Badge tone="success">
+        <LuCheck className="size-3.5" />
         Success
-      </span>
+      </Badge>
     );
   if (status === "failed")
     return (
-      <span className="flex items-center gap-1.5 text-red-600 bg-red-50 border border-red-200 text-xs font-gotham-bold px-2.5 py-1 rounded-full">
-        <LuTriangleAlert className="w-3.5 h-3.5" />
+      <Badge tone="danger">
+        <LuTriangleAlert className="size-3.5" />
         Failed
-      </span>
+      </Badge>
     );
   return (
-    <span className="flex items-center gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 text-xs font-gotham-bold px-2.5 py-1 rounded-full">
-      <LuClock className="w-3.5 h-3.5" />
+    <Badge tone="warning">
+      <LuClock className="size-3.5" />
       Pending
-    </span>
+    </Badge>
   );
 }
 
@@ -91,96 +87,93 @@ function AdminPayoutsView() {
     const idempotencyKey = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
     send({
-      payload: { amount, mobile_number, mobile_provider: provider, recipient_name, description: description || undefined },
+      payload: {
+        amount,
+        mobile_number,
+        mobile_provider: provider,
+        recipient_name,
+        description: description || undefined,
+      },
       key: idempotencyKey,
     });
   };
 
   if (!canSend) {
     return (
-      <div className="flex items-center justify-center h-full p-10 text-gray-400 text-sm">
+      <div className="flex h-full items-center justify-center p-10 text-sm text-muted-foreground">
         You don&apos;t have permission to access this page.
       </div>
     );
   }
 
   return (
-    <div className="p-5 px-7 pb-10 max-w-xl">
-      <div className="flex items-center gap-2.5 mb-6">
-        <LuBanknote className="w-5 h-5 text-primary" />
-        <span className="text-lg font-gotham-black uppercase">Payments</span>
-      </div>
+    <div className="max-w-xl space-y-5 px-5 py-6 lg:px-8 lg:py-7">
+      <PageHeader
+        title="Payments"
+        description="Send a mobile money payout and track its confirmation."
+      />
 
       {lastPayout && (
-        <div className="mb-6 border rounded-xl p-4 bg-gray-50 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-gotham-black text-gray-500 uppercase tracking-wide">
-              Last Payout
+        <Card className="p-5">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+              Last payout
             </span>
             {statusBadge(lastPayout.status)}
           </div>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-gray-600">
-            <div>
-              <span className="font-gotham-bold block text-gray-400">Reference</span>
-              <span className="font-jura-bold">{lastPayout.reference}</span>
-            </div>
-            <div>
-              <span className="font-gotham-bold block text-gray-400">Amount</span>
-              <span className="font-jura-bold">USD {lastPayout.amount}</span>
-            </div>
-            <div>
-              <span className="font-gotham-bold block text-gray-400">Recipient</span>
-              <span>{lastPayout.recipient_name}</span>
-            </div>
-            <div>
-              <span className="font-gotham-bold block text-gray-400">Mobile</span>
-              <span className="font-jura-bold">{lastPayout.mobile_number}</span>
-            </div>
+          <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3">
+            <Field label="Reference" value={lastPayout.reference} mono />
+            <Field label="Amount" value={`USD ${lastPayout.amount}`} mono />
+            <Field label="Recipient" value={lastPayout.recipient_name} />
+            <Field label="Mobile" value={lastPayout.mobile_number} mono />
             {lastPayout.paystack_transfer_code && (
               <div className="col-span-2">
-                <span className="font-gotham-bold block text-gray-400">Transfer Code</span>
-                <span className="font-jura-bold">{lastPayout.paystack_transfer_code}</span>
+                <Field
+                  label="Transfer code"
+                  value={lastPayout.paystack_transfer_code}
+                  mono
+                />
               </div>
             )}
           </div>
           {lastPayout.status === "pending" && (
-            <p className="text-[11px] text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-              Status is pending — it will flip to success or failed once Paystack confirms via webhook.
+            <p className="mt-4 rounded-xl bg-amber-50 px-3 py-2.5 text-[11px] leading-relaxed text-amber-700">
+              Status is pending — it will flip to success or failed once
+              Paystack confirms via webhook.
             </p>
           )}
-        </div>
+        </Card>
       )}
 
       <Form key={formKey} onSubmit={handleSubmit}>
-        <div className="space-y-4 w-full">
+        <div className="w-full space-y-4">
           <CustomInputComponent
             label="Amount (USD)"
             name="amount"
             type="number"
-            className="p-0 border rounded-lg border-gray-300"
             showPreficIcon={false}
             showPlaceholder={false}
             isRequired
           />
           <CustomInputComponent
-            label="Mobile Number"
+            label="Mobile number"
             name="mobile_number"
             type="tel"
-            className="p-0 border rounded-lg border-gray-300"
             isRequired
           />
           <CustomSelectComponent
-            label="Mobile Provider"
+            label="Mobile provider"
             placeholder="Select provider"
             showDropDownIcon
             list={PROVIDERS}
             initialItemKey="MTN"
-            onSelectionChange={(val) => setProvider(val.key as "MTN" | "VOD" | "ATL")}
+            onSelectionChange={(val) =>
+              setProvider(val.key as "MTN" | "VOD" | "ATL")
+            }
           />
           <CustomInputComponent
-            label="Recipient Name"
+            label="Recipient name"
             name="recipient_name"
-            className="p-0 border rounded-lg border-gray-300"
             showPreficIcon={false}
             showPlaceholder={false}
             isRequired
@@ -188,17 +181,19 @@ function AdminPayoutsView() {
           <CustomInputComponent
             label="Description (optional)"
             name="description"
-            className="p-0 border rounded-lg border-gray-300"
             showPreficIcon={false}
             showPlaceholder={false}
             isRequired={false}
           />
           <Button
             type="submit"
-            isDisabled={isPending}
-            className="w-full rounded-lg bg-primary text-white text-xs font-gotham-black mt-2"
+            size="lg"
+            fullWidth
+            className="mt-2"
+            isPending={isPending}
           >
-            {isPending ? <Spinner size="sm" color="current" /> : "Send Payout"}
+            <LuBanknote />
+            {isPending ? "Sending…" : "Send payout"}
           </Button>
         </div>
       </Form>
@@ -207,3 +202,24 @@ function AdminPayoutsView() {
 }
 
 export default AdminPayoutsView;
+
+const Field = ({
+  label,
+  value,
+  mono,
+}: {
+  label: string;
+  value: React.ReactNode;
+  mono?: boolean;
+}) => (
+  <div className="min-w-0">
+    <p className="text-[11px] text-zinc-400">{label}</p>
+    <p
+      className={`mt-0.5 truncate text-sm font-medium text-foreground ${
+        mono ? "tabular-nums" : ""
+      }`}
+    >
+      {value}
+    </p>
+  </div>
+);

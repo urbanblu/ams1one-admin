@@ -3,14 +3,16 @@
 import EmptyImage from "@/public/images/new/empty-page.jpg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui";
+import { LuArrowRight } from "react-icons/lu";
 
 export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-white px-6">
-      <div className="flex flex-col items-center text-center max-w-sm">
-        <div className="relative w-64 h-64">
+    <div className="flex h-screen w-full items-center justify-center bg-background px-6">
+      <div className="flex max-w-sm flex-col items-center text-center">
+        <div className="relative h-56 w-56">
           <Image
             src={EmptyImage}
             alt="Page not found"
@@ -19,19 +21,22 @@ export default function NotFound() {
           />
         </div>
 
-        <h1 className="mt-4 text-2xl font-gotham-black text-gray-800">
+        <h1 className="mt-4 text-2xl font-bold tracking-tight text-foreground">
           Page not found
         </h1>
-        <p className="mt-2 text-sm font-gotham-regular text-gray-400 leading-relaxed">
-          The page you&apos;re looking for doesn&apos;t exist or may have been moved.
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          The page you&apos;re looking for doesn&apos;t exist or may have been
+          moved.
         </p>
 
-        <button
+        <Button
+          size="lg"
+          className="mt-8"
           onClick={() => router.push("/sales")}
-          className="mt-8 bg-linear-to-br from-primary to-[#5b4abf] text-white text-sm font-gotham-bold px-8 py-3 rounded-lg transition-opacity hover:opacity-90 cursor-pointer"
         >
           Go to Sales
-        </button>
+          <LuArrowRight />
+        </Button>
       </div>
     </div>
   );

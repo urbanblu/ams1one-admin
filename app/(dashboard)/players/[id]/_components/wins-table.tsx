@@ -8,10 +8,10 @@ import { formatGhs } from "@/utils/currency";
 
 function winStatusClass(status: string) {
   const s = status.toLowerCase();
-  if (s === "claimed") return "border-green-600 text-green-700";
+  if (s === "claimed") return "border-emerald-300 text-emerald-600";
   if (s === "pending") return "border-orange-500 text-orange-600";
-  if (s === "expired") return "border-red-400 text-red-500";
-  return "border-gray-400 text-gray-500";
+  if (s === "expired") return "border-rose-300 text-rose-500";
+  return "border-zinc-400 text-muted-foreground";
 }
 
 function WinsTable({ game, playerId }: { game: PlayerGame; playerId: string }) {
@@ -30,7 +30,11 @@ function WinsTable({ game, playerId }: { game: PlayerGame; playerId: string }) {
 
   const rows = data?.results ?? [];
   const pagination = data
-    ? { pageNumber: currentPage, pageSize: currentPageSize, totalCount: data.count }
+    ? {
+        pageNumber: currentPage,
+        pageSize: currentPageSize,
+        totalCount: data.count,
+      }
     : { pageNumber: 1, pageSize: currentPageSize, totalCount: 0 };
 
   function fmtDate(iso: string | null) {
@@ -38,7 +42,11 @@ function WinsTable({ game, playerId }: { game: PlayerGame; playerId: string }) {
     const d = new Date(iso);
     return Number.isNaN(d.getTime())
       ? "—"
-      : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      : d.toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
   }
 
   return (
@@ -53,7 +61,7 @@ function WinsTable({ game, playerId }: { game: PlayerGame; playerId: string }) {
         ]}
         data={rows.map((r) => ({
           winAmount: (
-            <span className="text-sm font-jura-bold text-green-700">
+            <span className="text-sm font-semibold tabular-nums text-emerald-600">
               {formatGhs(parseFloat(r.win_amount))}
             </span>
           ),
@@ -71,7 +79,10 @@ function WinsTable({ game, playerId }: { game: PlayerGame; playerId: string }) {
         pagination={pagination}
         pageSize={currentPageSize}
         onPageChange={setCurrentPage}
-        onPageSizeChange={(s) => { setCurrentPageSize(s); setCurrentPage(1); }}
+        onPageSizeChange={(s) => {
+          setCurrentPageSize(s);
+          setCurrentPage(1);
+        }}
         onRowClick={() => {}}
         onSort={() => {}}
         loading={isPending}

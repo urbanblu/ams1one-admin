@@ -54,6 +54,21 @@ api/                    # Service classes (one per domain)
   index.ts              # Axios instance (base URL, auth interceptors, token refresh)
 
 components/             # Shared UI components
+  ui/                   # Design-system primitives — see "Design System" below
+    index.ts            # Barrel export; always import from "@/components/ui"
+    card.tsx            # Card, CardHeader, CardBody, CardFooter
+    metric-card.tsx     # MetricCard — headline figure + breakdown rows
+    stat-tile.tsx       # StatTile — compact KPI tile
+    hero-panel.tsx      # HeroPanel, HeroStat — brand gradient panel
+    badge.tsx           # Badge, StatusBadge, StatusDot, toneForStatus
+    avatar.tsx          # Avatar (initials / photo / status dot)
+    button.tsx          # Button, IconButton
+    segmented-control.tsx
+    search-input.tsx
+    number-ball.tsx     # NumberBall, NumberBallRow — lottery numbers
+    page-header.tsx     # PageHeader, PageShell
+    empty-state.tsx / query-state.tsx / skeleton.tsx
+    drawer-chrome.tsx   # DrawerTitleBar, drawerDialogClass
   custom-input-component.tsx
   custom-select-component.tsx
   custom-table.tsx
@@ -110,6 +125,60 @@ utils/
 - To pre-fill a form after async data loads, wrap inputs in a `<div key={someUniqueLoadedValue}>` — this forces a re-render with new `defaultValues` when data arrives
 - For `type="tel"` inputs, only phone characters (`0-9 + - space ( )`) are accepted; paste is sanitized
 
+## Design System
+
+The UI follows the **Ams1one Supervisor platform** design language
+(`urbanblu/ams1one_supervisor`). Tokens live in `app/globals.css`; never
+hardcode a hex value in a component.
+
+### Tokens
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--background` | `#f7f8fa` | page canvas (`bg-background`) |
+| `--surface` | `#ffffff` | cards, drawers, tables (`bg-surface`) |
+| `--subtle` | `#f4f4f5` | hover / track fills (`bg-subtle`) |
+| `--foreground` | `#171717` | primary text |
+| `--muted-foreground` | `#71717a` | secondary text |
+| `--primary` | `#9387eb` | brand violet |
+| `--primary-soft` | `#f1effd` | tinted chips, active nav |
+| `--brand-gradient` | `135deg #a99df0 → #9387eb → #7d6fe5` | `bg-brand-gradient` |
+| `--border-subtle` | `#f1f1f3` | card hairlines |
+| `--border` | `#e4e4e7` | inputs, dividers |
+
+`--muted` is **also read by `@heroui/styles`** for its own secondary text, so it
+must stay a foreground colour — use `bg-subtle` for tinted surfaces, never
+`bg-muted`. The `:root` block also re-points HeroUI's internal `--accent`,
+`--danger`, `--success`, `--segment` and `--default` at these tokens so HeroUI
+widgets inherit the brand automatically.
+
+Custom utilities: `bg-brand-gradient`, `text-brand-gradient`, `bg-dot-grid`,
+`animate-slide-up`, `animate-fade-in`, `animate-rise-in`.
+
+Chart colours live in `utils/chart-colors.ts` (Recharts needs literals).
+
+### Visual language
+
+- **Surfaces:** flat white, `rounded-2xl`, `border border-border-subtle`, no
+  shadow. Drawers and hero panels use `rounded-3xl`.
+- **Section labels:** `text-[11px] font-semibold uppercase tracking-wider text-zinc-400`.
+- **Figures:** `font-bold tracking-tight tabular-nums`; always `tabular-nums` for numbers.
+- **Icon chips:** `size-9 rounded-xl` with a 50-weight tint and a 500-weight
+  icon (`bg-amber-50 text-amber-500`), icons at `size-4`.
+- **Rows:** `divide-y divide-border-subtle`, `hover:bg-subtle`.
+- **Semantic colours:** emerald = success/active, amber = pending/warning,
+  rose = failed/inactive, blue = info, violet = brand. Use `StatusBadge` rather
+  than hand-rolling status pills.
+- **Icons:** `react-icons/lu` (Lucide) only, sized with `size-*`.
+- Page shells: `px-5 py-6 lg:px-8 lg:py-7` with `gap-5`, opened by `<PageHeader>`.
+
+### Tabs
+
+`Tabs.Indicator` from HeroUI mis-positions itself when the initially selected
+tab is **not the first one** (React Aria computes a shared-element offset that
+never settles). For any tab bar whose default is not the first tab, use
+`<SegmentedControl>` instead — it is plain state, no measurement.
+
 ## Custom Components
 
 ### `CustomInputComponent`
@@ -130,6 +199,11 @@ Props: `label`, `name`, `type`, `defaultValue`, `isRequired`, `className`, `onCh
 - `data`: `TableRow[]` where each key matches a column key
 - `pagination`: `{ pageNumber, pageSize, totalCount }`
 - Column keys must be unique — duplicate keys cause React rendering errors
+- Renders as a white `rounded-2xl` card: header `bg-surface-muted` with
+  `text-[11px] uppercase tracking-wider text-zinc-400`, body cells `px-5 py-3.5`,
+  rows `hover:bg-subtle`. Cell content supplies its own emphasis — wrap the
+  primary column in `font-medium text-foreground` and numbers in
+  `font-semibold tabular-nums text-foreground`.
 
 ### `CustomDatePicker`
 
@@ -144,7 +218,9 @@ Returns: `{ files, onClick, removeFile, clearFiles, InputComponent }`
 
 ## Drawers
 
-Pattern used throughout the app:
+Use `drawerDialogClass` on `Drawer.Dialog` and `DrawerTitleBar` (both from
+`@/components/ui`) so every drawer shares the same chrome. Pattern used
+throughout the app:
 
 ```tsx
 const [drawerIsOpen, setDrawerOpen] = React.useState(false);

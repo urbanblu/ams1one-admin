@@ -1,8 +1,9 @@
 "use client";
 
 import CustomInputComponent from "@/components/custom-input-component";
+import { Button } from "@/components/ui";
 import ToastService from "@/utils/toast-service";
-import { Button, Form, Spinner } from "@heroui/react";
+import { Form } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
@@ -10,6 +11,13 @@ import AuthService from "@/api/auth";
 import useAuth from "@/stores/auth.store";
 import { getFirstAccessibleHref } from "@/utils/navigation";
 import { useEffect } from "react";
+import { LuChartNoAxesColumn, LuShieldCheck, LuZap } from "react-icons/lu";
+
+const HIGHLIGHTS = [
+  { icon: LuChartNoAxesColumn, text: "Live sales and draw performance" },
+  { icon: LuZap, text: "Approve payouts and top-ups in seconds" },
+  { icon: LuShieldCheck, text: "Dual-approval controls on every draw" },
+];
 
 function LoginView() {
   const router = useRouter();
@@ -55,36 +63,60 @@ function LoginView() {
   const isPending = loginRequest.isPending || profileRequest.isPending;
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen bg-background">
       {/* Left panel — brand */}
-      <div className="hidden lg:flex lg:w-[45%] bg-primary flex-col items-center justify-center p-12 relative overflow-hidden">
-        {/* Subtle decorative circles */}
-        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -right-16 w-96 h-96 rounded-full bg-white/5" />
-        <div className="absolute top-1/2 -right-12 w-48 h-48 rounded-full bg-white/5" />
+      <div className="relative hidden w-[46%] flex-col justify-between overflow-hidden bg-brand-gradient p-12 lg:flex">
+        {/* Soft highlights + dot grid, matching the hero panels in-app */}
+        <div className="pointer-events-none absolute -top-24 -right-20 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.07]" />
 
-        <div className="relative z-10 flex flex-col items-center gap-6">
+        {/* The mark is a violet gradient built for light surfaces, so it sits
+            on a white plate rather than directly on the brand gradient. */}
+        <div className="relative w-fit rounded-2xl bg-white/95 px-6 py-4">
           <Image
             src="/images/new/logo.png"
-            alt="logo"
-            width={200}
-            height={80}
+            alt="Ams1one"
+            width={132}
+            height={52}
             className="object-contain"
+            priority
           />
-          <p className="text-white/70 text-sm text-center max-w-xs leading-relaxed">
-            Manage your operations, track performance, and grow your business.
-          </p>
         </div>
+
+        <div className="relative max-w-sm">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/50">
+            Admin Console
+          </p>
+          <h2 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-white">
+            Everything across the network, in one place.
+          </h2>
+
+          <div className="mt-8 space-y-3.5">
+            {HIGHLIGHTS.map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-3">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-white/20">
+                  <Icon className="size-3.5 text-white" />
+                </span>
+                <span className="text-sm text-white/75">{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="relative text-[11px] text-white/60">
+          © {new Date().getFullYear()} Ams1one. All rights reserved.
+        </p>
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
+      <div className="flex flex-1 items-center justify-center bg-surface px-6 py-12">
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
-          <div className="flex justify-center mb-8 lg:hidden">
+          <div className="mb-8 flex justify-center lg:hidden">
             <Image
               src="/images/new/icon.png"
-              alt="icon"
+              alt="Ams1one"
               width={56}
               height={56}
               className="object-contain"
@@ -92,11 +124,11 @@ function LoginView() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Welcome back
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Sign in to your admin account
+            <p className="mt-1 text-sm text-muted-foreground">
+              Sign in to your admin account to continue.
             </p>
           </div>
 
@@ -110,24 +142,39 @@ function LoginView() {
               });
             }}
           >
-            <div className="w-full space-y-4 mb-6">
-              <CustomInputComponent type="email" name="email" />
-              <CustomInputComponent type="password" name="password" />
+            <div className="mb-6 w-full space-y-4">
+              <CustomInputComponent type="email" name="email" isRequired />
+              <CustomInputComponent
+                type="password"
+                name="password"
+                isRequired
+              />
             </div>
 
             <Button
-              isPending={isPending}
-              className="w-full bg-primary hover:bg-primary-hover text-white rounded-lg py-6 text-sm font-semibold transition-colors duration-200 cursor-pointer"
               type="submit"
+              size="lg"
+              fullWidth
+              isPending={isPending}
+              className="relative overflow-hidden"
             >
-              {({ isPending }) => (
-                <span className="flex items-center gap-2">
-                  {isPending && <Spinner color="current" size="sm" />}
-                  {isPending ? "Signing in…" : "Sign In"}
-                </span>
-              )}
+              <span className="relative z-10">
+                {isPending ? "Signing in…" : "Sign in"}
+              </span>
+              {/* Shine sweep */}
+              <span
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%)",
+                }}
+              />
             </Button>
           </Form>
+
+          <p className="mt-8 text-center text-[11px] text-zinc-400 lg:hidden">
+            © {new Date().getFullYear()} Ams1one
+          </p>
         </div>
       </div>
     </div>

@@ -89,14 +89,28 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
   // Split profile.name as fallback for first/last when detail hasn't loaded yet.
   const profileNameParts = writerProfile?.name.trim().split(/\s+/) ?? [];
   const merged = {
-    first_name: writerDetail?.first_name || profileNameParts.slice(0, -1).join(" ") || profileNameParts[0] || "",
-    last_name: writerDetail?.last_name || (profileNameParts.length > 1 ? profileNameParts[profileNameParts.length - 1] : "") || "",
+    first_name:
+      writerDetail?.first_name ||
+      profileNameParts.slice(0, -1).join(" ") ||
+      profileNameParts[0] ||
+      "",
+    last_name:
+      writerDetail?.last_name ||
+      (profileNameParts.length > 1
+        ? profileNameParts[profileNameParts.length - 1]
+        : "") ||
+      "",
     email: writerDetail?.email ?? writerProfile?.email ?? "",
     phone: writerDetail?.phone ?? writerProfile?.phone ?? "",
     photo_url: writerDetail?.photo_url ?? writerProfile?.photo_url ?? null,
-    id_card_image_url: writerDetail?.id_card_image_url ?? writerProfile?.id_card_image_url ?? null,
-    location_address: writerDetail?.location_address ?? writerProfile?.location_address ?? "",
-    date_of_birth: writerDetail?.date_of_birth ?? writerProfile?.date_of_birth ?? "",
+    id_card_image_url:
+      writerDetail?.id_card_image_url ??
+      writerProfile?.id_card_image_url ??
+      null,
+    location_address:
+      writerDetail?.location_address ?? writerProfile?.location_address ?? "",
+    date_of_birth:
+      writerDetail?.date_of_birth ?? writerProfile?.date_of_birth ?? "",
     supervisor_id: writerDetail?.supervisor_id ?? "",
   };
 
@@ -114,18 +128,26 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
       WritersService.editWriter(writerId, payload),
     onSuccess: async () => {
       ToastService.success({ text: "Retailer updated successfully" });
-      await queryClient.invalidateQueries({ queryKey: ["writers", "profile", writerId] });
-      await queryClient.invalidateQueries({ queryKey: ["writers", writerId, "detail"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["writers", "profile", writerId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["writers", writerId, "detail"],
+      });
       clearSelfie();
       clearIdCard();
       setDrawerOpen(false);
     },
     onError: (error: ApiError) => {
-      ToastService.error({ text: error?.message ?? "Failed to update retailer" });
+      ToastService.error({
+        text: error?.message ?? "Failed to update retailer",
+      });
     },
   });
 
-  const handleSubmit: React.ComponentProps<typeof Form>["onSubmit"] = async (e) => {
+  const handleSubmit: React.ComponentProps<typeof Form>["onSubmit"] = async (
+    e,
+  ) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
     await editWriter({
@@ -144,7 +166,11 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
   const existingDateValue = (() => {
     const dob = merged.date_of_birth;
     if (!dob) return undefined;
-    try { return parseDate(dob); } catch { return undefined; }
+    try {
+      return parseDate(dob);
+    } catch {
+      return undefined;
+    }
   })();
 
   const supervisorInitialKey = selectedSupervisorId || merged.supervisor_id;
@@ -162,24 +188,21 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none">
+          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
             <Drawer.Header>
               <CloseButton
-                className="self-end bg-transparent"
+                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
                 onClick={() => setDrawerOpen(false)}
               >
-                <CloseIcon className="w-[20px] h-[20px] text-shadow-black" />
+                <CloseIcon className="size-4" />
               </CloseButton>
             </Drawer.Header>
-            <Drawer.Body className="text-black">
+            <Drawer.Body className="px-5 pb-6">
               <Form onSubmit={handleSubmit}>
                 <div className="flex flex-col space-y-3">
-                  <span className="text-lg font-gotham-black">Edit Retailer</span>
+                  <span className="text-lg font-bold">Edit Retailer</span>
 
-                  <div
-                    key={formKey}
-                    className="space-y-4 mt-4"
-                  >
+                  <div key={formKey} className="space-y-4 mt-4">
                     <SelfieInputComponent />
                     <IdCardInputComponent />
 
@@ -187,13 +210,17 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                     <div className="w-full flex justify-center">
                       <div
                         className={`relative rounded-full w-35 h-35 ${
-                          selfieFiles.length === 0 && !merged.photo_url ? "border" : ""
+                          selfieFiles.length === 0 && !merged.photo_url
+                            ? "border"
+                            : ""
                         } justify-center flex flex-col`}
                         onClick={onSelfieUploadClick}
                       >
                         <div
                           className={`flex flex-col items-center ${
-                            selfieFiles.length === 0 && !merged.photo_url ? "p-3" : ""
+                            selfieFiles.length === 0 && !merged.photo_url
+                              ? "p-3"
+                              : ""
                           } space-y-2`}
                         >
                           {selfieFiles.length === 0 ? (
@@ -208,7 +235,7 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                             ) : (
                               <>
                                 <IoCameraOutline size={25} />
-                                <span className="text-center text-xs text-gray-500">
+                                <span className="text-center text-xs text-muted-foreground">
                                   Click to add photo
                                 </span>
                               </>
@@ -226,10 +253,13 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                         </div>
                         {selfieFiles.length > 0 && (
                           <span
-                            onClick={(e) => { e.stopPropagation(); removeSelfie(0); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeSelfie(0);
+                            }}
                             className="absolute top-1 right-3 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
                           >
-                            <RiDeleteBin6Line className="text-red-500" />
+                            <RiDeleteBin6Line className="text-rose-500" />
                           </span>
                         )}
                       </div>
@@ -237,9 +267,11 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
 
                     {/* ID card image */}
                     <div className="flex flex-col gap-1.5">
-                      <span className="text-xs font-gotham-bold text-gray-600">ID Card Image</span>
+                      <span className="text-xs font-semibold text-muted-foreground">
+                        ID Card Image
+                      </span>
                       <div
-                        className="relative w-full rounded-xl border border-dashed border-gray-300 overflow-hidden cursor-pointer hover:border-primary transition-colors"
+                        className="relative w-full rounded-xl border border-dashed border-border overflow-hidden cursor-pointer hover:border-primary transition-colors"
                         style={{ minHeight: 120 }}
                         onClick={onIdCardUploadClick}
                       >
@@ -254,10 +286,14 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                               style={{ maxHeight: 220, objectFit: "cover" }}
                             />
                           ) : (
-                            <div className="flex flex-col items-center justify-center gap-2 py-8 text-gray-400">
+                            <div className="flex flex-col items-center justify-center gap-2 py-8 text-zinc-400">
                               <IoCameraOutline size={28} />
-                              <span className="text-xs">Click to upload ID card image</span>
-                              <span className="text-[10px] text-gray-300">JPG, PNG — max 10 MB</span>
+                              <span className="text-xs">
+                                Click to upload ID card image
+                              </span>
+                              <span className="text-[10px] text-zinc-300">
+                                JPG, PNG — max 10 MB
+                              </span>
                             </div>
                           )
                         ) : (
@@ -272,37 +308,40 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                         )}
                         {idCardFiles.length > 0 && (
                           <span
-                            onClick={(e) => { e.stopPropagation(); removeIdCardFile(0); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeIdCardFile(0);
+                            }}
                             className="absolute top-2 right-2 z-10 cursor-pointer bg-white rounded-full p-1 shadow-sm"
                           >
-                            <RiDeleteBin6Line className="text-red-500" />
+                            <RiDeleteBin6Line className="text-rose-500" />
                           </span>
                         )}
-                        {idCardFiles.length === 0 && merged.id_card_image_url && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity rounded-xl">
-                            <span className="text-white text-xs font-gotham-bold">Click to replace</span>
-                          </div>
-                        )}
+                        {idCardFiles.length === 0 &&
+                          merged.id_card_image_url && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity rounded-xl">
+                              <span className="text-white text-xs font-semibold">
+                                Click to replace
+                              </span>
+                            </div>
+                          )}
                       </div>
                     </div>
 
                     <CustomInputComponent
                       label="First Name"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="firstName"
                       defaultValue={merged.first_name}
                       isRequired
                     />
                     <CustomInputComponent
                       label="Last Name"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="lastName"
                       defaultValue={merged.last_name}
                       isRequired
                     />
                     <CustomInputComponent
                       label="Email"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="email"
                       type="email"
                       showPreficIcon={false}
@@ -312,14 +351,12 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                     />
                     <CustomInputComponent
                       label="Phone Number"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="phoneNumber"
                       type="tel"
                       defaultValue={merged.phone}
                     />
                     <CustomInputComponent
                       label="Location"
-                      className="p-0 border rounded-lg border-gray-300"
                       name="location"
                       defaultValue={merged.location_address}
                     />
@@ -330,18 +367,20 @@ function EditRetailerUserDrawer({ writerId }: { writerId: string }) {
                       list={lmcOptions}
                       isDisabled={lmcPending || lmcOptions.length === 0}
                       initialItemKey={supervisorInitialKey}
-                      onSelectionChange={(val) => setSelectedSupervisorId(val.key)}
+                      onSelectionChange={(val) =>
+                        setSelectedSupervisorId(val.key)
+                      }
                     />
                     <CustomDatePicker
                       label="Date of Birth"
-                      className="border rounded-lg border-gray-300 w-full"
+                      className="w-full"
                       defaultValue={existingDateValue}
                       onDatePicked={(date) => setSelectedDate(date.toString())}
                     />
                   </div>
 
                   <Button
-                    className="rounded-lg bg-primary w-full text-xs font-gotham-black mt-2"
+                    className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
                     type="submit"
                     isDisabled={isPending}
                   >

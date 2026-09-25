@@ -14,12 +14,12 @@ import type { ElementType } from "react";
 
 function OperationalTab({ operational }: { operational: ILmcOperational }) {
   return (
-    <div className="flex flex-col space-y-3 divide-gray-100">
+    <div className="flex flex-col space-y-3 divide-border-subtle">
       <Section label="Writers" total={operational.writers_total}>
         <Tile
           icon={LuUserCheck}
-          iconBg="bg-green-100"
-          iconColor="text-green-600"
+          iconBg="bg-emerald-100"
+          iconColor="text-emerald-600"
           label="Active"
           value={String(operational.active)}
         />
@@ -32,8 +32,8 @@ function OperationalTab({ operational }: { operational: ILmcOperational }) {
         />
         <Tile
           icon={LuUserX}
-          iconBg="bg-gray-100"
-          iconColor="text-gray-500"
+          iconBg="bg-subtle"
+          iconColor="text-muted-foreground"
           label="Inactive"
           value={String(operational.inactive)}
         />
@@ -46,8 +46,8 @@ function OperationalTab({ operational }: { operational: ILmcOperational }) {
         />
         <Tile
           icon={LuBan}
-          iconBg="bg-red-100"
-          iconColor="text-red-500"
+          iconBg="bg-rose-100"
+          iconColor="text-rose-500"
           label="No Use"
           value={String(operational.no_use)}
         />
@@ -69,8 +69,8 @@ function OperationalTab({ operational }: { operational: ILmcOperational }) {
         />
         <Tile
           icon={LuTriangle}
-          iconBg="bg-red-100"
-          iconColor="text-red-500"
+          iconBg="bg-rose-100"
+          iconColor="text-rose-500"
           label="Recovery"
           value={String(operational.pos_recovery)}
         />
@@ -92,11 +92,11 @@ const Section = ({
 }) => (
   <div className="flex flex-col gap-1">
     <div className="flex items-center justify-between mb-1">
-      <span className="text-[0.6rem] font-gotham-black text-gray-400 uppercase tracking-wide">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
         {label}
       </span>
       {total != null && (
-        <span className="text-[0.6rem] font-bold text-gray-500">
+        <span className="text-[11px] font-bold text-muted-foreground">
           {total} total
         </span>
       )}
@@ -123,8 +123,10 @@ const Tile = ({
       <div className={`${iconBg} rounded-md p-1`}>
         <Icon className={`w-3 h-3 ${iconColor}`} />
       </div>
-      <span className="text-xs text-gray-600 font-gotham-bold">{label}</span>
+      <span className="text-xs text-muted-foreground font-semibold">
+        {label}
+      </span>
     </div>
-    <span className="text-xs font-jura-bold">{value}</span>
+    <span className="text-xs font-semibold tabular-nums">{value}</span>
   </div>
 );
