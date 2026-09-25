@@ -1,5 +1,11 @@
+import { Button as UiButton, drawerDialogClass } from "@/components/ui";
 import CustomInputComponent from "@/components/custom-input-component";
-import { Button, CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
+import {
+  CloseButton,
+  CloseIcon,
+  Drawer,
+  Form,
+} from "@heroui/react";
 import React from "react";
 
 type Props = {
@@ -11,13 +17,9 @@ function SetCreditPromiseDrawer(payload: Props) {
 
   return (
     <Drawer>
-      <Button
-        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
-        size="md"
-        onClick={() => setDrawerOpen(true)}
-      >
-        Credit Promise
-      </Button>
+      <UiButton size="sm" onClick={() => setDrawerOpen(true)}>
+        Credit promise
+      </UiButton>
       <Drawer.Backdrop
         variant="blur"
         className="backdrop-blur-sm"
@@ -25,7 +27,7 @@ function SetCreditPromiseDrawer(payload: Props) {
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
+          <Drawer.Dialog className={drawerDialogClass}>
             <Drawer.Header>
               <CloseButton
                 className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
@@ -70,12 +72,9 @@ function SetCreditPromiseDrawer(payload: Props) {
                         return true;
                       }}
                     />
-                    <Button
-                      className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
-                      type="submit"
-                    >
-                      Save
-                    </Button>
+                    <UiButton className="mt-2" size="lg" type="submit" fullWidth>
+                      Save credit promise
+                    </UiButton>
                   </div>
                 </div>
               </Form>

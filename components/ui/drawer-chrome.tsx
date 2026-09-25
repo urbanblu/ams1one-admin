@@ -4,9 +4,27 @@ import { cn } from "@heroui/react";
 import React from "react";
 import { LuX } from "react-icons/lu";
 
-/** Shared surface treatment for every HeroUI `Drawer.Dialog` in the app. */
+/**
+ * Shared surface treatment for every HeroUI `Drawer.Dialog` in the app.
+ *
+ * `overflow-hidden` is scoped to `sm` because below that the drawer is
+ * full-screen and has to scroll; clipping it there strands the submit button.
+ */
 export const drawerDialogClass =
-  "rounded-none bg-surface sm:rounded-l-3xl overflow-hidden";
+  "rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden";
+
+/**
+ * The two drawer widths. Applied to `Drawer.Content`, not `Drawer.Dialog`.
+ *
+ * `wide` clears CustomTable's 720px content floor so a table inside a drawer
+ * doesn't get its own nested horizontal scrollbar.
+ */
+export const drawerWidth = {
+  /** Forms and entity detail — a single column of fields. */
+  form: "w-full sm:w-[28rem]! sm:max-w-[28rem] sm:min-w-[300px] bg-surface h-dvh",
+  /** Anything containing a data table. */
+  wide: "w-full lg:w-[55rem]! lg:max-w-[55rem] sm:min-w-[300px] bg-surface h-dvh",
+} as const;
 
 type TitleBarProps = {
   title: React.ReactNode;

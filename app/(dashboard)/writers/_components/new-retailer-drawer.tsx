@@ -6,7 +6,7 @@ import WritersService from "@/api/writers";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import ToastService from "@/utils/toast-service";
 import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
-import { Button as UiButton } from "@/components/ui";
+import { Button as UiButton, drawerDialogClass } from "@/components/ui";
 import { DateValue, getLocalTimeZone, today } from "@internationalized/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -89,7 +89,7 @@ function NewRetailerDrawer(payload: Props) {
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
+          <Drawer.Dialog className={drawerDialogClass}>
             <Drawer.Header>
               <CloseButton
                 className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"

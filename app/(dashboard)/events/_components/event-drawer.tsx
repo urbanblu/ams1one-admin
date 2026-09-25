@@ -1,5 +1,7 @@
 "use client";
 
+import { drawerDialogClass, drawerWidth } from "@/components/ui";
+
 import React, { useState } from "react";
 import { Button, CloseButton, cn, Drawer, Spinner, Tabs } from "@heroui/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -447,9 +449,9 @@ export default function EventDrawer({
     >
       <Drawer.Content
         placement="right"
-        className="w-[90vw]! max-w-[480px] min-w-[300px] bg-white h-screen"
+        className={drawerWidth.form}
       >
-        <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden flex h-full w-full flex-col">
+        <Drawer.Dialog className={cn(drawerDialogClass, "flex h-full w-full flex-col")}>
           <Drawer.Header className="border-b border-border-subtle pb-4 shrink-0">
             <div className="flex items-start justify-between gap-2 w-full">
               <div className="flex flex-col gap-0.5 min-w-0">

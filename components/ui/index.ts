@@ -14,4 +14,4 @@ export { QueryState } from "./query-state";
 export { PageHeader, PageShell } from "./page-header";
 export { SearchInput } from "./search-input";
 export { NumberBall, NumberBallRow } from "./number-ball";
-export { DrawerTitleBar, drawerDialogClass } from "./drawer-chrome";
+export { DrawerTitleBar, drawerDialogClass, drawerWidth } from "./drawer-chrome";

@@ -1,9 +1,13 @@
 "use client";
 
+import { Button as UiButton } from "@/components/ui";
 import CustomSelectComponent from "@/components/custom-select-component";
 import GamesService from "@/api/games";
 import ToastService from "@/utils/toast-service";
-import { Button, Modal, Spinner } from "@heroui/react";
+import {
+  Button,
+  Modal,
+} from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ApiError from "@/utils/api_error";
@@ -120,25 +124,22 @@ function CreateDrawModal() {
             </Modal.Body>
 
             <Modal.Footer>
-              <Button
-                slot="close"
-                className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground"
-                isDisabled={isSubmitting}
+              <UiButton
+                type="button"
+                variant="outline"
+                disabled={isSubmitting}
+                onClick={() => setIsOpen(false)}
               >
                 Cancel
-              </Button>
-              <Button
-                className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
+              </UiButton>
+              <UiButton
+                type="button"
                 isPending={isSubmitting}
-                isDisabled={isSubmitting || !selectedEventId}
+                disabled={isSubmitting || !selectedEventId}
                 onClick={handleSubmit}
               >
-                {isSubmitting ? (
-                  <Spinner color="current" size="sm" />
-                ) : (
-                  "Draw Results"
-                )}
-              </Button>
+                {isSubmitting ? "Drawing…" : "Draw results"}
+              </UiButton>
             </Modal.Footer>
           </Modal.Dialog>
         </Modal.Container>

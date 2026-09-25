@@ -1,3 +1,4 @@
+import { Button as UiButton, drawerDialogClass } from "@/components/ui";
 import CustomInputComponent from "@/components/custom-input-component";
 import CustomSelectComponent from "@/components/custom-select-component";
 import PermissionsService from "@/api/permissions";
@@ -7,7 +8,6 @@ import {
   CloseIcon,
   Drawer,
   Form,
-  Spinner,
 } from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -67,7 +67,7 @@ function NewUserDrawer(payload: Props) {
         onOpenChange={setDrawerOpen}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden">
+          <Drawer.Dialog className={drawerDialogClass}>
             <Drawer.Header>
               <CloseButton
                 className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
@@ -173,22 +173,15 @@ function NewUserDrawer(payload: Props) {
                       onSelectionChange={(item) => setRoleId(item.key)}
                     />
                   </div>
-                  <Button
-                    className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
+                  <UiButton
+                    className="mt-2"
+                    size="lg"
                     type="submit"
-                    isDisabled={isPending}
+                    fullWidth
                     isPending={isPending}
                   >
-                    {({ isPending }) => (
-                      <>
-                        {isPending ? (
-                          <Spinner color="current" size="sm" />
-                        ) : (
-                          "Save"
-                        )}
-                      </>
-                    )}
-                  </Button>
+                    {isPending ? "Saving…" : "Save member"}
+                  </UiButton>
                 </div>
               </Form>
             </Drawer.Body>

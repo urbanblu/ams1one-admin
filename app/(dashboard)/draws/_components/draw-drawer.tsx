@@ -1,5 +1,7 @@
 "use client";
 
+import { drawerDialogClass, drawerWidth } from "@/components/ui";
+
 import CustomTable, { TableRow } from "@/components/custom-table";
 import { CloseButton, cn, Drawer, Table } from "@heroui/react";
 import React from "react";
@@ -111,9 +113,9 @@ function DrawDrawer({
     >
       <Drawer.Content
         placement="right"
-        className="w-[70vw]! max-w-[70vw] min-w-[300px] bg-white h-screen"
+        className={drawerWidth.wide}
       >
-        <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden w-full">
+        <Drawer.Dialog className={cn(drawerDialogClass, "w-full")}>
           <Drawer.Header>
             <div className="flex justify-between items-center">
               <Drawer.Heading className="text-sm font-semibold">

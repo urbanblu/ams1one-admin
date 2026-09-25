@@ -1,7 +1,12 @@
 "use client";
 
+import { Button as UiButton } from "@/components/ui";
 import React from "react";
-import { Button, Form, Modal, Spinner } from "@heroui/react";
+import {
+  Button,
+  Form,
+  Modal,
+} from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LuCalendarDays, LuPlus } from "react-icons/lu";
 import EventsService from "@/api/events";
@@ -104,25 +109,17 @@ export default function CreateEventModal() {
               </Modal.Body>
 
               <Modal.Footer>
-                <Button
+                <UiButton
                   type="button"
-                  variant="danger"
-                  size="sm"
+                  variant="outline"
                   onClick={() => setIsOpen(false)}
-                  isDisabled={isPending}
-                  className="font-semibold text-xs"
+                  disabled={isPending}
                 >
                   Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  size="sm"
-                  isPending={isPending}
-                  isDisabled={isPending}
-                  className="bg-primary text-white font-semibold text-xs"
-                >
-                  {isPending ? <Spinner size="sm" color="current" /> : "Create"}
-                </Button>
+                </UiButton>
+                <UiButton type="submit" isPending={isPending}>
+                  {isPending ? "Creating…" : "Create event"}
+                </UiButton>
               </Modal.Footer>
             </Form>
           </Modal.Dialog>

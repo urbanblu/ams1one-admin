@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  AlertDialog,
-  Button,
-  CloseButton,
-  Drawer,
-  Spinner,
-} from "@heroui/react";
+import { drawerDialogClass, drawerWidth } from "@/components/ui";
+
+import { cn, AlertDialog, Button, CloseButton, Drawer, Spinner } from "@heroui/react";
 import { useState } from "react";
 import { RiCheckLine, RiCloseCircleLine } from "react-icons/ri";
 import { LuCalendar, LuUser } from "react-icons/lu";
@@ -108,9 +104,9 @@ function ManageDrawDrawer({
         <Drawer.Backdrop isDismissable={true}>
           <Drawer.Content
             placement="right"
-            className="w-[420px]! max-w-[95vw] min-w-[300px] bg-white h-screen"
+            className={drawerWidth.form}
           >
-            <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden flex h-full w-full flex-col">
+            <Drawer.Dialog className={cn(drawerDialogClass, "flex h-full w-full flex-col")}>
               <Drawer.Header className="shrink-0">
                 <div className="flex justify-between items-center">
                   <Drawer.Heading className="text-sm font-semibold">
@@ -123,7 +119,7 @@ function ManageDrawDrawer({
                 </div>
               </Drawer.Header>
 
-              <div className="pb-3 shrink-0 mt-4">
+              <div className="shrink-0 px-5 pb-3 pt-4">
                 <CustomSelectComponent
                   label="Filter by Event"
                   placeholder=""

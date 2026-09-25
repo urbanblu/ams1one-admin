@@ -1,19 +1,13 @@
 "use client";
 
+import { Button as UiButton, drawerDialogClass } from "@/components/ui";
+
 import CustomCheckboxItem from "@/components/custom-checkbox";
 import CustomInputComponent from "@/components/custom-input-component";
 import PermissionsService from "@/api/permissions";
 import ToastService from "@/utils/toast-service";
 import type { IDashboardRole } from "@/interfaces/admin-users.interface";
-import {
-  Accordion,
-  Button,
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Modal,
-  Spinner,
-} from "@heroui/react";
+import { cn, Accordion, Button, CloseButton, CloseIcon, Drawer, Modal, Spinner } from "@heroui/react";
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -52,7 +46,7 @@ function ExistingRolesDrawer() {
         }}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog className="rounded-none bg-surface sm:rounded-l-3xl sm:overflow-hidden flex h-full max-h-screen flex-col">
+          <Drawer.Dialog className={cn(drawerDialogClass, "flex h-full max-h-screen flex-col")}>
             <Drawer.Header>
               <CloseButton
                 className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
@@ -179,13 +173,9 @@ function RolesList({
         <div className="flex flex-col space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold">Existing Roles</span>
-            <Button
-              className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
-              size="md"
-              onClick={onAdd}
-            >
-              New Role
-            </Button>
+            <UiButton size="sm" onClick={onAdd}>
+              New role
+            </UiButton>
           </div>
 
           {isPending ? (
