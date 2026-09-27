@@ -2,7 +2,6 @@
 
 import CustomInputComponent from "@/components/custom-input-component";
 import { Button, RouteSplash } from "@/components/ui";
-import ToastService from "@/utils/toast-service";
 import { cn, Form } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -34,7 +33,6 @@ function LoginView() {
     onSuccess: ({ user, pages }) => {
       setAuth({ access: auth!.access, refresh: auth!.refresh, user, pages });
       router.replace(getFirstAccessibleHref(pages));
-      ToastService.success({ text: "Login successful" });
     },
   });
 
@@ -80,17 +78,21 @@ function LoginView() {
     return undefined;
   })();
 
-  if (!_hasHydrated || hasSession) return <RouteSplash />;
+  if (!_hasHydrated || hasSession)
+    return <RouteSplash className="bg-background-alt" />;
 
   return (
     /* The shape every other Ams1one sign-in uses: the mark, large and
        centred; one line under it; the fields; the button. No card, no band,
        no labels — the placeholders name the fields, and there are only two.
-       The controls are the app's own (rounded-md, bordered) on the app's
-       own canvas, one step taller than the h-9 the tables use — a front door
-       can afford 4px a data row cannot. The column sits a little above centre, where a centred block
-       reads as centred. */
-    <main className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 pb-[6vh] pt-10">
+       The controls are the app's own (rounded-md, bordered), one step taller
+       than the h-9 the tables use — a front door can afford 4px a data row
+       cannot. The canvas is the chrome grey the nav rail wears, so the white
+       fields read as the objects on it rather than as holes in a white page.
+       The column sits above true centre: the bottom padding outweighs the top
+       by roughly a sixth of the viewport, which is where a centred block
+       actually reads as centred. */
+    <main className="flex min-h-dvh flex-col items-center justify-center bg-background-alt px-6 pb-[16vh] pt-10">
       <div className="flex w-full max-w-[360px] flex-col items-center">
         {/* The screen holds a blank RouteSplash until rehydration says whether
             this person is about to be sent onward, so the form's arrival is a

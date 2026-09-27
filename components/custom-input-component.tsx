@@ -122,8 +122,12 @@ function CustomInputComponent({
 
     if (type == "password") {
       return (
+        // The button keeps its 24px hit area but gives back the padding as
+        // negative margin, so the glyph's right edge lands 12px inside the
+        // field — the same inset the placeholder has on the left — instead of
+        // floating 22px in and reading as unmoored from the edge.
         <CloseButton
-          className="mr-1 bg-transparent text-foreground-muted transition-colors hover:text-foreground"
+          className="-mr-1.5 bg-transparent text-foreground-muted transition-colors hover:text-foreground"
           onPress={() => showPassword(!showing)}
         >
           <InputGroup.Suffix>
