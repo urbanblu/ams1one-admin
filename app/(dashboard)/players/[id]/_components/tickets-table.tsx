@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/ui";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PlayersService, { type PlayerGame } from "@/api/players";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 
 function TicketsTable({
   game,
@@ -52,13 +52,13 @@ function TicketsTable({
           { key: "event", label: "Event", sortable: false },
           { key: "game", label: "Game", sortable: false },
           { key: "channel", label: "Channel", sortable: false },
-          { key: "amount", label: "Amount", sortable: false },
-          { key: "stakes", label: "Stakes", sortable: false },
+          { key: "amount", label: "Amount", sortable: false, align: "right" },
+          { key: "stakes", label: "Stakes", sortable: false, align: "right" },
           { key: "status", label: "Status", sortable: false },
         ]}
         data={rows.map((r) => ({
           ticketNo: (
-            <span className="text-xs font-semibold tabular-nums">
+            <span className="text-xs font-medium tabular-nums text-foreground">
               {r.ticket_no}
             </span>
           ),
@@ -72,17 +72,15 @@ function TicketsTable({
               #{r.draw_event.event_no} — {r.draw_event.name}
             </span>
           ),
-          game: (
-            <span className="text-xs font-semibold">{r.game_type.name}</span>
-          ),
+          game: <span className="text-xs font-medium">{r.game_type.name}</span>,
           channel: <span className="text-xs capitalize">{r.channel}</span>,
           amount: (
-            <span className="text-sm font-semibold tabular-nums">
-              {formatGhs(parseFloat(r.total_amount))}
+            <span className="text-xs font-semibold tabular-nums text-foreground">
+              {formatUsd(parseFloat(r.total_amount))}
             </span>
           ),
           stakes: (
-            <span className="text-sm font-semibold tabular-nums">
+            <span className="text-xs font-semibold tabular-nums text-foreground">
               {r.stake_count}
             </span>
           ),

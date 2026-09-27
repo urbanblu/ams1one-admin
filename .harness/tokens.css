@@ -1,0 +1,263 @@
+@import "tailwindcss" source(none);
+@source "/private/tmp/claude-501/-Users-elikem-Desktop-Dev-ams1one-admin/9d9ba958-cb0b-40b1-8c23-5efc50cb182e/scratchpad/harness/index.html";
+
+:root {
+  /* --- Surfaces -----------------------------------------------------------
+     Supabase separates content from chrome: the working area is plain white
+     and the chrome (nav rail, table headers, control fills) sits on the
+     "alternative" off-white. Panels do NOT use a fill to separate themselves
+     from the canvas — the 1px border does all of that work. */
+  --background: #ffffff;
+  --background-alt: #f8f9fa;
+  --surface: #ffffff;
+  --surface-100: #f6f7f8;
+  --surface-200: #f1f3f5;
+  --surface-300: #eceef0;
+  /* Legacy alias — table headers and other chrome fills. */
+  --surface-muted: #f6f7f8;
+
+  /* --- Text ---------------------------------------------------------------
+     `light` carries every piece of secondary text (6.3:1 on white).
+     `lighter` is the floor for real text (4.6:1) — placeholders, dimmed
+     figures. `muted` is decorative only: icon glyphs, disabled, separators. */
+  --foreground: #11181c;
+  --foreground-light: #5b6166;
+  --foreground-lighter: #6f777d;
+  --foreground-muted: #a8b0b6;
+
+  /* `--muted` is read by @heroui/styles for its own secondary text, so it has
+     to stay a foreground colour; tinted fills live on `--subtle`. */
+  --muted: #5b6166;
+  --muted-foreground: #5b6166;
+  --subtle: #f1f3f5;
+
+  /* --- Brand ---------------------------------------------------------------
+     Hue held at ~247° across the ramp. 500 is the untouched Ams1one violet
+     and stays the identity colour; 700 is the first step dark enough to carry
+     white text (5.5:1), so that — not 500 — is what fills buttons. */
+  --brand-50: #f7f6fe;
+  --brand-100: #efedfd;
+  --brand-200: #e2ddfb;
+  --brand-300: #cdc5f8;
+  --brand-400: #b0a5f2;
+  --brand-500: #9387eb;
+  --brand-600: #7d6fe5;
+  --brand-700: #6355d8;
+  --brand-800: #5244b4;
+  --brand-900: #443a8f;
+
+  --primary: #9387eb;
+  --primary-foreground: #ffffff;
+  --primary-soft: #efedfd;
+  /* Readable brand: white text on it, and legible as text on --primary-soft. */
+  --primary-strong: #6355d8;
+  --brand-button: #6355d8;
+  --brand-button-hover: #5244b4;
+
+  /* Flat brand fill. Kept under the old utility name so that any surface
+     still asking for "brand gradient" lands on a solid, readable violet
+     instead of a pastel one that white text can't clear. */
+  --brand-gradient: #6355d8;
+
+  /* --- Semantic ------------------------------------------------------------
+     The -700 step of each ramp: ≥4.8:1 on both white and its own -50 tint. */
+  --success: #047857;
+  --warning: #b45309;
+  --destructive: #be123c;
+  --info: #1d4ed8;
+
+  /* --- Lines & fields ------------------------------------------------------
+     Supabase's defining trait: borders are visible. The old `--border-subtle`
+     (#f1f1f3) was effectively invisible; re-pointing it here turns every
+     existing hairline into a real line without touching a call site. */
+  --border: #e6e8eb;
+  --border-muted: #eceef0;
+  --border-subtle: #eceef0;
+  --border-strong: #dfe3e6;
+  --border-stronger: #d7dbdf;
+  --input: #dfe3e6;
+  --ring: #9387eb;
+
+  /* Re-point @heroui/styles' internal theme at the design system so HeroUI
+     widgets (tabs, selects, checkboxes, focus rings) inherit the brand. */
+  --accent: #6355d8;
+  --accent-foreground: #ffffff;
+  --danger: #be123c;
+  --segment: #ffffff;
+  --segment-foreground: #ffffff;
+  --default: #f1f3f5;
+  --default-foreground: #11181c;
+
+  /* Stacking order. HeroUI portals its overlays to <body> at
+     --z-index-overlay: 100000, so anything that must clear a drawer or modal
+     has to sit above that number, not above the app's own values. */
+  --z-sticky: 10;
+  --z-dropdown: 20;
+  --z-backdrop: 40;
+  --z-modal: 50;
+  --z-reveal: 60;
+  --z-reveal-confetti: 70;
+
+  /* react-toastify defaults to 9999, which renders every toast *behind* an
+     open HeroUI drawer or modal — i.e. behind most forms in this app. */
+  --toastify-z-index: 100002;
+
+  /* Legacy aliases kept so pre-redesign utility classes keep resolving */
+  --primary-light: var(--primary-soft);
+  --primary-hover: var(--primary-strong);
+  --red: var(--destructive);
+  --orange: var(--warning);
+}
+@theme inline {
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-surface: var(--surface);
+  --color-surface-100: var(--surface-100);
+  --color-surface-200: var(--surface-200);
+  --color-surface-300: var(--surface-300);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-foreground: var(--foreground);
+  --color-foreground-light: var(--foreground-light);
+  --color-foreground-lighter: var(--foreground-lighter);
+  --color-foreground-muted: var(--foreground-muted);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle: var(--subtle);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-light: var(--primary-soft);
+  --color-primary-hover: var(--primary-strong);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+  --color-info: var(--info);
+  --color-red: var(--destructive);
+  --color-orange: var(--warning);
+
+  --color-border: var(--border);
+  --color-border-muted: var(--border-muted);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-border-stronger: var(--border-stronger);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: GoogleSans, ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  /* Supabase's radii are tight and nearly uniform: 6px on controls, 8px on
+     panels, 12px on overlays. The scale is deliberately collapsed at the top
+     end so the app's existing `rounded-xl`/`rounded-2xl` call sites land on
+     the panel radius instead of the old pill-like 16/24px. */
+  --radius-sm: 0.25rem;
+  --radius: 0.375rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.5rem;
+  --radius-3xl: 0.75rem;
+
+  /* Overlays only. Every other surface is flat, bordered, unshadowed. */
+  --shadow-overlay:
+    0 8px 24px -6px rgb(17 24 28 / 0.1), 0 2px 6px -2px rgb(17 24 28 / 0.06);
+}
+@utility bg-brand-gradient {
+  background-color: var(--brand-gradient);
+}
+
+/* Identifiers, codes and reference numbers. Supabase sets these in mono so a
+   writer ID or event number reads as a value rather than as prose. */
+@utility font-ident {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  letter-spacing: -0.01em;
+}
+
+/* Focus ring used by hand-rolled controls, matching HeroUI's. */
+@utility focus-brand {
+  &:focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: 1px;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@utility animate-slide-up {
+  animation: slide-up 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Starts faded rather than invisible on purpose. The utility uses
+   `fill: both`, so whatever this keyframe opens on is what shows if the
+   animation never gets to run — a print render, a screenshot service, a
+   paused tab. A panel that arrives slightly ghosted is recoverable; one that
+   arrives blank is not. */
+@keyframes rise-in {
+  from {
+    opacity: 0.35;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-rise-in {
+  animation: rise-in 0.2s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+/* Faint grid, used behind the brand panel on the login and ticket screens in
+   place of the old dot grid. */
+@utility bg-line-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ---------------------------------------------------------------------------
+   Chrome
+--------------------------------------------------------------------------- */
+
+
+body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }

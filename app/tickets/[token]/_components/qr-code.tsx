@@ -13,7 +13,7 @@ export default function QRCodeDisplay({ token, dimmed }: QRCodeDisplayProps) {
     // SVG has to be told to scale or it overflows (and gets clipped by the
     // card's overflow-hidden) on any phone narrower than ~408px.
     <div
-      className="w-full max-w-[17.5rem] rounded-2xl bg-white p-4"
+      className="w-full max-w-[17.5rem] rounded-lg bg-white p-4"
       style={{
         opacity: dimmed ? 0.25 : 1,
         filter: dimmed ? "grayscale(1)" : "none",

@@ -3,7 +3,7 @@ import WritersPerformace from "./_components/writers-performance";
 import { Suspense, useState } from "react";
 import RetentionRatePerformance from "./_components/rate-performace";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { PageHeader, PageShell, SegmentedControl } from "@/components/ui";
+import { AppBarActions, PageShell, SegmentedControl } from "@/components/ui";
 
 type Tab = "writers" | "rate";
 
@@ -49,20 +49,15 @@ function AnalysisPageView() {
 
   return (
     <PageShell>
-      <PageHeader
-        className="shrink-0"
-        title="Analysis"
-        description="Writer performance and retention trends across the network."
-        actions={
-          analysisTabs.length > 1 ? (
-            <SegmentedControl
-              segments={analysisTabs}
-              value={activeTab}
-              onChange={setUserSelectedTab}
-            />
-          ) : undefined
-        }
-      />
+      {analysisTabs.length > 1 && (
+        <AppBarActions>
+          <SegmentedControl
+            segments={analysisTabs}
+            value={activeTab}
+            onChange={setUserSelectedTab}
+          />
+        </AppBarActions>
+      )}
 
       {activeTab === "writers" && canSeeWritersPerf && <WritersPerformace />}
       {activeTab === "rate" && canSeeRatePerf && <RetentionRatePerformance />}

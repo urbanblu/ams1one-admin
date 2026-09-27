@@ -1,10 +1,20 @@
 "use client";
 
 import type { BadgeTone } from "@/components/ui";
-import { Badge, drawerDialogClass, drawerWidth } from "@/components/ui";
+import {
+  Badge,
+  Button as UiButton,
+  DrawerTitleBar,
+  SegmentedControl,
+  StatusBadge,
+  Textarea,
+  drawerBodyClass,
+  drawerDialogClass,
+  drawerWidth,
+} from "@/components/ui";
 
 import React, { useState } from "react";
-import { Button, CloseButton, cn, Drawer, Spinner, Tabs } from "@heroui/react";
+import { cn, Drawer, Spinner, Tabs } from "@heroui/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   LuCalendarDays,
@@ -44,8 +54,10 @@ const STATUS_CHIP: Record<ITicketStatus, { label: string; tone: BadgeTone }> = {
 };
 
 function StatusChip({ status }: { status: ITicketStatus }) {
+  // toneForStatus can't know that a delivered ticket is in-flight rather than
+  // healthy, so the domain map rides StatusBadge's tone override.
   const { label, tone } = STATUS_CHIP[status] ?? STATUS_CHIP.issued;
-  return <Badge tone={tone}>{label}</Badge>;
+  return <StatusBadge status={label} tone={tone} />;
 }
 
 // ─── Tickets panel ────────────────────────────────────────────────────────────
@@ -81,38 +93,31 @@ function TicketsPanel({
 
   return (
     <div className="flex flex-col gap-3 h-full">
-      {/* Filter chips */}
-      <div className="flex flex-wrap gap-1.5 shrink-0">
-        {ALL_STATUSES.map((s) => (
-          <button
-            key={s}
-            onClick={() => setFilter(s)}
-            className={cn(
-              "px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider border transition-colors",
-              filter === s
-                ? "bg-primary text-white border-primary"
-                : "bg-white text-muted-foreground border-border hover:border-border",
-            )}
-          >
-            {s === "all" ? "All" : STATUS_CHIP[s].label}
-          </button>
-        ))}
-      </div>
+      {/* Status filter */}
+      <SegmentedControl
+        className="shrink-0 self-start"
+        value={filter}
+        onChange={setFilter}
+        segments={ALL_STATUSES.map((s) => ({
+          key: s,
+          label: s === "all" ? "All" : STATUS_CHIP[s].label,
+        }))}
+      />
 
       {/* List */}
       {isFetching ? (
         <div className="flex-1 flex items-center justify-center">
-          <Spinner size="sm" className="text-primary" />
+          <Spinner size="sm" className="text-brand-700" />
         </div>
       ) : tickets.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center gap-2 text-zinc-400 py-8">
-          <LuTicket className="w-8 h-8" />
+        <div className="flex flex-1 flex-col items-center justify-center gap-2 py-8 text-foreground-light">
+          <LuTicket className="size-8 text-foreground-muted" />
           <p className="text-xs">
             No tickets{filter !== "all" ? ` with status "${filter}"` : ""}.
           </p>
         </div>
       ) : (
-        <div className="flex flex-col divide-y divide-border-subtle overflow-y-auto">
+        <div className="flex flex-col divide-y divide-border overflow-y-auto">
           {tickets.map((t) => (
             <TicketRow
               key={t.id}
@@ -140,32 +145,34 @@ function TicketRow({
   return (
     <div className="py-3 flex items-start justify-between gap-2">
       <div className="flex flex-col gap-0.5 min-w-0">
-        <span className="text-sm font-semibold text-foreground truncate">
+        <span className="text-sm font-medium text-foreground truncate">
           {ticket.player_phone}
         </span>
         <div className="flex items-center gap-2">
           <StatusChip status={ticket.status} />
           {ticket.delivery_error && (
-            <span className="text-[10px] text-rose-500">SMS failed</span>
+            <span className="text-xs text-rose-600">SMS failed</span>
           )}
         </div>
         {ticket.scanned_at && (
-          <span className="text-[10px] text-zinc-400">
+          <span className="text-xs text-foreground-light">
             Scanned {formatDate(ticket.scanned_at)}
           </span>
         )}
       </div>
       {canResend && (
-        <Button
+        <UiButton
+          type="button"
+          variant="secondary"
           size="sm"
+          className="shrink-0"
           isPending={resendingId === ticket.id}
-          isDisabled={!!resendingId}
+          disabled={!!resendingId}
           onClick={() => onResend(ticket.id)}
-          className="shrink-0 text-[10px] font-semibold text-primary bg-primary-soft h-7 px-2.5"
         >
-          <LuSend className="w-3 h-3" />
+          <LuSend />
           Resend
-        </Button>
+        </UiButton>
       )}
     </div>
   );
@@ -215,53 +222,44 @@ function IssuePanel({ eventId }: { eventId: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-foreground-light">
         Enter phone numbers (one per line or comma-separated). Each number
         receives a unique QR ticket and an SMS invite.
       </p>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-xs text-muted-foreground font-semibold">
-          Phone Numbers
-        </label>
-        <textarea
-          value={phones}
-          onChange={(e) => setPhones(e.target.value)}
-          placeholder={"+233501234567\n+233200000001\n+233244979958"}
-          rows={8}
-          className="w-full border border-border rounded-md px-3 py-2 text-xs font-mono resize-none focus:outline-none focus:border-primary"
-        />
-      </div>
+      <Textarea
+        label="Phone numbers"
+        value={phones}
+        onChange={(e) => setPhones(e.target.value)}
+        placeholder={"+233501234567\n+233200000001\n+233244979958"}
+        rows={8}
+        className="font-ident"
+      />
 
-      <Button
-        onClick={handleIssue}
+      <UiButton
+        type="button"
+        size="lg"
+        fullWidth
         isPending={isPending}
-        isDisabled={isPending}
-        className="h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
+        onClick={handleIssue}
       >
-        {isPending ? (
-          <Spinner size="sm" color="current" />
-        ) : (
-          <>
-            <LuUsers className="w-3.5 h-3.5" />
-            Issue &amp; Send Tickets
-          </>
-        )}
-      </Button>
+        <LuUsers />
+        {isPending ? "Issuing…" : "Issue and send tickets"}
+      </UiButton>
 
       {result && (
-        <div className="rounded-2xl border border-border-subtle bg-surface-muted px-5 py-4 flex flex-col gap-2">
-          <p className="text-sm font-semibold text-foreground">
+        <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface-100 px-5 py-4">
+          <p className="text-sm font-medium text-foreground">
             {result.created} ticket{result.created !== 1 ? "s" : ""} issued ·{" "}
             {result.queued} SMS queued
           </p>
           {result.invalid.length > 0 && (
-            <div>
-              <p className="text-xs text-rose-600 font-semibold mb-1">
+            <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2.5">
+              <p className="mb-1 text-xs font-medium text-rose-700">
                 {result.invalid.length} invalid number
-                {result.invalid.length !== 1 ? "s" : ""}:
+                {result.invalid.length !== 1 ? "s" : ""}
               </p>
-              <p className="text-xs text-rose-500 font-mono break-all">
+              <p className="break-all font-ident text-xs text-rose-700">
                 {result.invalid.join(", ")}
               </p>
             </div>
@@ -320,69 +318,67 @@ function SendPanel({ eventId }: { eventId: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-2xl border border-border-subtle px-5 py-4 flex items-center justify-between gap-4">
+      <div className="rounded-lg border border-border px-5 py-4 flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-foreground">
+          <p className="text-sm font-medium text-foreground">
             Resend all undelivered
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="mt-0.5 text-xs text-foreground-light">
             {isFetching
               ? "…"
               : `${undelivered.length} ticket${undelivered.length !== 1 ? "s" : ""} awaiting delivery`}
           </p>
         </div>
-        <Button
+        <UiButton
+          type="button"
           size="sm"
+          className="shrink-0"
           isPending={sendingAll}
-          isDisabled={undelivered.length === 0 || isFetching}
+          disabled={undelivered.length === 0 || isFetching}
           onClick={() => sendAll()}
-          className="bg-primary text-white text-xs font-semibold rounded-lg shrink-0"
         >
-          {sendingAll ? (
-            <Spinner size="sm" color="current" />
-          ) : (
-            <>
-              <LuSend className="w-3.5 h-3.5" /> Send All
-            </>
-          )}
-        </Button>
+          <LuSend />
+          {sendingAll ? "Sending…" : "Send all"}
+        </UiButton>
       </div>
 
       {isFetching ? (
         <div className="flex justify-center py-6">
-          <Spinner size="sm" className="text-primary" />
+          <Spinner size="sm" className="text-brand-700" />
         </div>
       ) : undelivered.length === 0 ? (
-        <p className="text-xs text-zinc-400 text-center py-4">
+        <p className="py-4 text-center text-xs text-foreground-light">
           No undelivered tickets.
         </p>
       ) : (
-        <div className="flex flex-col divide-y divide-border-subtle">
+        <div className="flex flex-col divide-y divide-border">
           {undelivered.map((t) => (
             <div
               key={t.id}
               className="py-2.5 flex items-center justify-between gap-2"
             >
               <div>
-                <p className="text-xs font-semibold text-foreground">
+                <p className="text-xs font-medium text-foreground">
                   {t.player_phone}
                 </p>
                 {t.delivery_error && (
-                  <p className="text-[10px] text-rose-500 mt-0.5">
+                  <p className="text-xs text-rose-600 mt-0.5">
                     Last error: {t.delivery_error}
                   </p>
                 )}
               </div>
-              <Button
+              <UiButton
+                type="button"
+                variant="secondary"
                 size="sm"
+                className="shrink-0"
                 isPending={resendingId === t.id}
-                isDisabled={!!resendingId || sendingAll}
+                disabled={!!resendingId || sendingAll}
                 onClick={() => handleResendOne(t.id)}
-                className="shrink-0 text-[10px] font-semibold text-primary bg-primary-soft h-7 px-2.5"
               >
-                <LuSend className="w-3 h-3" />
+                <LuSend />
                 Send
-              </Button>
+              </UiButton>
             </div>
           ))}
         </div>
@@ -439,56 +435,49 @@ export default function EventDrawer({
         if (!open) onClose();
       }}
     >
-      <Drawer.Content placement="right" className={drawerWidth.form}>
-        <Drawer.Dialog
-          className={cn(drawerDialogClass, "flex h-full w-full flex-col")}
-        >
-          <Drawer.Header className="border-b border-border-subtle pb-4 shrink-0">
-            <div className="flex items-start justify-between gap-2 w-full">
-              <div className="flex flex-col gap-0.5 min-w-0">
-                <Drawer.Heading className="text-sm font-bold text-foreground">
-                  {event?.name ?? ""}
-                </Drawer.Heading>
-                {event && (
-                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <LuCalendarDays className="w-3 h-3 shrink-0" />
+      <Drawer.Content placement="right">
+        <Drawer.Dialog className={cn(drawerDialogClass, drawerWidth.form)}>
+          <DrawerTitleBar
+            title={event?.name ?? ""}
+            description={
+              event && (
+                <span className="flex flex-col gap-1">
+                  <span className="flex flex-wrap gap-x-3 gap-y-0.5">
+                    <span className="flex items-center gap-1">
+                      <LuCalendarDays className="size-3 shrink-0 text-foreground-muted" />
                       {formatDate(event.event_date)}
                     </span>
                     {event.venue && (
-                      <span className="flex items-center gap-1 text-xs text-zinc-400">
-                        <LuMapPin className="w-3 h-3 shrink-0" />
-                        <span className="truncate max-w-[180px]">
+                      <span className="flex items-center gap-1">
+                        <LuMapPin className="size-3 shrink-0 text-foreground-muted" />
+                        <span className="max-w-[180px] truncate">
                           {event.venue}
                         </span>
                       </span>
                     )}
-                  </div>
-                )}
-                <div className="flex items-center gap-2 mt-1.5">
-                  <Badge tone={event?.is_active ? "success" : "danger"} dot>
-                    {event?.is_active ? "Active" : "Inactive"}
-                  </Badge>
-                  <span className="text-[10px] text-zinc-400">
-                    {event?.ticket_count ?? 0} ticket
-                    {event?.ticket_count !== 1 ? "s" : ""}
                   </span>
-                </div>
-              </div>
-              <CloseButton
-                className="bg-transparent text-black shrink-0"
-                onClick={onClose}
-              />
-            </div>
-          </Drawer.Header>
+                  <span className="flex items-center gap-2">
+                    <Badge tone={event.is_active ? "success" : "danger"} dot>
+                      {event.is_active ? "Active" : "Inactive"}
+                    </Badge>
+                    <span className="text-xs text-foreground-light">
+                      {event.ticket_count ?? 0} ticket
+                      {event.ticket_count !== 1 ? "s" : ""}
+                    </span>
+                  </span>
+                </span>
+              )
+            }
+            onClose={onClose}
+          />
 
-          <Drawer.Body className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
+          <Drawer.Body className={drawerBodyClass}>
             {event && (
               <>
                 {!canViewTickets && !canIssue && !canSend ? (
-                  <div className="flex flex-col items-center justify-center h-full gap-3 text-zinc-400 py-16">
-                    <LuTicket className="w-8 h-8" />
-                    <p className="text-xs text-center">
+                  <div className="flex h-full flex-col items-center justify-center gap-3 py-16 text-foreground-light">
+                    <LuTicket className="size-8 text-foreground-muted" />
+                    <p className="text-center text-xs">
                       You don&apos;t have permission to manage this event&apos;s
                       tickets.
                     </p>
@@ -503,28 +492,28 @@ export default function EventDrawer({
                         {canViewTickets && (
                           <Tabs.Tab
                             id="tickets"
-                            className="h-9 rounded-xl px-4 text-sm"
+                            className="h-9 rounded-none px-4 text-sm"
                           >
                             Tickets
-                            <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
+                            <Tabs.Indicator className="rounded-none bg-brand-500" />
                           </Tabs.Tab>
                         )}
                         {canIssue && (
                           <Tabs.Tab
                             id="issue"
-                            className="h-9 rounded-xl px-4 text-sm"
+                            className="h-9 rounded-none px-4 text-sm"
                           >
                             Issue new
-                            <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
+                            <Tabs.Indicator className="rounded-none bg-brand-500" />
                           </Tabs.Tab>
                         )}
                         {canSend && (
                           <Tabs.Tab
                             id="send"
-                            className="h-9 rounded-xl px-4 text-sm"
+                            className="h-9 rounded-none px-4 text-sm"
                           >
                             Send SMS
-                            <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
+                            <Tabs.Indicator className="rounded-none bg-brand-500" />
                           </Tabs.Tab>
                         )}
                       </Tabs.List>

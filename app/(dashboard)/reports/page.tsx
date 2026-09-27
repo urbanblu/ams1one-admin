@@ -1,44 +1,74 @@
 "use client";
 
 import CustomInputComponent from "@/components/custom-input-component";
-import CustomCheckboxItem from "@/components/custom-checkbox";
 import CustomTable from "@/components/custom-table";
 import FinancialsService from "@/api/financials";
-import type { IReportDefinition } from "@/interfaces/financials.interface";
+import type {
+  IReportDefinition,
+  IReportFilterSchema,
+} from "@/interfaces/financials.interface";
 import ToastService from "@/utils/toast-service";
-import EmptyImage from "@/public/images/new/empty-page.jpg";
-import Image from "next/image";
-import { Header, Label, ListBox, Select } from "@heroui/react";
+import ApiError from "@/utils/api_error";
+import { cn } from "@heroui/react";
 import {
   Button,
   Card,
+  CardFooter,
   CardHeader,
-  PageHeader,
+  EmptyState,
+  FieldLabel,
   PageShell,
+  SearchInput,
+  Skeleton,
 } from "@/components/ui";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { LuDownload, LuFileText } from "react-icons/lu";
-import ApiError from "@/utils/api_error";
+import {
+  LuCheck,
+  LuChevronDown,
+  LuColumns3,
+  LuDownload,
+  LuFileText,
+  LuLoaderCircle,
+  LuLock,
+  LuPlus,
+  LuSlidersHorizontal,
+  LuTableProperties,
+} from "react-icons/lu";
 
 const PAGE_SIZE = 20;
 
+/**
+ * Reports is a three-step task — pick a report, shape it, read the result —
+ * so the page is laid out in those three zones: a rail that lists every
+ * report, a collapsible strip that holds the shaping controls, and the
+ * result table underneath. The strip folds away once a report has run so the
+ * rows, which are the reason the page exists, get the whole panel.
+ */
 function ReportsView() {
   const { hasPage } = usePageAccess();
   const canExecute = hasPage("reports.execute");
   const canDownload = hasPage("reports.download");
 
-  const { data: reports = [] } = useQuery({
+  const { data: reports = [], isPending: reportsLoading } = useQuery({
     queryKey: ["financials", "reports"],
     queryFn: FinancialsService.fetchReports,
   });
+
   const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
-  const [optionalSelectedColumns, setOptionalSelectedColumns] = useState<
-    Record<string, boolean>
-  >({});
+  /** `null` means "every column" — the default for a freshly picked report. */
+  const [columnOverrides, setColumnOverrides] = useState<Record<
+    string,
+    boolean
+  > | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
+  /** Bumped to remount the uncontrolled filter fields when they are cleared. */
+  const [filterEpoch, setFilterEpoch] = useState(0);
   const [previewPage, setPreviewPage] = useState(1);
+  const [reportSearch, setReportSearch] = useState("");
+  const [configOpen, setConfigOpen] = useState(true);
+
   const resolvedReportId = selectedReportId ?? reports[0]?.reportId ?? null;
 
   const selectedReport = useMemo(
@@ -64,16 +94,26 @@ function ReportsView() {
     [executeMutation.data?.data],
   );
 
+  const reportColumns = selectedReport?.schema.columns ?? [];
+  const reportFilters = selectedReport?.schema.filters ?? [];
+
   const visibleColumns = useMemo(() => {
     if (!selectedReport) return [];
     return selectedReport.schema.columns.filter(
-      (col) => col.required || optionalSelectedColumns[col.key],
+      (column) => column.required || (columnOverrides?.[column.key] ?? true),
     );
-  }, [optionalSelectedColumns, selectedReport]);
+  }, [columnOverrides, selectedReport]);
 
-  const totalPreviewPages = Math.max(
-    1,
-    Math.ceil(previewRows.length / PAGE_SIZE),
+  const missingRequiredFilters = useMemo(() => {
+    if (!selectedReport) return [];
+    return selectedReport.schema.filters.filter(
+      (filter) => filter.required && !(filters[filter.key] ?? "").trim(),
+    );
+  }, [filters, selectedReport]);
+
+  const activeFilterCount = useMemo(
+    () => Object.values(filters).filter((value) => value.trim()).length,
+    [filters],
   );
 
   const pagedRows = useMemo(() => {
@@ -82,9 +122,17 @@ function ReportsView() {
   }, [previewRows, previewPage]);
 
   const groupedReports = useMemo(() => {
+    const query = reportSearch.trim().toLowerCase();
     const groups = new Map<string, IReportDefinition[]>();
     for (const report of reports) {
       const category = report.schema.category || "General";
+      if (
+        query &&
+        !report.name.toLowerCase().includes(query) &&
+        !category.toLowerCase().includes(query)
+      ) {
+        continue;
+      }
       const current = groups.get(category) ?? [];
       current.push(report);
       groups.set(category, current);
@@ -93,7 +141,27 @@ function ReportsView() {
       key,
       values,
     }));
-  }, [reports]);
+  }, [reports, reportSearch]);
+
+  const matchedCount = groupedReports.reduce(
+    (total, group) => total + group.values.length,
+    0,
+  );
+
+  const onSelectReport = (report: IReportDefinition) => {
+    setSelectedReportId(report.reportId);
+    setColumnOverrides(null);
+    setFilters({});
+    setFilterEpoch((epoch) => epoch + 1);
+    setPreviewPage(1);
+    setConfigOpen(true);
+    executeMutation.reset();
+  };
+
+  const onClearFilters = () => {
+    setFilters({});
+    setFilterEpoch((epoch) => epoch + 1);
+  };
 
   const onDownloadCsv = () => {
     if (!previewRows.length || !visibleColumns.length) return;
@@ -120,13 +188,12 @@ function ReportsView() {
 
   const onGenerate = async () => {
     if (!selectedReport) return;
-    const required = selectedReport.schema.filters.filter((f) => f.required);
-    for (const req of required) {
-      const val = filters[req.key]?.trim();
-      if (!val) {
-        ToastService.error({ text: `${req.label} is required.` });
-        return;
-      }
+    if (missingRequiredFilters.length) {
+      setConfigOpen(true);
+      ToastService.error({
+        text: `${missingRequiredFilters[0].label} is required.`,
+      });
+      return;
     }
     const payload: Record<string, string | number> = {};
     Object.entries(filters).forEach(([k, v]) => {
@@ -139,7 +206,10 @@ function ReportsView() {
         filters: payload,
       });
       setPreviewPage(1);
-      if (!result.status) {
+      if (result.status) {
+        // Hand the panel over to the rows now that there are some.
+        setConfigOpen(false);
+      } else {
         ToastService.error({
           text: result.message || "Report execution failed",
         });
@@ -170,188 +240,302 @@ function ReportsView() {
     totalCount: previewRows.length,
   };
 
+  const headerDescription = (() => {
+    if (!selectedReport) return "Pick a report from the list";
+    const parts = [selectedReport.schema.category || "General"];
+    parts.push(
+      visibleColumns.length === reportColumns.length
+        ? `${reportColumns.length} columns`
+        : `${visibleColumns.length} of ${reportColumns.length} columns`,
+    );
+    if (executeMutation.data) {
+      parts.push(
+        `${previewRows.length.toLocaleString("en-US")} ${
+          previewRows.length === 1 ? "row" : "rows"
+        }`,
+      );
+    }
+    return parts.join(" · ");
+  })();
+
+  const configSummary = (() => {
+    const parts: string[] = [];
+    if (activeFilterCount) {
+      parts.push(
+        `${activeFilterCount} filter${activeFilterCount === 1 ? "" : "s"}`,
+      );
+    }
+    if (reportColumns.length) {
+      parts.push(
+        visibleColumns.length === reportColumns.length
+          ? "all columns"
+          : `${visibleColumns.length} of ${reportColumns.length} columns`,
+      );
+    }
+    return parts.join(" · ");
+  })();
+
+  const allColumnsOn = visibleColumns.length === reportColumns.length;
+  const onlyRequiredOn = visibleColumns.every((column) => column.required);
+
   return (
     <PageShell fill>
-      <PageHeader
-        className="shrink-0"
-        title="Reports"
-        description="Build, preview and export operational reports."
-      />
+      <div className="grid min-h-0 flex-1 gap-4 overflow-hidden lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)]">
+        {/* ── Report rail ── */}
+        <ReportRail
+          groups={groupedReports}
+          total={reports.length}
+          matched={matchedCount}
+          loading={reportsLoading}
+          search={reportSearch}
+          onSearch={setReportSearch}
+          selectedId={resolvedReportId}
+          onSelect={onSelectReport}
+        />
 
-      {/* Two-column layout */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 overflow-hidden lg:grid-cols-2">
-        {/* ── Left column ── */}
-        <div className="flex flex-col gap-4 h-full min-h-0">
-          {/* Report selector */}
-          <div className="shrink-0">
-            <ReportsSelection
-              reports={groupedReports}
-              onSelected={(val) => {
-                setSelectedReportId(val.reportId);
-                setOptionalSelectedColumns({});
-                setFilters({});
-                setPreviewPage(1);
-                executeMutation.reset();
-              }}
-              selectedValue={selectedReport}
-            />
-          </div>
+        {/* ── Working panel ── */}
+        <Card className="flex min-h-0 flex-col lg:h-full">
+          <CardHeader
+            className="shrink-0"
+            icon={<LuFileText />}
+            title={selectedReport?.name ?? "No report selected"}
+            description={headerDescription}
+            action={
+              <div className="flex items-center gap-2">
+                {canDownload && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={!previewRows.length || !visibleColumns.length}
+                    onClick={onDownloadCsv}
+                  >
+                    <LuDownload />
+                    Export CSV
+                  </Button>
+                )}
+                {canExecute && (
+                  <Button
+                    size="sm"
+                    disabled={!selectedReport}
+                    isPending={executeMutation.isPending}
+                    onClick={onGenerate}
+                  >
+                    {executeMutation.isPending ? "Running…" : "Run report"}
+                  </Button>
+                )}
+              </div>
+            }
+          />
 
-          {/* Config card — scrolls internally */}
-          <Card className="flex min-h-0 flex-1 flex-col">
-            <CardHeader
-              className="shrink-0"
-              icon={<LuFileText />}
-              title={selectedReport?.name ?? "Report configuration"}
-              description={selectedReport?.schema.category ?? "General"}
-            />
-
-            {/* Scrollable filters + columns */}
-            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-4">
-              {/* Filters */}
-              {(selectedReport?.schema.filters ?? []).length > 0 && (
-                <div className="space-y-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                    Filters
-                  </p>
-                  {(selectedReport?.schema.filters ?? []).map((filter) => {
-                    if (filter.type === "date") {
-                      return (
-                        <div key={filter.key} className="max-w-[240px]">
-                          <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                            {filter.label}
-                          </Label>
-                          <input
-                            type="date"
-                            value={filters[filter.key] ?? ""}
-                            onChange={(e) =>
-                              setFilters((prev) => ({
-                                ...prev,
-                                [filter.key]: e.target.value,
-                              }))
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none transition-colors focus:border-primary"
-                          />
-                        </div>
-                      );
-                    }
-                    return (
-                      <CustomInputComponent
-                        key={filter.key}
-                        className="max-w-[240px]"
-                        label={filter.label}
-                        placeholder={`Input ${filter.label}`}
-                        onChange={(e) =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            [filter.key]: e.target.value,
-                          }))
-                        }
-                      />
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Columns */}
-              {(selectedReport?.schema.columns ?? []).length > 0 && (
-                <div className="space-y-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                    Columns
-                  </p>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    {(selectedReport?.schema.columns ?? []).map((column) => (
-                      <CustomCheckboxItem
-                        key={column.key}
-                        selected={
-                          column.required || optionalSelectedColumns[column.key]
-                        }
-                        label={column.label}
-                        labelClassName="font-normal"
-                        isDisabled={column.required}
-                        setIsSelected={(checked) =>
-                          setOptionalSelectedColumns((prev) => ({
-                            ...prev,
-                            [column.key]: Boolean(checked),
-                          }))
-                        }
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Generate button pinned to bottom */}
-            {canExecute && (
-              <div className="shrink-0 border-t border-border-subtle px-5 py-4">
-                <Button
-                  size="lg"
-                  fullWidth
-                  disabled={!selectedReport}
-                  onClick={onGenerate}
-                  isPending={executeMutation.isPending}
+          {/* Shaping controls — folded away once the rows arrive. */}
+          {selectedReport &&
+            (reportFilters.length > 0 || reportColumns.length > 0) && (
+              <div className="shrink-0 border-b border-border bg-surface-100">
+                <button
+                  type="button"
+                  aria-expanded={configOpen}
+                  onClick={() => setConfigOpen((open) => !open)}
+                  className="flex w-full cursor-pointer items-center justify-between gap-3 px-5 py-2.5 text-left transition-colors hover:bg-surface-200"
                 >
-                  {executeMutation.isPending
-                    ? "Generating…"
-                    : "Generate report"}
-                </Button>
+                  <span className="flex items-center gap-2 text-xs font-medium text-foreground">
+                    <LuSlidersHorizontal className="size-3.5 text-foreground-muted" />
+                    Filters &amp; columns
+                  </span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    {missingRequiredFilters.length > 0 && (
+                      <span className="rounded-md border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-700">
+                        {missingRequiredFilters.length} required
+                      </span>
+                    )}
+                    {configSummary && (
+                      <span className="hidden truncate text-xs text-foreground-light sm:inline">
+                        {configSummary}
+                      </span>
+                    )}
+                    <LuChevronDown
+                      className={cn(
+                        "size-3.5 shrink-0 text-foreground-muted transition-transform",
+                        configOpen && "rotate-180",
+                      )}
+                    />
+                  </span>
+                </button>
+
+                {configOpen && (
+                  <div className="space-y-5 border-t border-border px-5 py-4">
+                    {reportFilters.length > 0 && (
+                      <section className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-3">
+                          <SectionLabel>Filters</SectionLabel>
+                          <TextAction
+                            disabled={activeFilterCount === 0}
+                            onClick={onClearFilters}
+                          >
+                            Clear
+                          </TextAction>
+                        </div>
+                        <div
+                          key={`${resolvedReportId}-${filterEpoch}`}
+                          className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+                        >
+                          {reportFilters.map((filter) => (
+                            <FilterField
+                              key={filter.key}
+                              filter={filter}
+                              value={filters[filter.key] ?? ""}
+                              onChange={(value) =>
+                                setFilters((prev) => ({
+                                  ...prev,
+                                  [filter.key]: value,
+                                }))
+                              }
+                            />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
+                    {reportColumns.length > 0 && (
+                      <section className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-3">
+                          <SectionLabel>Columns</SectionLabel>
+                          <div className="flex items-center gap-2">
+                            <TextAction
+                              disabled={allColumnsOn}
+                              onClick={() => setColumnOverrides(null)}
+                            >
+                              Select all
+                            </TextAction>
+                            <span className="text-foreground-muted">·</span>
+                            <TextAction
+                              disabled={onlyRequiredOn}
+                              onClick={() =>
+                                setColumnOverrides(
+                                  Object.fromEntries(
+                                    reportColumns.map((column) => [
+                                      column.key,
+                                      false,
+                                    ]),
+                                  ),
+                                )
+                              }
+                            >
+                              Clear
+                            </TextAction>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {reportColumns.map((column) => {
+                            const on =
+                              column.required ||
+                              (columnOverrides?.[column.key] ?? true);
+                            return (
+                              <button
+                                key={column.key}
+                                type="button"
+                                disabled={column.required}
+                                aria-pressed={on}
+                                title={
+                                  column.required
+                                    ? `${column.label} is always included`
+                                    : undefined
+                                }
+                                onClick={() =>
+                                  setColumnOverrides((prev) => ({
+                                    ...(prev ?? {}),
+                                    [column.key]: !on,
+                                  }))
+                                }
+                                className={cn(
+                                  "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors",
+                                  "focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-500",
+                                  on
+                                    ? "border-brand-300 bg-brand-100 text-brand-800"
+                                    : "border-border-strong bg-surface text-foreground-light hover:bg-surface-200 hover:text-foreground",
+                                  column.required
+                                    ? "cursor-default"
+                                    : "cursor-pointer",
+                                )}
+                              >
+                                {on ? (
+                                  <LuCheck className="size-3 shrink-0" />
+                                ) : (
+                                  <LuPlus className="size-3 shrink-0" />
+                                )}
+                                {column.label}
+                                {column.required && (
+                                  <LuLock className="size-2.5 shrink-0 opacity-70" />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    )}
+                  </div>
+                )}
               </div>
             )}
-          </Card>
-        </div>
 
-        {/* ── Right column — preview ── */}
-        <Card className="flex h-full min-h-0 flex-col">
-          {/* Header */}
-          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle px-5 py-3.5">
-            <div className="flex min-w-0 flex-col">
-              <span className="text-sm font-semibold text-foreground">
-                Preview
-              </span>
-              {executeMutation.data && (
-                <span className="mt-0.5 truncate text-[11px] text-zinc-400">
-                  {executeMutation.data.report_name}
-                  {` · ${previewRows.length.toLocaleString("en-US")} records`}
-                </span>
-              )}
-            </div>
-            <div className="flex gap-2">
-              {canDownload && (
-                <Button
-                  size="sm"
-                  disabled={!previewRows.length}
-                  onClick={onDownloadCsv}
-                >
-                  <LuDownload />
-                  Download
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Content */}
+          {/* Result */}
           <div className="min-h-0 flex-1 overflow-hidden">
-            {!executeMutation.data ? (
-              /* Empty state */
-              <div className="flex h-full flex-col items-center justify-center gap-2 px-6">
-                <div className="relative size-44">
-                  <Image
-                    src={EmptyImage}
-                    alt=""
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <p className="text-sm font-medium text-foreground">
-                  No report generated yet
-                </p>
-                <p className="max-w-[220px] text-center text-xs text-muted-foreground">
-                  Pick a report, set its filters, then generate it.
-                </p>
+            {executeMutation.isPending ? (
+              <div className="flex h-full min-h-48 items-center justify-center gap-2 text-xs text-foreground-light">
+                <LuLoaderCircle className="size-4 animate-spin" />
+                Running {selectedReport?.name}…
               </div>
+            ) : !selectedReport ? (
+              <ResultPlaceholder
+                icon={<LuFileText />}
+                title={
+                  reportsLoading ? "Loading reports…" : "No reports available"
+                }
+                description={
+                  reportsLoading
+                    ? undefined
+                    : "No report definitions have been published for your account."
+                }
+              />
+            ) : !executeMutation.data ? (
+              <ResultPlaceholder
+                icon={<LuTableProperties />}
+                title="No rows yet"
+                description={
+                  missingRequiredFilters.length
+                    ? `Set ${missingRequiredFilters
+                        .map((filter) => filter.label)
+                        .join(", ")} to run this report.`
+                    : "Shape the filters and columns you need, then run the report."
+                }
+                action={
+                  canExecute ? (
+                    <Button size="sm" onClick={onGenerate}>
+                      Run report
+                    </Button>
+                  ) : undefined
+                }
+              />
+            ) : visibleColumns.length === 0 ? (
+              <ResultPlaceholder
+                icon={<LuColumns3 />}
+                title="Every column is hidden"
+                description={`${previewRows.length.toLocaleString(
+                  "en-US",
+                )} rows are ready — turn a column back on to read them.`}
+                action={
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setColumnOverrides(null);
+                      setConfigOpen(true);
+                    }}
+                  >
+                    Select all columns
+                  </Button>
+                }
+              />
             ) : (
-              /* Data state — CustomTable */
               <div className="h-full overflow-hidden">
                 <CustomTable
                   columns={tableColumns}
@@ -360,16 +544,11 @@ function ReportsView() {
                   pageSize={PAGE_SIZE}
                   onPageChange={(page) => setPreviewPage(page)}
                   onPageSizeChange={() => {}}
-                  onRowClick={() => {}}
                   onSort={() => {}}
-                  loading={executeMutation.isPending}
+                  loading={false}
                   isRefetching={false}
                   addTableBorder={false}
-                  emptyMessage={
-                    totalPreviewPages === 0
-                      ? "No rows returned"
-                      : "No data available"
-                  }
+                  emptyMessage="This report returned no rows"
                 />
               </div>
             )}
@@ -382,68 +561,201 @@ function ReportsView() {
 
 export default ReportsView;
 
-type Props = {
-  reports: Array<{ key: string; values: IReportDefinition[] }>;
-  onSelected: (value: IReportDefinition) => void;
-  selectedValue: IReportDefinition | null;
+/* ------------------------------------------------------------------ rail */
+
+type RailProps = {
+  groups: Array<{ key: string; values: IReportDefinition[] }>;
+  total: number;
+  matched: number;
+  loading: boolean;
+  search: string;
+  onSearch: (value: string) => void;
+  selectedId: number | null;
+  onSelect: (report: IReportDefinition) => void;
 };
 
-const ReportsSelection = ({ reports, onSelected, selectedValue }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const selectedLabel = selectedValue?.name ?? "";
+/**
+ * Every report, always on screen. A dropdown hid the catalogue behind a click
+ * and gave no sense of how much there was to choose from; a rail makes the
+ * set browsable and the current choice permanently visible.
+ */
+function ReportRail({
+  groups,
+  total,
+  matched,
+  loading,
+  search,
+  onSearch,
+  selectedId,
+  onSelect,
+}: RailProps) {
+  return (
+    <Card className="flex min-h-0 flex-col lg:h-full">
+      <div className="shrink-0 border-b border-border p-2.5">
+        <SearchInput
+          placeholder="Search reports"
+          value={search}
+          onChange={onSearch}
+        />
+      </div>
 
-  function handleAction(payload: IReportDefinition) {
-    setIsOpen(false);
-    onSelected(payload);
+      <div className="max-h-72 min-h-0 flex-1 overflow-y-auto p-1.5 lg:max-h-none">
+        {loading && (
+          <div className="space-y-1.5 p-1">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <Skeleton key={i} className="h-7 w-full rounded-md" />
+            ))}
+          </div>
+        )}
+
+        {!loading && matched === 0 && (
+          <p className="px-2.5 py-8 text-center text-xs text-foreground-light">
+            {total === 0
+              ? "No reports available."
+              : "No reports match that search."}
+          </p>
+        )}
+
+        {!loading &&
+          groups.map((group) => (
+            <div key={group.key} className="mb-1.5 last:mb-0">
+              <p className="px-2.5 py-1.5 text-xs font-medium text-foreground-light">
+                {group.key}
+              </p>
+              <div className="space-y-0.5">
+                {group.values.map((report) => {
+                  const isActive = report.reportId === selectedId;
+                  return (
+                    <button
+                      key={report.reportId}
+                      type="button"
+                      aria-current={isActive ? "true" : undefined}
+                      onClick={() => onSelect(report)}
+                      className={cn(
+                        "flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs transition-colors",
+                        "focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-500",
+                        isActive
+                          ? "bg-brand-100 font-medium text-brand-800"
+                          : "text-foreground-light hover:bg-surface-200 hover:text-foreground",
+                      )}
+                    >
+                      <LuFileText
+                        className={cn(
+                          "size-3.5 shrink-0",
+                          isActive ? "text-brand-700" : "text-foreground-muted",
+                        )}
+                      />
+                      <span className="min-w-0 flex-1 truncate">
+                        {report.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+      </div>
+
+      {!loading && total > 0 && (
+        <CardFooter className="shrink-0 tabular-nums">
+          {matched === total
+            ? `${total} report${total === 1 ? "" : "s"}`
+            : `${matched} of ${total} reports`}
+        </CardFooter>
+      )}
+    </Card>
+  );
+}
+
+/* ---------------------------------------------------------------- pieces */
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs font-medium text-foreground-light">{children}</p>
+  );
+}
+
+function TextAction({
+  children,
+  disabled,
+  onClick,
+}: {
+  children: React.ReactNode;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="cursor-pointer rounded-sm text-xs font-medium text-foreground-light transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-foreground-light"
+    >
+      {children}
+    </button>
+  );
+}
+
+/**
+ * Date filters are a native field rather than `CustomDatePicker` because that
+ * component seeds itself with today's date and offers no way back to empty —
+ * a report filter has to be able to stay unset.
+ */
+function FilterField({
+  filter,
+  value,
+  onChange,
+}: {
+  filter: IReportFilterSchema;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const label = filter.required ? `${filter.label} *` : filter.label;
+
+  if (filter.type === "date") {
+    return (
+      <div>
+        <FieldLabel htmlFor={`filter-${filter.key}`}>{label}</FieldLabel>
+        <input
+          id={`filter-${filter.key}`}
+          type="date"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-9 w-full rounded-md border border-border-strong bg-surface px-3 text-sm text-foreground outline-none transition-colors duration-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+        />
+      </div>
+    );
   }
 
   return (
-    <Select
-      placeholder="Select a Report"
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
-    >
-      <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-        Select a report
-      </Label>
-      <Select.Trigger
-        className="h-11 w-full cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm shadow-none transition-colors hover:border-zinc-300 data-[focused=true]:border-primary"
-        onClick={() => setIsOpen(true)}
-      >
-        <Select.Value className="text-sm text-foreground">
-          {selectedLabel || "Select a report"}
-        </Select.Value>
-        <Select.Indicator />
-      </Select.Trigger>
-      <Select.Popover className="rounded-2xl border border-border-subtle p-1.5 shadow-lg shadow-zinc-200/60">
-        <ListBox>
-          {reports.map((section, sIndex) => (
-            <ListBox.Section key={section.key}>
-              <Header className="px-3 py-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
-                {section.key}
-              </Header>
-              {section.values.map((report) => (
-                <ListBox.Item
-                  key={report.reportId}
-                  id={report.name.toLowerCase().replace(/\s+/g, "-")}
-                  textValue={report.name}
-                  onAction={() => handleAction(report)}
-                  className="flex cursor-pointer items-center rounded-xl px-3 py-2.5 text-sm text-muted-foreground outline-none transition-colors data-[hovered=true]:bg-subtle data-[hovered=true]:text-foreground"
-                >
-                  <div className="flex items-center gap-3 w-full">
-                    <span className="flex-1 truncate group-selected:font-medium">
-                      {report.name}
-                    </span>
-                  </div>
-                </ListBox.Item>
-              ))}
-              {sIndex < reports.length - 1 && (
-                <div className="mx-2 my-1 h-px bg-border-subtle" />
-              )}
-            </ListBox.Section>
-          ))}
-        </ListBox>
-      </Select.Popover>
-    </Select>
+    <CustomInputComponent
+      label={label}
+      type={filter.type === "number" ? "number" : "text"}
+      placeholder={`Any ${filter.label.toLowerCase()}`}
+      defaultValue={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
   );
-};
+}
+
+function ResultPlaceholder({
+  icon,
+  title,
+  description,
+  action,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <EmptyState
+      className="h-full min-h-48"
+      icon={icon}
+      title={title}
+      description={description}
+      action={action}
+    />
+  );
+}

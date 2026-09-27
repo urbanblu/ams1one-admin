@@ -5,7 +5,7 @@ import GeneralSettings from "./_components/general-settings";
 import TeamMembers from "./_components/team-members";
 import ActivityLogsTab from "./_components/activity-logs-tab";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { PageHeader, PageShell, SegmentedControl } from "@/components/ui";
+import { AppBarActions, PageShell, SegmentedControl } from "@/components/ui";
 import { LuHistory, LuSettings, LuUsers } from "react-icons/lu";
 
 type Tab = "generalSettings" | "teamMembers" | "activityLogs";
@@ -41,18 +41,13 @@ function SettingsView() {
 
   return (
     <PageShell fill className="overflow-x-hidden">
-      <PageHeader
-        className="shrink-0"
-        title="Settings"
-        description="Organisation profile, team access and activity history."
-        actions={
-          <SegmentedControl
-            segments={segments}
-            value={selectedTab}
-            onChange={setSelectedTab}
-          />
-        }
-      />
+      <AppBarActions>
+        <SegmentedControl
+          segments={segments}
+          value={selectedTab}
+          onChange={setSelectedTab}
+        />
+      </AppBarActions>
 
       {/* RightSegment rendered an empty <div/>, so a quarter of the widest page
           in the app was permanently blank. Settings is a single column. */}

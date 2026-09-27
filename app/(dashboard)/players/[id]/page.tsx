@@ -2,12 +2,11 @@
 
 import { Tabs } from "@heroui/react";
 import {
-  Avatar,
+  AppBarIdentity,
   Card,
   CardBody,
   CardHeader,
   DetailRow,
-  IconButton,
   PageShell,
   StatTile,
 } from "@/components/ui";
@@ -15,7 +14,6 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  LuArrowLeft,
   LuWallet,
   LuArrowDownLeft,
   LuArrowUpRight,
@@ -26,7 +24,7 @@ import {
   LuCalendar,
 } from "react-icons/lu";
 import PlayersService, { type PlayerGame } from "@/api/players";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 import TicketsTable from "./_components/tickets-table";
 import WinsTable from "./_components/wins-table";
 import TransactionsTable from "./_components/transactions-table";
@@ -74,21 +72,11 @@ function PlayerDetailView() {
 
   return (
     <PageShell className="overflow-x-hidden">
-      {/* Header */}
-      <div className="flex min-w-0 items-center gap-3">
-        <IconButton label="Go back" onClick={() => router.back()}>
-          <LuArrowLeft />
-        </IconButton>
-        <Avatar name={data.full_name} size="lg" gradient />
-        <div className="min-w-0">
-          <h1 className="min-w-0 truncate text-xl font-bold tracking-tight text-foreground">
-            {data.full_name}
-          </h1>
-          <p className="mt-0.5 text-xs tabular-nums text-zinc-400">
-            {data.phone}
-          </p>
-        </div>
-      </div>
+      <AppBarIdentity
+        name={data.full_name}
+        meta={data.phone}
+        onBack={() => router.back()}
+      />
 
       <div className="grid items-start gap-4 lg:grid-cols-5">
         {/* Left column — info + wallet */}
@@ -99,14 +87,12 @@ function PlayerDetailView() {
             <CardBody className="flex flex-col gap-3">
               <SideRow
                 icon={LuPhone}
-                iconBg="bg-emerald-50"
-                iconColor="text-emerald-500"
+                iconColor="text-emerald-600"
                 label={data.phone}
               />
               <SideRow
                 icon={LuMail}
-                iconBg="bg-blue-50"
-                iconColor="text-blue-500"
+                iconColor="text-blue-600"
                 label={data.email || "—"}
               />
               <SideRow
@@ -123,31 +109,27 @@ function PlayerDetailView() {
               <CardBody className="flex flex-col gap-3">
                 <SideRow
                   icon={LuWallet}
-                  iconBg="bg-primary-soft"
-                  iconColor="text-primary"
+                  iconColor="text-brand-600"
                   label="Balance"
-                  value={formatGhs(parseFloat(wallet.balance))}
+                  value={formatUsd(parseFloat(wallet.balance))}
                 />
                 <SideRow
                   icon={LuArrowDownLeft}
-                  iconBg="bg-emerald-50"
-                  iconColor="text-emerald-500"
+                  iconColor="text-emerald-600"
                   label="Deposited"
-                  value={formatGhs(parseFloat(wallet.total_deposited))}
+                  value={formatUsd(parseFloat(wallet.total_deposited))}
                 />
                 <SideRow
                   icon={LuTrophy}
-                  iconBg="bg-amber-50"
-                  iconColor="text-amber-500"
+                  iconColor="text-amber-600"
                   label="Won"
-                  value={formatGhs(parseFloat(wallet.total_won))}
+                  value={formatUsd(parseFloat(wallet.total_won))}
                 />
                 <SideRow
                   icon={LuArrowUpRight}
-                  iconBg="bg-rose-50"
-                  iconColor="text-rose-500"
+                  iconColor="text-rose-600"
                   label="Withdrawn"
-                  value={formatGhs(parseFloat(wallet.total_withdrawn))}
+                  value={formatUsd(parseFloat(wallet.total_withdrawn))}
                 />
               </CardBody>
             </Card>
@@ -161,14 +143,18 @@ function PlayerDetailView() {
                 [
                   { label: "Active", key: "active", color: "text-blue-600" },
                   { label: "Won", key: "won", color: "text-emerald-600" },
-                  { label: "Lost", key: "lost", color: "text-rose-500" },
-                  { label: "Claimed", key: "claimed", color: "text-primary" },
+                  { label: "Lost", key: "lost", color: "text-rose-600" },
+                  { label: "Claimed", key: "claimed", color: "text-brand-700" },
                   {
                     label: "Cancelled",
                     key: "cancelled",
                     color: "text-muted-foreground",
                   },
-                  { label: "Expired", key: "expired", color: "text-zinc-400" },
+                  {
+                    label: "Expired",
+                    key: "expired",
+                    color: "text-foreground-muted",
+                  },
                 ] as { label: string; key: keyof typeof tc; color: string }[]
               ).map(({ label, key, color }) => (
                 <SideRow
@@ -189,27 +175,23 @@ function PlayerDetailView() {
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
               <StatTile
                 icon={<LuWallet />}
-                iconClassName="bg-primary-soft text-primary"
                 label="Balance"
-                value={formatGhs(parseFloat(wallet.balance))}
+                value={formatUsd(parseFloat(wallet.balance))}
               />
               <StatTile
                 icon={<LuArrowDownLeft />}
-                iconClassName="bg-emerald-50 text-emerald-500"
                 label="Total deposited"
-                value={formatGhs(parseFloat(wallet.total_deposited))}
+                value={formatUsd(parseFloat(wallet.total_deposited))}
               />
               <StatTile
                 icon={<LuTrophy />}
-                iconClassName="bg-amber-50 text-amber-500"
                 label="Total won"
-                value={formatGhs(parseFloat(wallet.total_won))}
+                value={formatUsd(parseFloat(wallet.total_won))}
               />
               <StatTile
                 icon={<LuArrowUpRight />}
-                iconClassName="bg-rose-50 text-rose-500"
                 label="Total withdrawn"
-                value={formatGhs(parseFloat(wallet.total_withdrawn))}
+                value={formatUsd(parseFloat(wallet.total_withdrawn))}
               />
             </div>
           )}
@@ -226,21 +208,21 @@ function PlayerDetailView() {
                     className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
                   >
                     Tickets
-                    <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
+                    <Tabs.Indicator className="rounded-none bg-brand-500" />
                   </Tabs.Tab>
                   <Tabs.Tab
                     id="wins"
                     className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
                   >
                     Wins
-                    <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
+                    <Tabs.Indicator className="rounded-none bg-brand-500" />
                   </Tabs.Tab>
                   <Tabs.Tab
                     id="transactions"
                     className="h-10 w-auto! flex-none! whitespace-nowrap px-4 text-sm font-medium"
                   >
                     Transactions
-                    <Tabs.Indicator className="rounded-xl bg-brand-gradient" />
+                    <Tabs.Indicator className="rounded-none bg-brand-500" />
                   </Tabs.Tab>
                 </Tabs.List>
               </Tabs.ListContainer>
@@ -283,20 +265,19 @@ const SideRow = ({
   icon: Icon,
   label,
   value,
-  iconBg = "bg-subtle",
-  iconColor = "text-zinc-400",
+  iconColor,
   valueClassName,
 }: {
   icon: ElementType;
   label: string;
   value?: string;
-  iconBg?: string;
+  /** Only for rows where the glyph's colour is the signal. */
   iconColor?: string;
   valueClassName?: string;
 }) => (
   <DetailRow
     icon={<Icon />}
-    iconClassName={`${iconBg} ${iconColor}`}
+    iconClassName={iconColor}
     label={label}
     value={value}
     valueClassName={valueClassName}

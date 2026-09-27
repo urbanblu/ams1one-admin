@@ -4,7 +4,7 @@ import { cn } from "@heroui/react";
 import React from "react";
 
 /**
- * A labelled group of form fields.
+ * A labelled group of form fields, closed off by a rule.
  *
  * Long forms rendered as one flat `space-y-4` column give "Confirm password"
  * the same separation from "Password" as from "Supervisor", so the reader has
@@ -21,8 +21,8 @@ export function FormSection({
   className?: string;
 }) {
   return (
-    <section className={cn("space-y-4", className)}>
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+    <section className={cn("space-y-3.5", className)}>
+      <h3 className="border-b border-border pb-2 text-xs font-medium text-foreground-light">
         {title}
       </h3>
       {children}

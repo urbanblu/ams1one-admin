@@ -1,7 +1,15 @@
-import { Button as UiButton, drawerDialogClass } from "@/components/ui";
+import {
+  Button,
+  DrawerTitleBar,
+  drawerBodyClass,
+  drawerDialogClass,
+  drawerFooterClass,
+  drawerWidth,
+} from "@/components/ui";
 import CustomInputComponent from "@/components/custom-input-component";
-import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
+import { cn, Drawer, Form } from "@heroui/react";
 import React from "react";
+import { LuWallet } from "react-icons/lu";
 
 type Props = {
   onFilterTap?: (payload: { name: string; phoneNumber: string }) => void;
@@ -12,73 +20,58 @@ function SetCreditPromiseDrawer(payload: Props) {
 
   return (
     <Drawer>
-      <UiButton size="sm" onClick={() => setDrawerOpen(true)}>
+      <Button size="sm" onClick={() => setDrawerOpen(true)}>
         Credit promise
-      </UiButton>
-      <Drawer.Backdrop
-        variant="blur"
-        className="backdrop-blur-sm"
-        isOpen={drawerIsOpen}
-        onOpenChange={setDrawerOpen}
-      >
+      </Button>
+      <Drawer.Backdrop isOpen={drawerIsOpen} onOpenChange={setDrawerOpen}>
         <Drawer.Content placement="right">
-          <Drawer.Dialog className={drawerDialogClass}>
-            <Drawer.Header>
-              <CloseButton
-                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
-                onClick={() => setDrawerOpen(false)}
-              >
-                <CloseIcon className="size-4" />
-              </CloseButton>
-            </Drawer.Header>
-            <Drawer.Body className="px-5 pb-6">
-              <Form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const data = Object.fromEntries(
-                    new FormData(e.currentTarget),
-                  );
+          <Drawer.Dialog className={cn(drawerDialogClass, drawerWidth.form)}>
+            <Form
+              className="flex min-h-0 flex-1 flex-col"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(e.currentTarget));
 
-                  const finalData = {
-                    name: data.name as string,
-                    phoneNumber: data.phoneNumber as string,
-                  };
+                const finalData = {
+                  name: data.name as string,
+                  phoneNumber: data.phoneNumber as string,
+                };
 
-                  payload.onFilterTap?.(finalData);
-                }}
-              >
-                <div className="flex flex-col space-y-3">
-                  <span className="text-sm font-bold">Set Credit Promise</span>
-                  <div className="space-y-4">
-                    <CustomInputComponent
-                      label="Amount"
-                      name="amount"
-                      validate={(value) => {
-                        if (!value || value.trim() === "") {
-                          return "Amount is required";
-                        }
-                        const num = Number(value);
-                        if (isNaN(num)) {
-                          return "Amount must be a number";
-                        }
-                        if (num <= 0) {
-                          return "Amount must be greater than 0";
-                        }
-                        return true;
-                      }}
-                    />
-                    <UiButton
-                      className="mt-2"
-                      size="lg"
-                      type="submit"
-                      fullWidth
-                    >
-                      Save credit promise
-                    </UiButton>
-                  </div>
-                </div>
-              </Form>
-            </Drawer.Body>
+                payload.onFilterTap?.(finalData);
+              }}
+            >
+              <DrawerTitleBar
+                icon={<LuWallet />}
+                title="Set credit promise"
+                description="Cap how much credit this writer can carry."
+                onClose={() => setDrawerOpen(false)}
+              />
+              <Drawer.Body className={drawerBodyClass}>
+                <CustomInputComponent
+                  label="Amount"
+                  name="amount"
+                  isRequired
+                  validate={(value) => {
+                    if (!value || value.trim() === "") {
+                      return "Amount is required";
+                    }
+                    const num = Number(value);
+                    if (isNaN(num)) {
+                      return "Amount must be a number";
+                    }
+                    if (num <= 0) {
+                      return "Amount must be greater than 0";
+                    }
+                    return true;
+                  }}
+                />
+              </Drawer.Body>
+              <Drawer.Footer className={drawerFooterClass}>
+                <Button size="lg" type="submit" fullWidth>
+                  Save credit promise
+                </Button>
+              </Drawer.Footer>
+            </Form>
           </Drawer.Dialog>
         </Drawer.Content>
       </Drawer.Backdrop>

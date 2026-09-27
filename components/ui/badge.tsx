@@ -6,18 +6,29 @@ import React from "react";
 export type BadgeTone =
   "neutral" | "brand" | "success" | "warning" | "danger" | "info";
 
+/**
+ * Tint fill + a matching border + the -700 text step. The border is what makes
+ * these read as badges rather than as coloured text, and it is the reason the
+ * fills can stay as pale as they do.
+ */
 const TONES: Record<BadgeTone, string> = {
-  neutral: "bg-zinc-100 text-zinc-600",
-  brand: "bg-primary-soft text-primary-strong",
-  success: "bg-emerald-50 text-emerald-600",
-  warning: "bg-amber-50 text-amber-600",
-  danger: "bg-rose-50 text-rose-600",
-  info: "bg-blue-50 text-blue-600",
+  neutral: "border-border-stronger bg-surface-200 text-foreground-light",
+  brand: "border-brand-300 bg-brand-100 text-brand-800",
+  success: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  warning: "border-amber-200 bg-amber-50 text-amber-700",
+  danger: "border-rose-200 bg-rose-50 text-rose-700",
+  info: "border-blue-200 bg-blue-50 text-blue-700",
 };
 
-const DOTS: Record<BadgeTone, string> = {
-  neutral: "bg-zinc-400",
-  brand: "bg-primary",
+/**
+ * The fill for a tone's dot. Exported because anything that visualises a set
+ * of statuses — a dot, a legend key, a segment of a bar — has to agree with
+ * the badges beside it, and the only way to guarantee that is to read the
+ * same map.
+ */
+export const toneFill: Record<BadgeTone, string> = {
+  neutral: "bg-foreground-muted",
+  brand: "bg-brand-500",
   success: "bg-emerald-500",
   warning: "bg-amber-500",
   danger: "bg-rose-500",
@@ -92,13 +103,15 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium capitalize whitespace-nowrap",
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-normal capitalize",
         TONES[tone],
         className,
       )}
     >
       {dot && (
-        <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", DOTS[tone])} />
+        <span
+          className={cn("size-1.5 shrink-0 rounded-full", toneFill[tone])}
+        />
       )}
       {children}
     </span>
@@ -118,7 +131,7 @@ export function StatusBadge({
   tone?: BadgeTone;
   className?: string;
 }) {
-  if (!status) return <span className="text-muted-foreground">—</span>;
+  if (!status) return <span className="text-foreground-muted">—</span>;
   return (
     <Badge tone={tone ?? toneForStatus(status)} dot={dot} className={className}>
       {String(status).replace(/_/g, " ")}
@@ -136,8 +149,8 @@ export function StatusDot({
   return (
     <span
       className={cn(
-        "w-2.5 h-2.5 rounded-full border-2 border-white shrink-0",
-        DOTS[toneForStatus(status)],
+        "size-2.5 shrink-0 rounded-full border-2 border-surface",
+        toneFill[toneForStatus(status)],
         className,
       )}
     />

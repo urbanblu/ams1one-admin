@@ -11,7 +11,7 @@ const DeviceMapInner = dynamic(() => import("./device-map-inner"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full items-center justify-center">
-      <LuLoaderCircle className="size-5 animate-spin text-primary" />
+      <LuLoaderCircle className="size-5 animate-spin text-brand-700" />
     </div>
   ),
 });
@@ -40,21 +40,16 @@ export default function DeviceMapDrawer({ isOpen, onClose }: Props) {
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-zinc-900/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-40 bg-foreground/40" onClick={onClose} />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-surface shadow-2xl sm:w-[82vw] sm:rounded-l-3xl sm:overflow-hidden">
+      <div className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-border bg-surface sm:w-[82vw] sm:overflow-hidden sm:rounded-l-xl">
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle px-5 py-4">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
           <div className="flex min-w-0 items-center gap-2.5">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-              <LuMapPin className="size-4" />
-            </span>
+            <LuMapPin className="size-4 shrink-0 text-foreground-muted" />
             <div className="min-w-0">
-              <p className="text-base font-semibold tracking-tight text-foreground">
+              <p className="text-sm font-medium tracking-tight text-foreground">
                 POS device locations
               </p>
               {!isPending && (
@@ -80,10 +75,8 @@ export default function DeviceMapDrawer({ isOpen, onClose }: Props) {
         </div>
 
         {/* Legend */}
-        <div className="flex shrink-0 items-center gap-4 border-b border-border-subtle bg-surface-muted px-5 py-2.5 text-xs text-muted-foreground">
-          <span className="font-semibold uppercase tracking-wider text-zinc-400">
-            Status
-          </span>
+        <div className="flex shrink-0 items-center gap-4 border-b border-border bg-surface-muted px-5 py-2.5 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground-muted">Status</span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block size-2 rounded-full bg-emerald-500" />
             Active
@@ -93,7 +86,7 @@ export default function DeviceMapDrawer({ isOpen, onClose }: Props) {
             No use
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="inline-block size-2 rounded-full bg-zinc-400" />
+            <span className="inline-block size-2 rounded-full bg-foreground-muted" />
             Other
           </span>
         </div>
@@ -102,11 +95,11 @@ export default function DeviceMapDrawer({ isOpen, onClose }: Props) {
         <div className="relative min-h-0 flex-1">
           {isPending ? (
             <div className="flex h-full items-center justify-center">
-              <LuLoaderCircle className="size-5 animate-spin text-primary" />
+              <LuLoaderCircle className="size-5 animate-spin text-brand-700" />
             </div>
           ) : devices.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-3">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-subtle text-zinc-300">
+              <div className="flex size-12 items-center justify-center rounded-lg bg-subtle text-foreground-muted">
                 <LuMapPin className="size-5" />
               </div>
               <p className="text-sm text-muted-foreground">

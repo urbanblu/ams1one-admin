@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import FinancialsService from "@/api/financials";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 import {
   Bar,
   BarChart,
@@ -84,9 +84,9 @@ const CustomTooltip = ({
   if (!active || !payload?.length) return null;
   const { fullLabel, value } = payload[0].payload;
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface px-3 py-2 text-xs shadow-lg shadow-zinc-200/60">
-      <p className="font-bold text-foreground">{fullLabel}</p>
-      <p className="text-emerald-500 font-medium mt-1">
+    <div className="rounded-xl border border-border bg-surface px-3 py-2 text-xs shadow-overlay">
+      <p className="font-medium text-foreground">{fullLabel}</p>
+      <p className="text-emerald-600 font-medium mt-1">
         Retention rate: {value}%
       </p>
     </div>
@@ -176,7 +176,7 @@ function RetentionRatePerformance() {
     <div className="flex flex-col space-y-5">
       {/* 3×2 grid — dashed dividers only between cells */}
       {visibleCards > 0 && (
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border-subtle bg-border-subtle sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border-subtle sm:grid-cols-2 lg:grid-cols-3">
           {canSeeSalesCard && (
             <PrimaryCard
               label="Sales"
@@ -184,12 +184,12 @@ function RetentionRatePerformance() {
               subLabel="Net Sales"
               subValue={
                 salesCard != null
-                  ? formatGhs(salesCard.total_sales_amount)
+                  ? formatUsd(salesCard.total_sales_amount)
                   : "N/A"
               }
               icon={LuShoppingBag}
-              iconBg="bg-primary-soft"
-              iconColor="text-primary"
+              iconBg="bg-brand-100"
+              iconColor="text-brand-700"
             />
           )}
           {canSeeNetTopups && (
@@ -200,7 +200,7 @@ function RetentionRatePerformance() {
               subValue={netTopupsCard?.gross_topups ?? "N/A"}
               icon={LuWallet}
               iconBg="bg-blue-50"
-              iconColor="text-blue-500"
+              iconColor="text-blue-600"
             />
           )}
           {canSeeWritersAtWork && (
@@ -219,7 +219,7 @@ function RetentionRatePerformance() {
               }
               icon={LuUsers}
               iconBg="bg-emerald-50"
-              iconColor="text-emerald-500"
+              iconColor="text-emerald-600"
             />
           )}
           {canSeeWinsCard && (
@@ -234,7 +234,7 @@ function RetentionRatePerformance() {
               }
               icon={LuTrophy}
               iconBg="bg-amber-50"
-              iconColor="text-orange-500"
+              iconColor="text-orange-600"
             />
           )}
           {canSeeLiquidation && (
@@ -245,7 +245,7 @@ function RetentionRatePerformance() {
               subValue={liquidationCard?.unclaimed_coupons ?? "N/A"}
               icon={LuArrowDownUp}
               iconBg="bg-rose-50"
-              iconColor="text-rose-500"
+              iconColor="text-rose-600"
             />
           )}
           {canSeeSettlements && (
@@ -256,7 +256,7 @@ function RetentionRatePerformance() {
               subValue={settlementsCard?.claim_wallet_balance ?? "N/A"}
               icon={LuHandCoins}
               iconBg="bg-blue-50"
-              iconColor="text-blue-500"
+              iconColor="text-blue-600"
             />
           )}
         </div>
@@ -271,10 +271,10 @@ function RetentionRatePerformance() {
             action={
               <div className="flex items-center gap-3">
                 <span className="hidden items-center gap-1.5 sm:flex">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+                  <span className="text-xs font-medium text-foreground-light">
                     YTD
                   </span>
-                  <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold tabular-nums text-primary">
+                  <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium tabular-nums text-brand-700">
                     {ytdRR}
                   </span>
                 </span>
@@ -293,7 +293,7 @@ function RetentionRatePerformance() {
             <div className="h-[18rem] lg:h-[22rem]">
               {chartData.length === 0 ? (
                 <div className="h-full flex items-center justify-center">
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-foreground-muted">
                     No data available
                   </span>
                 </div>
@@ -370,7 +370,7 @@ const PrimaryCard = ({
   return (
     <div className="flex min-w-0 flex-col bg-surface px-5 py-4">
       <div className="flex items-start justify-between gap-3">
-        <span className="min-w-0 flex-1 truncate text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+        <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground-light">
           {label}
         </span>
         <span
@@ -379,11 +379,11 @@ const PrimaryCard = ({
           <Icon className={`size-4 ${iconColor}`} />
         </span>
       </div>
-      <p className="mt-1.5 truncate text-xl font-bold tracking-tight tabular-nums text-foreground">
+      <p className="mt-1.5 truncate text-xl font-medium tracking-tight tabular-nums text-foreground">
         {value}
       </p>
-      <p className="mt-1 truncate text-[11px] text-muted-foreground">
-        <span className={`font-semibold tabular-nums ${iconColor}`}>
+      <p className="mt-1 truncate text-xs text-muted-foreground">
+        <span className={`font-medium tabular-nums ${iconColor}`}>
           {subValue}
         </span>{" "}
         {subLabel}

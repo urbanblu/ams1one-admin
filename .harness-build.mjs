@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root = process.cwd();
+const pnpm = path.join(root, 'node_modules/.pnpm');
+const pcDir = fs.readdirSync(pnpm).filter(d => /^postcss@8\.5/.test(d)).sort().pop();
+const postcss = (await import(path.join(pnpm, pcDir, 'node_modules/postcss/lib/postcss.mjs'))).default;
+const tw = (await import(path.join(root, 'node_modules/@tailwindcss/postcss/dist/index.mjs'))).default;
+const outDir = process.argv[2];
+const input = path.join(root, '.harness/tokens.css');
+const css = fs.readFileSync(input, 'utf8');
+const res = await postcss([tw()]).process(css, { from: input, to: `${outDir}/out.css` });
+fs.writeFileSync(`${outDir}/out.css`, res.css);
+console.log('bytes', res.css.length);

@@ -1,6 +1,6 @@
 "use client";
 
-import CustomTable, { TableRow } from "@/components/custom-table";
+import CustomTable, { TableColumn, TableRow } from "@/components/custom-table";
 import { SegmentedControl, StatusBadge } from "@/components/ui";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -78,53 +78,64 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
     setCurrentPage(1);
   };
 
-  const transactionColumns = [
+  const transactionColumns: TableColumn[] = [
     { key: "createdAt", label: "Date", sortable: false },
     { key: "type", label: "Type", sortable: false },
     { key: "writer", label: "Writer", sortable: false },
     { key: "reference", label: "Reference", sortable: false },
-    { key: "amount", label: "Amount", sortable: false },
+    { key: "amount", label: "Amount", sortable: false, align: "right" },
   ];
 
-  const writerColumns = [
+  const writerColumns: TableColumn[] = [
     { key: "name", label: "Name", sortable: false },
     { key: "contact", label: "Contact", sortable: false },
     { key: "location", label: "Location", sortable: false },
     { key: "dot", label: "DoT", sortable: false },
-    { key: "ytd_sales", label: "YTD Sales", sortable: false },
-    { key: "ytd_topups", label: "YTD Top-ups", sortable: false },
+    { key: "ytd_sales", label: "YTD sales", sortable: false, align: "right" },
+    {
+      key: "ytd_topups",
+      label: "YTD top-ups",
+      sortable: false,
+      align: "right",
+    },
     { key: "status", label: "Status", sortable: false },
   ];
 
   const transactionRows: TableRow[] = useMemo(
     () =>
       (transactionsData?.results ?? []).map((row) => ({
-        createdAt: <span className="text-xs">{row.created_at}</span>,
+        createdAt: (
+          <span className="text-xs font-medium tabular-nums text-foreground">
+            {row.created_at}
+          </span>
+        ),
         type: (
           <span
-            className={`text-xs capitalize font-medium ${row.is_credit ? "text-emerald-600" : "text-rose-500"}`}
+            className={`text-xs font-medium capitalize ${row.is_credit ? "text-emerald-700" : "text-rose-700"}`}
           >
             {row.type}
           </span>
         ),
         writer: (
           <div className="flex flex-col min-w-0">
-            <span className="text-xs truncate">{row.writer_name}</span>
+            <span className="truncate text-xs text-foreground-light">
+              {row.writer_name}
+            </span>
             {row.writer_phone && (
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-xs tabular-nums text-foreground-lighter">
                 {row.writer_phone}
               </span>
             )}
           </div>
         ),
         reference: (
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs tabular-nums text-foreground-light">
             {row.reference ?? "—"}
           </span>
         ),
         amount: (
           <span
-            className={`text-xs font-semibold tabular-nums ${row.is_credit ? "text-emerald-600" : "text-rose-500"}`}
+            className={`text-xs font-semibold tabular-nums ${row.is_credit ? "text-emerald-700" : "text-rose-700"}`}
           >
             {row.is_credit ? "+" : "-"}USD {row.amount}
           </span>
@@ -147,12 +158,12 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
         ),
         dot: <span className="text-xs">{row.dot}</span>,
         ytd_sales: (
-          <span className="text-xs font-semibold tabular-nums">
+          <span className="text-xs font-medium tabular-nums">
             USD {row.ytd_sales}
           </span>
         ),
         ytd_topups: (
-          <span className="text-xs font-semibold tabular-nums">
+          <span className="text-xs font-medium tabular-nums">
             USD {row.ytd_topups}
           </span>
         ),
@@ -200,11 +211,11 @@ function LmcDetailTable({ type, tabs, lmcId }: Props) {
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
+    <div className="overflow-hidden rounded-lg border border-border bg-surface">
       {/* This sits under the page-level tab bar, so it reads as a filter row
           rather than a second navigation level. */}
-      <div className="flex flex-col gap-3 border-b border-border-subtle px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+      <div className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-xs font-medium text-foreground-light">
           {type}
         </span>
         <SegmentedControl

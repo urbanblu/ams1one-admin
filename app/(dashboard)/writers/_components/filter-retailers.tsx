@@ -53,21 +53,21 @@ function FilterRetailers({ onFilterTap }: Props) {
           <LuFilter />
           Filter
           {hasActiveFilter && (
-            <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+            <span className="flex size-4 items-center justify-center rounded-full bg-brand-700 text-xs font-medium text-white">
               {filtersCount}
             </span>
           )}
         </Button>
       </Popover.Trigger>
       <Popover.Content
-        className="w-80 rounded-2xl border border-border-subtle p-0 shadow-lg shadow-zinc-200/60"
+        className="w-80 rounded-lg border border-border p-0 shadow-overlay"
         placement="bottom right"
       >
         <Popover.Dialog className="w-full p-0">
           {/* key forces inputs to re-render with fresh defaultValues when params change */}
           <Form key={`${currentName}-${currentPhone}`} onSubmit={handleSubmit}>
             <div className="flex w-full flex-col gap-4 p-5">
-              <p className="text-sm font-semibold text-foreground">
+              <p className="text-sm font-medium text-foreground">
                 Filter retailers
               </p>
               <CustomInputComponent

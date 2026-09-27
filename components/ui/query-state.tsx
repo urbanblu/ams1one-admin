@@ -33,8 +33,8 @@ export function QueryState({
     return (
       <>
         {loadingFallback ?? (
-          <div className="flex items-center justify-center py-16">
-            <LuLoaderCircle className="size-5 animate-spin text-primary" />
+          <div className="flex items-center justify-center py-12">
+            <LuLoaderCircle className="size-4 animate-spin text-foreground-muted" />
           </div>
         )}
       </>
@@ -45,14 +45,12 @@ export function QueryState({
     const message =
       error instanceof Error ? error.message : "Something went wrong.";
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center mb-3 text-rose-400">
-          <LuTriangleAlert className="size-5" />
-        </div>
+      <div className="flex flex-col items-center justify-center px-6 py-12 text-center">
+        <LuTriangleAlert className="mb-3 size-5 text-rose-600" />
         <p className="text-sm font-medium text-foreground">
           Couldn&apos;t load this
         </p>
-        <p className="text-xs text-muted-foreground mt-1 max-w-xs">{message}</p>
+        <p className="mt-1 max-w-xs text-xs text-foreground-light">{message}</p>
       </div>
     );
   }

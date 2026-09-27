@@ -1,27 +1,25 @@
 "use client";
 
-import { Button as UiButton, drawerDialogClass } from "@/components/ui";
+import {
+  Button as UiButton,
+  DrawerTitleBar,
+  FieldLabel,
+  drawerBodyClass,
+  drawerDialogClass,
+  drawerFooterClass,
+  drawerWidth,
+} from "@/components/ui";
 
 import CustomCheckboxItem from "@/components/custom-checkbox";
 import CustomInputComponent from "@/components/custom-input-component";
 import PermissionsService from "@/api/permissions";
 import ToastService from "@/utils/toast-service";
 import type { IDashboardRole } from "@/interfaces/admin-users.interface";
-import {
-  cn,
-  Accordion,
-  Button,
-  CloseButton,
-  CloseIcon,
-  Drawer,
-  Modal,
-  Spinner,
-} from "@heroui/react";
+import { cn, Accordion, Drawer, Modal, Spinner } from "@heroui/react";
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import ApiError from "@/utils/api_error";
-import { LuShieldCheck } from "react-icons/lu";
+import { LuShieldCheck, LuTrash2 } from "react-icons/lu";
 
 function ExistingRolesDrawer() {
   const [drawerIsOpen, setDrawerOpen] = React.useState(false);
@@ -35,19 +33,15 @@ function ExistingRolesDrawer() {
     setIsAdding(false);
   };
 
+  const isFormView = isAdding || !!editingRole;
+
   return (
     <>
-      <Button
-        className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-subtle w-full md:w-auto"
-        size="md"
-        onClick={() => setDrawerOpen(true)}
-      >
-        <LuShieldCheck className="size-4" />
+      <UiButton variant="outline" size="sm" onClick={() => setDrawerOpen(true)}>
+        <LuShieldCheck />
         Roles &amp; permissions
-      </Button>
+      </UiButton>
       <Drawer.Backdrop
-        variant="blur"
-        className="backdrop-blur-sm"
         isOpen={drawerIsOpen}
         onOpenChange={(open) => {
           if (!open) resetDrawerState();
@@ -55,22 +49,25 @@ function ExistingRolesDrawer() {
         }}
       >
         <Drawer.Content placement="right">
-          <Drawer.Dialog
-            className={cn(
-              drawerDialogClass,
-              "flex h-full max-h-screen flex-col",
-            )}
-          >
-            <Drawer.Header>
-              <CloseButton
-                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
-                onClick={resetDrawerState}
-              >
-                <CloseIcon className="size-4" />
-              </CloseButton>
-            </Drawer.Header>
+          <Drawer.Dialog className={cn(drawerDialogClass, drawerWidth.form)}>
+            <DrawerTitleBar
+              icon={<LuShieldCheck />}
+              title={
+                editingRole
+                  ? "Edit role"
+                  : isAdding
+                    ? "New role"
+                    : "Roles & permissions"
+              }
+              description={
+                isFormView
+                  ? "Choose the pages this role can reach."
+                  : "Which pages each dashboard role can reach."
+              }
+              onClose={resetDrawerState}
+            />
 
-            {!isAdding && !editingRole ? (
+            {!isFormView ? (
               <RolesList
                 onAdd={() => setIsAdding(true)}
                 onEdit={(role) => setEditingRole(role)}
@@ -144,139 +141,128 @@ function RolesList({
         }}
       >
         <Modal.Container placement="center" size="sm">
-          <Modal.Dialog className="rounded-3xl">
+          <Modal.Dialog className="rounded-lg">
             <Modal.Header>
-              <Modal.Heading className="text-lg font-semibold tracking-tight">
+              <Modal.Heading className="text-base font-medium tracking-tight">
                 Delete role?
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-foreground-light">
                 Are you sure you want to delete{" "}
-                <span className="font-semibold text-black">
+                <span className="font-medium text-foreground">
                   {confirmRole?.name}
                 </span>
                 ? This cannot be undone.
               </p>
             </Modal.Body>
             <Modal.Footer>
-              <Button
-                className="h-10 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-subtle flex-1"
-                size="md"
-                isDisabled={isDeleting}
+              <UiButton
+                type="button"
+                variant="outline"
+                disabled={isDeleting}
                 onClick={() => setConfirmRole(null)}
               >
                 Cancel
-              </Button>
-              <Button
-                className="h-10 flex-1 cursor-pointer rounded-xl bg-rose-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-rose-600"
-                size="md"
+              </UiButton>
+              <UiButton
+                type="button"
+                variant="danger"
                 isPending={isDeleting}
                 onClick={() => confirmRole && deleteRole(confirmRole.id)}
               >
-                {({ isPending }) =>
-                  isPending ? <Spinner color="current" size="sm" /> : "Delete"
-                }
-              </Button>
+                {isDeleting ? "Deleting…" : "Delete role"}
+              </UiButton>
             </Modal.Footer>
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>
 
-      <Drawer.Body className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
-        <div className="flex flex-col space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-bold">Existing Roles</span>
-            <UiButton size="sm" onClick={onAdd}>
-              New role
-            </UiButton>
+      <Drawer.Body className={drawerBodyClass}>
+        {isPending ? (
+          <div className="flex justify-center py-8">
+            <Spinner size="sm" className="text-brand-700" />
           </div>
-
-          {isPending ? (
-            <div className="flex justify-center py-8">
-              <Spinner size="sm" className="text-primary" />
-            </div>
-          ) : roles.length === 0 ? (
-            <p className="text-xs text-zinc-400 text-center py-8">
-              No roles yet. Create one to assign to team members.
-            </p>
-          ) : (
-            <div className="rounded-2xl border border-border-subtle bg-surface">
-              <Accordion>
-                {roles.map((role) => (
-                  <Accordion.Item key={role.id}>
-                    <Accordion.Heading>
-                      <Accordion.Trigger>
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm font-bold truncate">
-                            {role.name}
+        ) : roles.length === 0 ? (
+          <p className="py-8 text-center text-xs text-foreground-light">
+            No roles yet. Create one to assign to team members.
+          </p>
+        ) : (
+          <div className="rounded-lg border border-border bg-surface">
+            <Accordion>
+              {roles.map((role) => (
+                <Accordion.Item key={role.id}>
+                  <Accordion.Heading>
+                    <Accordion.Trigger>
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span className="truncate text-sm font-medium text-foreground">
+                          {role.name}
+                        </span>
+                        <span className="shrink-0 text-xs text-foreground-light">
+                          {role.user_count} user
+                          {role.user_count !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                      <Accordion.Indicator />
+                    </Accordion.Trigger>
+                  </Accordion.Heading>
+                  <Accordion.Panel>
+                    <Accordion.Body>
+                      {role.description && (
+                        <p className="mb-2 text-xs text-foreground-light">
+                          {role.description}
+                        </p>
+                      )}
+                      <div className="mb-3 flex flex-wrap gap-1.5">
+                        {role.page_keys.length === 0 ? (
+                          <span className="text-xs text-foreground-light">
+                            No pages assigned
                           </span>
-                          <span className="text-[10px] text-zinc-400 shrink-0">
-                            ({role.user_count} user
-                            {role.user_count !== 1 ? "s" : ""})
-                          </span>
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            className="text-[10px] font-semibold text-primary cursor-pointer shrink-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onEdit(role);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.stopPropagation();
-                                onEdit(role);
-                              }
-                            }}
-                          >
-                            Edit
-                          </span>
-                        </div>
-                        <Accordion.Indicator />
-                      </Accordion.Trigger>
-                    </Accordion.Heading>
-                    <Accordion.Panel>
-                      <Accordion.Body>
-                        {role.description && (
-                          <p className="text-[11px] text-muted-foreground mb-2">
-                            {role.description}
-                          </p>
-                        )}
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {role.page_keys.length === 0 ? (
-                            <span className="text-[11px] text-zinc-400">
-                              No pages assigned
+                        ) : (
+                          role.page_keys.map((key) => (
+                            <span
+                              key={key}
+                              className="rounded-md border border-border bg-surface-100 px-2 py-0.5 font-ident text-xs text-foreground-light"
+                            >
+                              {key}
                             </span>
-                          ) : (
-                            role.page_keys.map((key) => (
-                              <span
-                                key={key}
-                                className="text-[10px] bg-subtle text-muted-foreground px-2 py-0.5 rounded font-mono"
-                              >
-                                {key}
-                              </span>
-                            ))
-                          )}
-                        </div>
+                          ))
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <UiButton
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onEdit(role)}
+                        >
+                          Edit role
+                        </UiButton>
                         {role.user_count === 0 && (
-                          <button
-                            className="flex items-center gap-1 text-[11px] cursor-pointer text-rose-500 font-semibold mt-1"
+                          <UiButton
+                            type="button"
+                            variant="danger"
+                            size="sm"
                             onClick={() => setConfirmRole(role)}
                           >
-                            <RiDeleteBin6Line />
-                            Delete role
-                          </button>
+                            <LuTrash2 />
+                            Delete
+                          </UiButton>
                         )}
-                      </Accordion.Body>
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                ))}
-              </Accordion>
-            </div>
-          )}
-        </div>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Panel>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+          </div>
+        )}
       </Drawer.Body>
+      <Drawer.Footer className={drawerFooterClass}>
+        <UiButton type="button" size="lg" fullWidth onClick={onAdd}>
+          New role
+        </UiButton>
+      </Drawer.Footer>
     </>
   );
 }
@@ -341,91 +327,93 @@ function RoleForm({
   };
 
   return (
-    <Drawer.Body className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
-      <div className="flex flex-col space-y-4">
-        <span className="text-lg font-bold">
-          {role ? "Edit Role" : "New Role"}
-        </span>
+    <>
+      <Drawer.Body className={drawerBodyClass}>
+        <div className="space-y-4">
+          <div key={role?.id ?? "new"} className="space-y-3.5">
+            <CustomInputComponent
+              label="Name"
+              name="name"
+              defaultValue={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <CustomInputComponent
+              label="Description"
+              name="description"
+              defaultValue={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
 
-        <div key={role?.id ?? "new"} className="space-y-3">
-          <CustomInputComponent
-            label="Name"
-            name="name"
-            defaultValue={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <CustomInputComponent
-            label="Description"
-            name="description"
-            defaultValue={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
+          <div>
+            <FieldLabel>Pages</FieldLabel>
+            {pagesPending ? (
+              <div className="flex justify-center py-4">
+                <Spinner size="sm" className="text-brand-700" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {Object.entries(grouped).map(([category, catPages]) => {
+                  const catKeys = catPages.map((p) => p.key);
+                  const allSelected = catKeys.every((k) =>
+                    selectedKeys.includes(k),
+                  );
+                  const someSelected = catKeys.some((k) =>
+                    selectedKeys.includes(k),
+                  );
 
-        <div>
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-            Pages
-          </span>
-          {pagesPending ? (
-            <div className="flex justify-center py-4">
-              <Spinner size="sm" className="text-primary" />
-            </div>
-          ) : (
-            <div className="space-y-4 mt-2">
-              {Object.entries(grouped).map(([category, catPages]) => {
-                const catKeys = catPages.map((p) => p.key);
-                const allSelected = catKeys.every((k) =>
-                  selectedKeys.includes(k),
-                );
-                const someSelected = catKeys.some((k) =>
-                  selectedKeys.includes(k),
-                );
-
-                return (
-                  <div key={category}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <CustomCheckboxItem
-                        selected={allSelected || someSelected}
-                        label={category}
-                        labelClassName="text-[11px] font-bold"
-                        setIsSelected={() => toggleCategory(catKeys)}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 pl-2">
-                      {catPages.map((page) => (
+                  return (
+                    <div key={category}>
+                      <div className="mb-1 flex items-center gap-2">
                         <CustomCheckboxItem
-                          key={page.key}
-                          selected={selectedKeys.includes(page.key)}
-                          label={page.name}
-                          labelClassName="text-[11px] font-normal"
-                          setIsSelected={() => toggle(page.key)}
+                          selected={allSelected || someSelected}
+                          label={category}
+                          labelClassName="text-xs font-medium text-foreground"
+                          setIsSelected={() => toggleCategory(catKeys)}
                         />
-                      ))}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 pl-2">
+                        {catPages.map((page) => (
+                          <CustomCheckboxItem
+                            key={page.key}
+                            selected={selectedKeys.includes(page.key)}
+                            label={page.name}
+                            labelClassName="text-xs"
+                            setIsSelected={() => toggle(page.key)}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-
-        <Button
-          className="h-11 w-full cursor-pointer rounded-xl bg-brand-gradient text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
-          isDisabled={isPending || !name.trim()}
-          isPending={isPending}
-          onClick={() => saveRole()}
-        >
-          {({ isPending }) =>
-            isPending ? <Spinner color="current" size="sm" /> : "Save"
-          }
-        </Button>
-        <Button
-          className="h-11 w-full cursor-pointer rounded-xl border border-border bg-surface text-sm font-semibold text-foreground transition-colors hover:bg-subtle"
-          onClick={onCancel}
-        >
-          Cancel
-        </Button>
-      </div>
-    </Drawer.Body>
+      </Drawer.Body>
+      <Drawer.Footer className={drawerFooterClass}>
+        <div className="flex w-full items-center gap-2">
+          <UiButton
+            type="button"
+            variant="outline"
+            size="lg"
+            className="flex-1"
+            onClick={onCancel}
+          >
+            Cancel
+          </UiButton>
+          <UiButton
+            type="button"
+            size="lg"
+            className="flex-1"
+            disabled={isPending || !name.trim()}
+            isPending={isPending}
+            onClick={() => saveRole()}
+          >
+            {isPending ? "Saving…" : "Save role"}
+          </UiButton>
+        </div>
+      </Drawer.Footer>
+    </>
   );
 }

@@ -18,27 +18,37 @@ export function getInitials(name?: string | null) {
 }
 
 const SIZES = {
-  sm: "w-8 h-8 text-[11px]",
-  md: "w-10 h-10 text-sm",
-  lg: "w-12 h-12 text-base",
-  xl: "w-16 h-16 text-2xl rounded-2xl",
+  sm: "size-7 text-xs",
+  md: "size-8 text-xs",
+  lg: "size-10 text-sm",
+  xl: "size-14 text-lg",
 } as const;
 
 type AvatarProps = {
   name?: string | null;
   src?: string | null;
   size?: keyof typeof SIZES;
+  /**
+   * The plate's outline. Square is the console default; circle is for the
+   * places an avatar stands in for a person rather than labelling a row.
+   *
+   * It is a prop rather than something `className` can reach because that
+   * lands on the positioning wrapper, not on the plate.
+   */
+  shape?: "square" | "circle";
   /** Renders a small status dot on the bottom-right corner. */
   status?: string | null;
-  /** Use the brand gradient instead of the flat tint. */
+  /** Solid brand fill instead of the neutral one — for the signed-in user. */
   gradient?: boolean;
   className?: string;
 };
 
+/** Bordered, square-ish initials plate — the console's identity chip. */
 export function Avatar({
   name,
   src,
   size = "md",
+  shape = "square",
   status,
   gradient,
   className,
@@ -49,21 +59,30 @@ export function Avatar({
     <div className={cn("relative shrink-0", className)}>
       <div
         className={cn(
-          "relative overflow-hidden rounded-full flex items-center justify-center font-semibold tracking-tight",
+          "relative flex items-center justify-center overflow-hidden border font-medium tracking-tight",
+          shape === "circle" ? "rounded-full" : "rounded-md",
           SIZES[size],
           gradient
-            ? "bg-brand-gradient text-white"
-            : "bg-primary-soft text-primary-strong",
+            ? "border-brand-800 bg-brand-700 text-white"
+            : "border-border bg-surface-200 text-foreground-light",
         )}
       >
         {src ? (
-          <Image src={src} alt={name ?? "avatar"} fill className="object-cover" />
+          <Image
+            src={src}
+            alt={name ?? "avatar"}
+            fill
+            className="object-cover"
+          />
         ) : (
           initials
         )}
       </div>
       {status && (
-        <StatusDot status={status} className="absolute bottom-0 right-0" />
+        <StatusDot
+          status={status}
+          className="absolute -bottom-0.5 -right-0.5"
+        />
       )}
     </div>
   );

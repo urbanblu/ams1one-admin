@@ -1,11 +1,11 @@
 "use client";
 import {
-  Avatar,
+  AppBarActions,
+  AppBarIdentity,
   Card,
   CardBody,
   CardHeader,
   DetailRow,
-  IconButton,
   MetricCard,
   PageShell,
   SegmentedControl,
@@ -17,7 +17,6 @@ import { PieChart, Pie } from "recharts";
 import LmcDetailTable from "../_components/supervisor-detail-table";
 import ToastService from "@/utils/toast-service";
 import {
-  LuArrowLeft,
   LuBuilding2,
   LuMapPin,
   LuShoppingBag,
@@ -73,23 +72,15 @@ function LmcDetailView() {
 
   return (
     <PageShell className="overflow-x-hidden">
-      <div className="flex min-w-0 items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <IconButton label="Go back" onClick={() => router.back()}>
-            <LuArrowLeft />
-          </IconButton>
-          <Avatar name={info?.name ?? "—"} size="lg" gradient />
-          <div className="min-w-0">
-            <h1 className="min-w-0 truncate text-xl font-bold tracking-tight text-foreground">
-              {info?.name ?? "—"}
-            </h1>
-            <p className="mt-0.5 text-xs text-zinc-400">Supervisor</p>
-          </div>
-        </div>
-        <div className="shrink-0">
-          <EditLmcUserDrawer lmcId={lmcId} info={summary?.supervisor_info} />
-        </div>
-      </div>
+      <AppBarIdentity
+        name={info?.name ?? "—"}
+        meta="Supervisor"
+        onBack={() => router.back()}
+      />
+
+      <AppBarActions>
+        <EditLmcUserDrawer lmcId={lmcId} info={summary?.supervisor_info} />
+      </AppBarActions>
 
       <div className="grid items-start gap-4 lg:grid-cols-5">
         {canSeeSummary && (
@@ -214,18 +205,16 @@ const ContributionRatio = ({
   tone: keyof typeof TONES;
 }) => (
   <div className="flex items-center justify-between gap-2">
-    <span className="text-[11px] text-muted-foreground">
-      Contribution ratio
-    </span>
+    <span className="text-xs text-muted-foreground">Contribution ratio</span>
     <DonutChart value={value} color={TONES[tone].chart} />
   </div>
 );
 
 const TONES = {
-  brand: { chip: "bg-primary-soft text-primary", chart: "#9387eb" },
-  warning: { chip: "bg-amber-50 text-amber-500", chart: "#f59e0b" },
-  success: { chip: "bg-emerald-50 text-emerald-500", chart: "#10b981" },
-  info: { chip: "bg-blue-50 text-blue-500", chart: "#3b82f6" },
+  brand: { chip: "bg-brand-100 text-brand-700", chart: "#9387eb" },
+  warning: { chip: "bg-amber-50 text-amber-600", chart: "#f59e0b" },
+  success: { chip: "bg-emerald-50 text-emerald-600", chart: "#10b981" },
+  info: { chip: "bg-blue-50 text-blue-600", chart: "#3b82f6" },
 };
 
 const PrimaryAddressCard = ({
@@ -240,34 +229,24 @@ const PrimaryAddressCard = ({
   <Card>
     <CardHeader icon={<LuMapPin />} title="Primary address" />
     <CardBody className="flex flex-col gap-3">
-      <DetailRow
-        icon={<LuBuilding2 />}
-        iconClassName="bg-primary-soft text-primary"
-        label={name ?? "—"}
-      />
-      <DetailRow
-        icon={<LuMapPin />}
-        iconClassName="bg-amber-50 text-amber-500"
-        label={address || "N/A"}
-      />
+      <DetailRow icon={<LuBuilding2 />} label={name ?? "—"} />
+      <DetailRow icon={<LuMapPin />} label={address || "N/A"} />
 
-      <div className="mt-1 border-t border-border-subtle pt-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+      <div className="mt-1 border-t border-border pt-3">
+        <p className="text-xs font-medium text-foreground-light">
           Phone numbers
         </p>
         <div className="mt-2.5 flex flex-col gap-2.5">
           {phone ? (
             <div className="flex items-center gap-2.5">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50">
-                <LuPhone className="size-3.5 text-emerald-500" />
-              </span>
+              <LuPhone className="size-3.5 shrink-0 text-foreground-muted" />
               <span className="flex-1 truncate text-xs tabular-nums text-foreground">
                 {phone}
               </span>
               <button
                 type="button"
                 aria-label="Remove phone number"
-                className="relative flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-zinc-400 transition-colors after:absolute after:-inset-2 after:content-[''] hover:bg-rose-50 hover:text-rose-500"
+                className="relative flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-foreground-muted transition-colors after:absolute after:-inset-2 after:content-[''] hover:bg-rose-50 hover:text-rose-600"
                 onClick={() =>
                   ToastService.info({ text: "Feature not yet available" })
                 }
@@ -276,11 +255,11 @@ const PrimaryAddressCard = ({
               </button>
             </div>
           ) : (
-            <span className="text-xs text-zinc-400">—</span>
+            <span className="text-xs text-foreground-muted">—</span>
           )}
           <button
             type="button"
-            className="cursor-pointer text-left text-xs font-semibold text-primary transition-colors hover:text-primary-strong"
+            className="cursor-pointer text-left text-xs font-medium text-brand-700 transition-colors hover:text-brand-700"
             onClick={() =>
               ToastService.info({ text: "Feature not yet available" })
             }
@@ -305,21 +284,14 @@ const PosCard = ({
   <Card>
     <CardHeader icon={<LuTablet />} title="POS devices" />
     <CardBody className="flex flex-col gap-3">
-      <DetailRow
-        icon={<LuTablet />}
-        iconClassName="bg-primary-soft text-primary"
-        label="Issued"
-        value={String(posIssued)}
-      />
+      <DetailRow icon={<LuTablet />} label="Issued" value={String(posIssued)} />
       <DetailRow
         icon={<LuActivity />}
-        iconClassName="bg-emerald-50 text-emerald-500"
         label="Trading"
         value={String(posTrading)}
       />
       <DetailRow
         icon={<LuUsers />}
-        iconClassName="bg-blue-50 text-blue-500"
         label="Writers"
         value={String(writersTotal)}
       />
@@ -362,7 +334,7 @@ const DonutChart = ({
         />
       </PieChart>
       <span
-        className="absolute text-[10px] font-bold tabular-nums text-foreground"
+        className="absolute text-xs font-medium tabular-nums text-foreground"
         style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
       >
         {progress}%

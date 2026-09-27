@@ -4,7 +4,9 @@ import { cn } from "@heroui/react";
 import React from "react";
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("bg-subtle rounded animate-pulse", className)} />;
+  return (
+    <div className={cn("animate-pulse rounded-sm bg-surface-200", className)} />
+  );
 }
 
 /** Placeholder rows for avatar + two-line list items. */
@@ -16,10 +18,10 @@ export function SkeletonList({
   className?: string;
 }) {
   return (
-    <div className={cn("divide-y divide-border-subtle", className)}>
+    <div className={cn("divide-y divide-border", className)}>
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3 px-5 py-3.5">
-          <Skeleton className="w-9 h-9 rounded-full shrink-0" />
+        <div key={i} className="flex items-center gap-3 px-5 py-3">
+          <Skeleton className="size-8 shrink-0 rounded-md" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-2.5 w-36" />
             <Skeleton className="h-2 w-24" />

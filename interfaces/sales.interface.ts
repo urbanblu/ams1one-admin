@@ -94,3 +94,27 @@ export interface IWinnersListResponse {
   date: string;
   winners: IWinnerRow[];
 }
+
+/** One ticket reduced to what a time series needs: when, and how much. */
+export interface ITicketTimePoint {
+  /** The server's `sold_at`, as the detailed list reports it. */
+  time: string;
+  amount: number;
+}
+
+/**
+ * Today's tickets swept out of the paginated detailed list, stripped down to
+ * timestamps and amounts.
+ *
+ * `complete` is false when the sweep hit its page cap before the day ran out.
+ * The points then cover the most recent stretch of the day rather than all of
+ * it, so anything drawn from them has to say so.
+ */
+export interface ITodayTicketTimeline {
+  points: ITicketTimePoint[];
+  /** Tickets the server counted for today. */
+  totalCount: number;
+  /** Tickets the sweep actually brought back. */
+  fetchedCount: number;
+  complete: boolean;
+}

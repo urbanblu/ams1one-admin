@@ -4,7 +4,7 @@ import { Button as UiButton } from "@/components/ui";
 import CustomSelectComponent from "@/components/custom-select-component";
 import GamesService from "@/api/games";
 import ToastService from "@/utils/toast-service";
-import { Button, Modal } from "@heroui/react";
+import { Modal } from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ApiError from "@/utils/api_error";
@@ -73,14 +73,10 @@ function CreateDrawModal() {
 
   return (
     <>
-      <Button
-        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
-        size="md"
-        onClick={() => setIsOpen(true)}
-      >
-        <LuPlus className="size-4" />
+      <UiButton size="sm" onClick={() => setIsOpen(true)}>
+        <LuPlus />
         New draw
-      </Button>
+      </UiButton>
 
       <Modal.Backdrop
         isOpen={isOpen}
@@ -91,15 +87,15 @@ function CreateDrawModal() {
         isKeyboardDismissDisabled={isSubmitting}
       >
         <Modal.Container placement="center" size="sm">
-          <Modal.Dialog className="rounded-3xl">
+          <Modal.Dialog className="rounded-lg">
             <Modal.Header>
-              <Modal.Icon className="rounded-2xl bg-primary-soft text-primary">
+              <Modal.Icon className="border-none bg-transparent text-foreground-muted">
                 <LuDices className="w-5 h-5" />
               </Modal.Icon>
-              <Modal.Heading className="text-lg font-semibold tracking-tight">
-                Create Draw
+              <Modal.Heading className="text-base font-medium tracking-tight">
+                Create draw
               </Modal.Heading>
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="mb-2 text-sm text-foreground-light">
                 Select an event to run the auto-draw algorithm.
               </p>
             </Modal.Header>
@@ -114,7 +110,7 @@ function CreateDrawModal() {
                 onSelectionChange={(item) => setSelectedEventId(item.key)}
               />
               {!eventsPending && eventOptions.length === 0 && (
-                <p className="text-xs text-zinc-400 mt-1">
+                <p className="mt-1 text-xs text-foreground-light">
                   No drawable events available for today.
                 </p>
               )}

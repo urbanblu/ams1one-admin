@@ -4,7 +4,7 @@ import { Popover } from "@heroui/react";
 import {
   Avatar,
   Button,
-  PageHeader,
+  AppBarActions,
   PageShell,
   StatusBadge,
 } from "@/components/ui";
@@ -17,7 +17,7 @@ import NewRetailerDrawer from "./_components/new-retailer-drawer";
 import DeviceMapDrawer from "./_components/device-map-drawer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 import { usePageAccess } from "@/hooks/use-page-access";
 import {
   LuMap,
@@ -90,11 +90,11 @@ function WriterActionMenu({
           }}
           className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground"
         >
-          <span className="text-[11px] font-semibold">Actions</span>
+          <span className="text-xs font-medium">Actions</span>
           <LuChevronDown className="size-3" />
         </button>
       </Popover.Trigger>
-      <Popover.Content className="w-44 rounded-2xl border border-border-subtle p-1.5 shadow-lg shadow-zinc-200/60">
+      <Popover.Content className="w-44 rounded-lg border border-border p-1.5 shadow-overlay">
         <Popover.Dialog className="p-0">
           {isBlocked ? (
             <button
@@ -103,10 +103,10 @@ function WriterActionMenu({
                 e.stopPropagation();
                 unblock();
               }}
-              className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-50 disabled:opacity-50"
+              className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2.5 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-50 disabled:opacity-50"
             >
               <LuShieldCheck className="size-3.5 shrink-0" />
-              {unblocking ? "Unblocking…" : "Unblock Writer"}
+              {unblocking ? "Unblocking…" : "Unblock writer"}
             </button>
           ) : (
             <button
@@ -115,10 +115,10 @@ function WriterActionMenu({
                 e.stopPropagation();
                 block();
               }}
-              className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-rose-500 transition-colors hover:bg-rose-50 disabled:opacity-50"
+              className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2.5 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-50 disabled:opacity-50"
             >
               <LuShieldOff className="size-3.5 shrink-0" />
-              {blocking ? "Blocking…" : "Block Writer"}
+              {blocking ? "Blocking…" : "Block writer"}
             </button>
           )}
         </Popover.Dialog>
@@ -201,13 +201,13 @@ function RetailersView() {
       dop: <span className="tabular-nums">{w.days_on_task}</span>,
       dot: <span className="tabular-nums">{w.days_on_task}</span>,
       ytdSales: (
-        <span className="font-semibold tabular-nums text-foreground">
-          {formatGhs(Number.isFinite(ytdSales) ? ytdSales : 0)}
+        <span className="font-medium tabular-nums text-foreground">
+          {formatUsd(Number.isFinite(ytdSales) ? ytdSales : 0)}
         </span>
       ),
       ytdTopUps: (
-        <span className="font-semibold tabular-nums text-foreground">
-          {formatGhs(Number.isFinite(ytdTop) ? ytdTop : 0)}
+        <span className="font-medium tabular-nums text-foreground">
+          {formatUsd(Number.isFinite(ytdTop) ? ytdTop : 0)}
         </span>
       ),
       lastTransDate: w.last_transaction ? formatDate(w.last_transaction) : "—",
@@ -226,25 +226,16 @@ function RetailersView() {
 
   return (
     <PageShell fill>
-      <PageHeader
-        className="shrink-0"
-        title="Retailers & Writers"
-        description={`${(data?.count ?? 0).toLocaleString("en-US")} registered across the network`}
-        actions={
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMapOpen(true)}
-            >
-              <LuMap />
-              Show map
-            </Button>
-            <FilterRetailers onFilterTap={() => setCurrentPage(1)} />
-            {canRegister && <NewRetailerDrawer />}
-          </>
-        }
-      />
+      {/* The registered count that used to sit under the title is already in
+          the table's own footer, so it is not repeated here. */}
+      <AppBarActions>
+        <Button variant="outline" size="sm" onClick={() => setMapOpen(true)}>
+          <LuMap />
+          Show map
+        </Button>
+        <FilterRetailers onFilterTap={() => setCurrentPage(1)} />
+        {canRegister && <NewRetailerDrawer />}
+      </AppBarActions>
 
       <DeviceMapDrawer isOpen={mapOpen} onClose={() => setMapOpen(false)} />
 
@@ -255,14 +246,24 @@ function RetailersView() {
               { key: "id", label: "ID #", sortable: true },
               { key: "name", label: "Name", sortable: true },
               { key: "contact", label: "Contact", sortable: false },
-              { key: "signUpDate", label: "Sign-up Date", sortable: true },
+              { key: "signUpDate", label: "Sign-up date", sortable: true },
               { key: "dop", label: "DoP", sortable: false },
               { key: "dot", label: "DoT", sortable: false },
-              { key: "ytdSales", label: "YTD Sales", sortable: false },
-              { key: "ytdTopUps", label: "YTD Top-ups", sortable: false },
+              {
+                key: "ytdSales",
+                label: "YTD sales",
+                sortable: false,
+                align: "right",
+              },
+              {
+                key: "ytdTopUps",
+                label: "YTD top-ups",
+                sortable: false,
+                align: "right",
+              },
               {
                 key: "lastTransDate",
-                label: "Last Trans Date",
+                label: "Last trans date",
                 sortable: false,
               },
               { key: "status", label: "Status", sortable: false },

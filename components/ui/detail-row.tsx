@@ -5,7 +5,7 @@ import React from "react";
 
 type Props = {
   icon?: React.ReactNode;
-  /** Tailwind classes for the chip, e.g. "bg-amber-50 text-amber-500". */
+  /** Escape hatch for an icon that carries meaning by colour. */
   iconClassName?: string;
   label: React.ReactNode;
   /** Trailing figure. Omit for label-only rows. */
@@ -15,11 +15,8 @@ type Props = {
 };
 
 /**
- * Label + optional trailing figure, with the small icon chip.
- *
- * `size-7 rounded-lg` with a `size-3.5` glyph is the step down from the
- * card-header chip (`size-9 rounded-xl` / `size-4`), for rows inside a card
- * body rather than a card header.
+ * Label + optional trailing figure. The icon is a bare 14px glyph in the muted
+ * colour; a row inside a panel body never carries a tinted chip.
  */
 export function DetailRow({
   icon,
@@ -31,23 +28,23 @@ export function DetailRow({
 }: Props) {
   return (
     <div className={cn("flex items-center justify-between gap-3", className)}>
-      <div className="flex min-w-0 items-center gap-2.5">
+      <div className="flex min-w-0 items-center gap-2">
         {icon && (
           <span
             className={cn(
-              "flex size-7 shrink-0 items-center justify-center rounded-lg [&>svg]:size-3.5",
-              iconClassName ?? "bg-subtle text-zinc-400",
+              "flex shrink-0 items-center justify-center [&>svg]:size-3.5",
+              iconClassName ?? "text-foreground-muted",
             )}
           >
             {icon}
           </span>
         )}
-        <span className="truncate text-xs text-muted-foreground">{label}</span>
+        <span className="truncate text-xs text-foreground-light">{label}</span>
       </div>
       {value !== undefined && value !== null && value !== "" && (
         <span
           className={cn(
-            "shrink-0 text-xs font-semibold tabular-nums text-foreground",
+            "shrink-0 text-xs font-medium tabular-nums text-foreground",
             valueClassName,
           )}
         >

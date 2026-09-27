@@ -21,14 +21,14 @@ const CustomCheckboxItem = ({
       onChange={setIsSelected}
       className="cursor-pointer data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-60"
     >
-      <Checkbox.Control className="rounded-sm border-border transition-colors data-[selected=true]:border-primary data-[selected=true]:bg-primary">
+      <Checkbox.Control className="rounded-sm border-border-strong transition-colors data-[selected=true]:border-brand-700 data-[selected=true]:bg-brand-700">
         <Checkbox.Indicator />
       </Checkbox.Control>
       {label && (
         <Checkbox.Content>
           <Label
             className={cn(
-              "cursor-pointer select-none text-sm text-muted-foreground",
+              "cursor-pointer select-none text-sm text-foreground-light",
               labelClassName,
             )}
           >

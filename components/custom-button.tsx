@@ -7,7 +7,7 @@
 //   variants: {
 //     intent: {
 //       primary: "bg-blue-500 hover:bg-blue-600 text-white",
-//       secondary: "bg-zinc-200 hover:bg-zinc-300",
+//       secondary: "bg-surface-300 hover:bg-zinc-300",
 //       danger: "hover:bg-rose-500 text-white",
 //     },
 //     variant: {

@@ -4,8 +4,9 @@ import { cn } from "@heroui/react";
 import React from "react";
 
 /**
- * Flat white surface on the app canvas — the core container of the
- * Ams1one design language. No shadow, hairline border, generous radius.
+ * The panel. White fill, 8px radius, a visible 1px border and no shadow —
+ * separation comes entirely from the border, never from elevation or a fill
+ * difference with the canvas.
  */
 export function Card({
   className,
@@ -15,7 +16,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "bg-surface border border-border-subtle rounded-2xl overflow-hidden",
+        "overflow-hidden rounded-lg border border-border bg-surface",
         className,
       )}
       {...rest}
@@ -28,9 +29,9 @@ export function Card({
 type CardHeaderProps = {
   title: React.ReactNode;
   description?: React.ReactNode;
-  /** Small tinted square that holds the section icon. */
+  /** Rendered bare at 16px in the muted glyph colour — no tinted chip. */
   icon?: React.ReactNode;
-  /** Tailwind classes for the icon chip, e.g. "bg-violet-50 text-violet-500". */
+  /** Escape hatch for the rare header icon that carries meaning by colour. */
   iconClassName?: string;
   action?: React.ReactNode;
   className?: string;
@@ -47,27 +48,27 @@ export function CardHeader({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-3 px-5 py-4 border-b border-border-subtle",
+        "flex items-center justify-between gap-3 border-b border-border px-5 py-3.5",
         className,
       )}
     >
-      <div className="flex items-center gap-2.5 min-w-0">
+      <div className="flex min-w-0 items-center gap-2.5">
         {icon && (
           <span
             className={cn(
-              "size-9 rounded-xl flex items-center justify-center shrink-0 [&>svg]:size-4",
-              iconClassName ?? "bg-primary-soft text-primary",
+              "flex shrink-0 items-center justify-center [&>svg]:size-4",
+              iconClassName ?? "text-foreground-muted",
             )}
           >
             {icon}
           </span>
         )}
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-foreground truncate">
+          <p className="truncate text-sm font-medium text-foreground">
             {title}
           </p>
           {description && (
-            <p className="text-xs text-muted-foreground truncate mt-0.5">
+            <p className="mt-0.5 truncate text-xs text-foreground-light">
               {description}
             </p>
           )}
@@ -90,6 +91,7 @@ export function CardBody({
   );
 }
 
+/** The panel footer: a quieter strip on the chrome fill. */
 export function CardFooter({
   className,
   children,
@@ -98,7 +100,7 @@ export function CardFooter({
   return (
     <div
       className={cn(
-        "px-5 py-3 border-t border-border-subtle text-xs text-muted-foreground",
+        "border-t border-border bg-surface-100 px-5 py-2.5 text-xs text-foreground-light",
         className,
       )}
       {...rest}

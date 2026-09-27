@@ -6,7 +6,7 @@ import FirstSalesSegment from "./_components/first-segment";
 import SecondSalesSegment from "./_components/second-segment";
 import ThirdSalesSegment from "./_components/third-segment";
 import { usePageAccess } from "@/hooks/use-page-access";
-import { PageHeader, PageShell, SegmentedControl } from "@/components/ui";
+import { AppBarActions, PageShell, SegmentedControl } from "@/components/ui";
 import { LuTicket, LuTrophy, LuUsers } from "react-icons/lu";
 
 type Tab = "tickets" | "writers" | "winnings";
@@ -80,22 +80,25 @@ function SalesPageView() {
 
   return (
     <PageShell fill className="w-full">
-      <PageHeader
-        className="shrink-0"
-        title="Sales"
-        description="Ticket flow, writer performance and winnings across the network."
-        actions={
-          segments.length > 1 ? (
-            <SegmentedControl
-              segments={segments}
-              value={effectiveTab}
-              onChange={setActiveTab}
-            />
-          ) : null
-        }
-      />
+      {segments.length > 1 && (
+        <AppBarActions>
+          <SegmentedControl
+            segments={segments}
+            value={effectiveTab}
+            onChange={setActiveTab}
+          />
+        </AppBarActions>
+      )}
 
-      <div className="min-h-0 flex-1 overflow-hidden">
+      {/* Keyed on the tab so the panel replays its entrance on every switch:
+          the segments share a footprint, and without it the swap reads as a
+          repaint rather than as one panel giving way to another. The animation
+          runs unconditionally at mount rather than on a class the page toggles
+          later, so there is no state in which the content stays hidden. */}
+      <div
+        key={effectiveTab}
+        className="min-h-0 flex-1 animate-rise-in overflow-hidden"
+      >
         {effectiveTab === "tickets" && canSeeTickets && <FirstSalesSegment />}
         {effectiveTab === "writers" && canSeeWriters && <SecondSalesSegment />}
         {effectiveTab === "winnings" && canSeeWinnings && <ThirdSalesSegment />}

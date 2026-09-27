@@ -6,12 +6,17 @@ import { Skeleton } from "./skeleton";
 
 export type MetricTone = "brand" | "warning" | "success" | "info" | "neutral";
 
-const CHIPS: Record<MetricTone, string> = {
-  brand: "bg-primary-soft text-primary",
-  warning: "bg-amber-50 text-amber-500",
-  success: "bg-emerald-50 text-emerald-500",
-  info: "bg-blue-50 text-blue-500",
-  neutral: "bg-subtle text-zinc-400",
+/**
+ * Icons are glyphs, not chips. Tone only reaches the glyph, and only where a
+ * card is genuinely about a warning or a success — everything else stays in
+ * the muted colour so a wall of KPI cards reads as one surface.
+ */
+const GLYPHS: Record<MetricTone, string> = {
+  brand: "text-brand-500",
+  warning: "text-amber-600",
+  success: "text-emerald-600",
+  info: "text-blue-600",
+  neutral: "text-foreground-muted",
 };
 
 type Props = {
@@ -32,7 +37,7 @@ export function MetricCard({
   title,
   value,
   icon,
-  tone = "brand",
+  tone = "neutral",
   rows,
   footer,
   isLoading,
@@ -41,20 +46,20 @@ export function MetricCard({
   return (
     <div
       className={cn(
-        "flex flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface",
+        "flex flex-col overflow-hidden rounded-lg border border-border bg-surface",
         className,
       )}
     >
-      <div className="px-5 py-4">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+      <div className="px-4 py-3.5">
+        <div className="flex items-center justify-between gap-3">
+          <p className="min-w-0 truncate text-xs text-foreground-light">
             {title}
           </p>
           {icon && (
             <span
               className={cn(
-                "flex size-9 shrink-0 items-center justify-center rounded-xl [&>svg]:size-4",
-                CHIPS[tone],
+                "flex shrink-0 items-center justify-center [&>svg]:size-3.5",
+                GLYPHS[tone],
               )}
             >
               {icon}
@@ -62,29 +67,29 @@ export function MetricCard({
           )}
         </div>
         {isLoading ? (
-          <Skeleton className="mt-3 h-7 w-32" />
+          <Skeleton className="mt-2.5 h-7 w-32" />
         ) : (
-          <p className="mt-2 truncate text-2xl font-bold tracking-tight tabular-nums text-foreground">
+          <p className="mt-1.5 truncate text-2xl font-medium tracking-tight tabular-nums text-foreground">
             {value}
           </p>
         )}
       </div>
 
       {footer && (
-        <div className="mt-auto border-t border-border-subtle px-5 py-3">
+        <div className="mt-auto border-t border-border bg-surface-100 px-4 py-2.5">
           {footer}
         </div>
       )}
 
       {rows && rows.length > 0 && (
-        <div className="mt-auto flex flex-col divide-y divide-border-subtle border-t border-border-subtle">
+        <div className="mt-auto flex flex-col divide-y divide-border border-t border-border bg-surface-100">
           {rows.map(({ label, value: rowValue }) => (
             <div
               key={label}
-              className="flex items-center justify-between gap-3 px-5 py-2.5"
+              className="flex items-center justify-between gap-3 px-4 py-2"
             >
-              <span className="text-xs text-muted-foreground">{label}</span>
-              <span className="text-xs font-semibold tabular-nums text-foreground">
+              <span className="text-xs text-foreground-light">{label}</span>
+              <span className="text-xs font-medium tabular-nums text-foreground">
                 {isLoading ? <Skeleton className="h-3 w-12" /> : rowValue}
               </span>
             </div>

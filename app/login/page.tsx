@@ -1,27 +1,27 @@
 "use client";
 
 import CustomInputComponent from "@/components/custom-input-component";
-import { Button } from "@/components/ui";
+import { Button, RouteSplash } from "@/components/ui";
 import ToastService from "@/utils/toast-service";
-import { Form } from "@heroui/react";
+import { cn, Form } from "@heroui/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import AuthService from "@/api/auth";
 import useAuth from "@/stores/auth.store";
 import { getFirstAccessibleHref } from "@/utils/navigation";
-import { useEffect } from "react";
-import { LuChartNoAxesColumn, LuShieldCheck, LuZap } from "react-icons/lu";
-
-const HIGHLIGHTS = [
-  { icon: LuChartNoAxesColumn, text: "Live sales and draw performance" },
-  { icon: LuZap, text: "Approve payouts and top-ups in seconds" },
-  { icon: LuShieldCheck, text: "Dual-approval controls on every draw" },
-];
+import { useEffect, useState } from "react";
+import { LuCircleAlert, LuTriangleAlert } from "react-icons/lu";
+import { signInMessage } from "./sign-in-copy";
 
 function LoginView() {
   const router = useRouter();
-  const { auth, setAuth } = useAuth();
+  const { auth, setAuth, _hasHydrated } = useAuth();
+  const [isCapsLockOn, setCapsLockOn] = useState(false);
+  // Counts submissions so the error callout can re-mount per attempt. Without
+  // it, a second failure carrying the same message changes nothing on screen
+  // and the attempt reads as if it never resolved.
+  const [attempt, setAttempt] = useState(0);
 
   const profileRequest = useMutation({
     mutationFn: async () => {
@@ -30,9 +30,6 @@ function LoginView() {
         AuthService.fetchMyPages(),
       ]);
       return { user, pages };
-    },
-    onError: (error) => {
-      ToastService.error({ text: error?.message ?? "Unable to fetch profile" });
     },
     onSuccess: ({ user, pages }) => {
       setAuth({ access: auth!.access, refresh: auth!.refresh, user, pages });
@@ -49,109 +46,145 @@ function LoginView() {
         profileRequest.mutate();
       }
     },
-    onError: (error) => {
-      ToastService.error({ text: error?.message ?? "Unable to login" });
-    },
   });
 
+  // A session restored from storage is only readable after rehydration, so the
+  // form stays behind RouteSplash until we know whether we are about to leave.
+  const hasSession = auth?.user !== undefined && auth?.pages !== undefined;
+
   useEffect(() => {
-    if (auth?.user && auth?.pages !== undefined) {
-      router.replace(getFirstAccessibleHref(auth.pages));
+    if (!_hasHydrated) return;
+    if (hasSession) {
+      router.replace(getFirstAccessibleHref(auth!.pages!));
     }
-  }, [auth, router]);
+  }, [auth, hasSession, _hasHydrated, router]);
+
+  // One field, one screen: the cursor belongs in it rather than one Tab away.
+  useEffect(() => {
+    if (!_hasHydrated || hasSession) return;
+    document.getElementById("login-email")?.focus();
+  }, [_hasHydrated, hasSession]);
 
   const isPending = loginRequest.isPending || profileRequest.isPending;
 
-  return (
-    <div className="flex min-h-dvh bg-background">
-      {/* Left panel — brand */}
-      <div className="relative hidden w-5/12 flex-col justify-between overflow-hidden bg-brand-gradient p-12 lg:flex">
-        {/* Soft highlights + dot grid, matching the hero panels in-app */}
-        <div className="pointer-events-none absolute -top-24 -right-20 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-        <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.06]" />
-        {/* Darkens the panel so the copy over it clears 4.5:1; pure white on
-            the raw brand gradient only reaches ~2.4:1. */}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(24_16_64/0.22)_0%,rgb(24_16_64/0.40)_100%)]" />
+  // A failed sign-in is the one error on this screen that has to survive being
+  // read, so it states itself in the form rather than in a toast that leaves.
+  const errorMessage = (() => {
+    if (isPending) return undefined;
+    if (loginRequest.isError)
+      return signInMessage(loginRequest.error?.message ?? "Unable to login");
+    if (profileRequest.isError)
+      return signInMessage(
+        profileRequest.error?.message ?? "Unable to fetch profile",
+      );
+    return undefined;
+  })();
 
-        {/* The mark is a violet gradient built for light surfaces, so it sits
-            on a white plate rather than directly on the brand gradient. */}
-        <div className="relative w-fit rounded-2xl bg-white/95 px-6 py-4">
+  if (!_hasHydrated || hasSession) return <RouteSplash />;
+
+  return (
+    /* The shape every other Ams1one sign-in uses: the mark, large and
+       centred; one line under it; the fields; the button. No card, no band,
+       no labels — the placeholders name the fields, and there are only two.
+       The controls are the app's own (rounded-md, bordered) on the app's
+       own canvas, one step taller than the h-9 the tables use — a front door
+       can afford 4px a data row cannot. The column sits a little above centre, where a centred block
+       reads as centred. */
+    <main className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 pb-[6vh] pt-10">
+      <div className="flex w-full max-w-[360px] flex-col items-center">
+        {/* The screen holds a blank RouteSplash until rehydration says whether
+            this person is about to be sent onward, so the form's arrival is a
+            real reveal rather than load decoration. Two steps — identity, then
+            form 70ms later — and no more. */}
+        <div className="animate-rise-in flex flex-col items-center">
           <Image
             src="/images/new/logo.png"
-            alt="Ams1one"
-            width={132}
-            height={52}
-            className="object-contain"
+            alt="Ams1one Lottery"
+            width={110}
+            height={96}
+            className="h-16 w-auto object-contain"
             priority
           />
-        </div>
-
-        <div className="relative max-w-sm">
-          <p className="relative text-[11px] font-semibold uppercase tracking-[0.2em] text-white/90">
-            Admin Console
+          <h1 className="sr-only">Sign in to Ams1one admin</h1>
+          <p className="mt-5 text-sm text-foreground-light">
+            Sign in to the admin console
           </p>
-          <h2 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-white">
-            Everything across the network, in one place.
-          </h2>
-
-          <div className="mt-8 space-y-3.5">
-            {HIGHLIGHTS.map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-3">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-white/20">
-                  <Icon className="size-3.5 text-white" />
-                </span>
-                <span className="text-sm text-white">{text}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        <p className="relative text-[11px] text-white/85">
-          © {new Date().getFullYear()} Ams1one. All rights reserved.
-        </p>
-      </div>
-
-      {/* Right panel — form */}
-      <div className="flex flex-1 items-center justify-center bg-surface px-6 py-12">
-        <div className="w-full max-w-sm">
-          {/* Mobile logo */}
-          <div className="mb-8 flex justify-center lg:hidden">
-            <Image
-              src="/images/new/icon.png"
-              alt="Ams1one"
-              width={56}
-              height={56}
-              className="object-contain"
-            />
-          </div>
-
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Welcome back
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Sign in to your admin account to continue.
-            </p>
-          </div>
+        <div
+          className="animate-rise-in mt-8 w-full"
+          style={{ animationDelay: "70ms" }}
+        >
+          {errorMessage && (
+            <div
+              key={attempt}
+              role="alert"
+              className="animate-rise-in mb-4 flex items-start gap-2.5 rounded-md border border-rose-200 bg-rose-50 px-3 py-2.5"
+            >
+              <LuCircleAlert className="mt-0.5 size-3.5 shrink-0 text-rose-600" />
+              <p className="text-xs leading-relaxed text-rose-700">
+                {errorMessage}
+              </p>
+            </div>
+          )}
 
           <Form
+            className="w-full"
+            aria-busy={isPending}
             onSubmit={(e) => {
               e.preventDefault();
               const data = Object.fromEntries(new FormData(e.currentTarget));
+              setAttempt((n) => n + 1);
               loginRequest.mutate({
                 email: data.email as string,
                 password: data.password as string,
               });
             }}
           >
-            <div className="mb-6 w-full space-y-4">
-              <CustomInputComponent type="email" name="email" isRequired />
+            {/* In flight, the fields recede and stop taking input: the
+                button's spinner speaks for itself, but two live fields above
+                it invite typing into a form that is already gone. */}
+            <div
+              className={cn(
+                "w-full space-y-3 transition-opacity duration-200",
+                isPending && "pointer-events-none opacity-60",
+              )}
+            >
               <CustomInputComponent
-                type="password"
-                name="password"
+                id="login-email"
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="h-10"
+                showLabel={false}
+                showPreficIcon={false}
                 isRequired
               />
+
+              {/* Caps Lock is the reason most of these passwords are wrong,
+                  and the field cannot say so itself — the wrapper listens. */}
+              <div
+                className="w-full"
+                onKeyUp={(e) => setCapsLockOn(e.getModifierState("CapsLock"))}
+                onBlur={() => setCapsLockOn(false)}
+              >
+                <CustomInputComponent
+                  id="login-password"
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  className="h-10"
+                  showLabel={false}
+                  showPreficIcon={false}
+                  isRequired
+                />
+                {isCapsLockOn && (
+                  <p className="animate-rise-in mt-1.5 flex items-center gap-1.5 px-1 text-xs text-amber-700">
+                    <LuTriangleAlert className="size-3.5 shrink-0" />
+                    Caps Lock is on
+                  </p>
+                )}
+              </div>
             </div>
 
             <Button
@@ -159,18 +192,18 @@ function LoginView() {
               size="lg"
               fullWidth
               isPending={isPending}
-              className="shine-on-hover"
+              className="mt-4 h-10"
             >
               {isPending ? "Signing in…" : "Sign in"}
             </Button>
           </Form>
-
-          <p className="mt-8 text-center text-[11px] text-zinc-400 lg:hidden">
-            © {new Date().getFullYear()} Ams1one
-          </p>
         </div>
+
+        <p className="mt-6 text-xs text-foreground-light">
+          Forgot your password? Ask an administrator.
+        </p>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -22,16 +22,16 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center py-16 px-6 text-center",
+        "flex flex-col items-center justify-center px-6 py-12 text-center",
         className,
       )}
     >
-      <div className="w-12 h-12 rounded-2xl bg-subtle flex items-center justify-center mb-3 text-zinc-300 [&>svg]:size-5">
+      <span className="mb-3 text-foreground-muted [&>svg]:size-5">
         {icon ?? <LuInbox />}
-      </div>
+      </span>
       <p className="text-sm font-medium text-foreground">{title}</p>
       {description && (
-        <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+        <p className="mt-1 max-w-xs text-xs text-foreground-light">
           {description}
         </p>
       )}

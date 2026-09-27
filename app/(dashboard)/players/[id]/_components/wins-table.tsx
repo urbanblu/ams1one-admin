@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/ui";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PlayersService, { type PlayerGame } from "@/api/players";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 
 function WinsTable({ game, playerId }: { game: PlayerGame; playerId: string }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,16 +46,21 @@ function WinsTable({ game, playerId }: { game: PlayerGame; playerId: string }) {
     <div className="flex flex-col min-w-0 lg:h-full lg:min-h-0">
       <CustomTable
         columns={[
-          { key: "winAmount", label: "Win Amount", sortable: false },
+          {
+            key: "winAmount",
+            label: "Win amount",
+            sortable: false,
+            align: "right",
+          },
           { key: "status", label: "Status", sortable: false },
           { key: "computedAt", label: "Computed", sortable: false },
-          { key: "claimedAt", label: "Claimed At", sortable: false },
-          { key: "expiresAt", label: "Expires At", sortable: false },
+          { key: "claimedAt", label: "Claimed at", sortable: false },
+          { key: "expiresAt", label: "Expires at", sortable: false },
         ]}
         data={rows.map((r) => ({
           winAmount: (
-            <span className="text-sm font-semibold tabular-nums text-emerald-600">
-              {formatGhs(parseFloat(r.win_amount))}
+            <span className="text-xs font-semibold tabular-nums text-emerald-700">
+              {formatUsd(parseFloat(r.win_amount))}
             </span>
           ),
           status: <StatusBadge status={r.status} />,

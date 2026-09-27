@@ -11,9 +11,10 @@ import {
   Card,
   CardBody,
   CardHeader,
-  PageHeader,
+  FileDropzone,
   PageShell,
   Skeleton,
+  Textarea,
 } from "@/components/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -26,6 +27,7 @@ function AppReleasesView() {
 
   const {
     files: apkFiles,
+    previewUrls: apkPreviewUrls,
     onClick: pickApk,
     clearFiles: clearApk,
     InputComponent: ApkInput,
@@ -76,12 +78,7 @@ function AppReleasesView() {
   };
 
   return (
-    <PageShell className="max-w-xl">
-      <PageHeader
-        title="App releases"
-        description="Publish a new writer app build and share the download link."
-      />
-
+    <PageShell narrow>
       {/* Current release */}
       <Card>
         <CardHeader
@@ -94,8 +91,10 @@ function AppReleasesView() {
             <Skeleton className="h-6 w-28 rounded-full" />
           ) : latest?.version ? (
             <div className="space-y-3">
-              <Badge tone="info">
-                <LuPackage className="size-3.5" />v{latest.version}
+              {/* A version is a token, not a word — the badge's capitalize
+                  would render it "V1.2.3". */}
+              <Badge tone="info" className="normal-case">
+                v{latest.version}
               </Badge>
               {latest.apk_url && (
                 <div>
@@ -103,20 +102,20 @@ function AppReleasesView() {
                     href={latest.apk_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary-strong"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 transition-colors hover:text-brand-700"
                   >
                     <LuDownload className="size-3.5" />
                     Download APK
                   </a>
                 </div>
               )}
-              <p className="rounded-xl bg-amber-50 px-3 py-2.5 text-[11px] leading-relaxed text-amber-700">
+              <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-700">
                 The download link is a presigned S3 URL valid for 1 hour.
                 Refresh the page for a fresh link.
               </p>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-foreground-light">
               No published release yet.
             </p>
           )}
@@ -142,40 +141,24 @@ function AppReleasesView() {
               />
 
               <div>
-                <p className="mb-1.5 text-xs font-medium text-muted-foreground">
-                  APK file *
-                </p>
                 <ApkInput />
-                <button
-                  type="button"
-                  onClick={pickApk}
-                  className="w-full cursor-pointer rounded-xl border border-dashed border-border bg-surface-muted px-4 py-6 text-center text-sm text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                >
-                  {apkFiles[0] ? (
-                    <span className="font-semibold text-foreground">
-                      {apkFiles[0].name}
-                    </span>
-                  ) : (
-                    "Click to select an APK file (.apk)"
-                  )}
-                </button>
-                {apkFiles[0] && (
-                  <button
-                    type="button"
-                    onClick={clearApk}
-                    className="mt-1.5 cursor-pointer text-[11px] font-medium text-rose-500 hover:underline"
-                  >
-                    Remove file
-                  </button>
-                )}
+                <FileDropzone
+                  label="APK file"
+                  isRequired
+                  preview="name"
+                  hint="A single .apk"
+                  file={apkFiles[0]}
+                  previewUrl={apkPreviewUrls[0]}
+                  onPick={pickApk}
+                  onRemove={clearApk}
+                />
               </div>
 
-              <CustomInputComponent
+              <Textarea
                 label="Release notes (optional)"
                 name="release_notes"
-                showPreficIcon={false}
-                showPlaceholder={false}
-                isRequired={false}
+                placeholder="What changed in this build"
+                rows={3}
               />
 
               <Button

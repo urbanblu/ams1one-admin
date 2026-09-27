@@ -49,27 +49,29 @@ function ActivityLogsTab() {
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-sm font-bold">Activity Logs</span>
+          <span className="text-sm font-medium">Activity Logs</span>
           {totalCount > 0 && (
-            <span className="ml-2 text-xs text-zinc-400 font-semibold tabular-nums">
+            <span className="ml-2 text-xs text-foreground-muted font-medium tabular-nums">
               {totalCount} total
             </span>
           )}
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
+      <div className="overflow-hidden rounded-lg border border-border bg-surface">
         {isPending ? (
           <div className="flex items-center justify-center py-16">
-            <span className="text-xs text-zinc-400">Loading…</span>
+            <span className="text-xs text-foreground-muted">Loading…</span>
           </div>
         ) : logs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-2">
-            <LuActivity className="w-8 h-8 text-zinc-300" />
-            <span className="text-xs text-zinc-400">No activity logs yet.</span>
+            <LuActivity className="w-8 h-8 text-foreground-muted" />
+            <span className="text-xs text-foreground-muted">
+              No activity logs yet.
+            </span>
           </div>
         ) : (
-          <div className="divide-y divide-border-subtle">
+          <div className="divide-y divide-border">
             {logs.map((log) => (
               <LogRow key={log.id} log={log} />
             ))}
@@ -79,21 +81,21 @@ function ActivityLogsTab() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-1">
-          <span className="text-xs text-zinc-400 font-semibold tabular-nums">
+          <span className="text-xs text-foreground-muted font-medium tabular-nums">
             Page {page} of {totalPages}
           </span>
           <div className="flex gap-2">
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground disabled:opacity-40"
+              className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground disabled:opacity-40"
             >
               Previous
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground disabled:opacity-40"
+              className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground disabled:opacity-40"
             >
               Next
             </button>
@@ -135,22 +137,22 @@ const LogRow = ({ log }: { log: IActivityLog }) => {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className={`text-xs font-semibold ${meta.color}`}>
+          <span className={`text-xs font-medium ${meta.color}`}>
             {meta.label}
           </span>
           <span className="text-xs text-foreground truncate">
             {log.description}
           </span>
         </div>
-        <span className="text-[11px] text-zinc-400 font-semibold tabular-nums">
+        <span className="text-xs text-foreground-muted font-medium tabular-nums">
           {log.actor_name ?? log.actor_email}
         </span>
       </div>
       <div className="shrink-0 flex flex-col items-end gap-0.5">
-        <span className="text-[11px] text-muted-foreground font-semibold tabular-nums">
+        <span className="text-xs text-muted-foreground font-medium tabular-nums">
           {dateText}
         </span>
-        <span className="text-[11px] text-zinc-400 font-semibold tabular-nums">
+        <span className="text-xs text-foreground-muted font-medium tabular-nums">
           {timeText}
         </span>
       </div>

@@ -1,5 +1,5 @@
-import { Button } from "@heroui/react";
-import { useRef, useState, ChangeEvent, useCallback } from "react";
+import { Button } from "@/components/ui";
+import { useRef, useState, ChangeEvent, useCallback, useEffect } from "react";
 
 interface UseFileUploadOptions {
   accept?: string;
@@ -12,6 +12,15 @@ interface UseFileUploadOptions {
 
 interface UseFileUploadReturn {
   files: File[];
+  /**
+   * Blob URLs for `files`, index-aligned.
+   *
+   * They live here rather than in the previewing component because this is
+   * where a file's lifetime is already decided: the URL is minted in the
+   * change handler and released the moment its file leaves the list, so no
+   * render ever mints one and nothing outstanding survives unmount.
+   */
+  previewUrls: string[];
   onClick: () => void;
   removeFile: (index: number) => void;
   clearFiles: () => void;
@@ -39,6 +48,29 @@ export const useFileUpload = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  /* The same list as `previewUrls`, kept so the unmount cleanup can reach the
+     current URLs without depending on them (a dependency would make the effect
+     re-run and revoke a URL that is still on screen). Only the handlers below
+     write to it, never a render. */
+  const previewUrlsRef = useRef<string[]>([]);
+
+  const replacePreviews = useCallback((next: string[]): void => {
+    previewUrlsRef.current.forEach(URL.revokeObjectURL);
+    previewUrlsRef.current = next;
+    setPreviewUrls(next);
+  }, []);
+
+  // Release every outstanding URL when the owner unmounts — a closed drawer
+  // must not keep a 10 MB image alive for the rest of the session.
+  useEffect(
+    () => () => {
+      previewUrlsRef.current.forEach(URL.revokeObjectURL);
+      previewUrlsRef.current = [];
+    },
+    [],
+  );
 
   const onClick = useCallback((): void => {
     inputRef.current?.click();
@@ -64,22 +96,35 @@ export const useFileUpload = ({
         }
 
         setFiles(fileArray);
+        replacePreviews(fileArray.map((f) => URL.createObjectURL(f)));
         onFilesSelected?.(fileArray);
       }
     },
-    [maxSize, maxFiles, onFilesSelected, onMaxFileSizeDetected],
+    [
+      maxSize,
+      maxFiles,
+      onFilesSelected,
+      onMaxFileSizeDetected,
+      replacePreviews,
+    ],
   );
 
   const removeFile = useCallback((index: number): void => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
+    const gone = previewUrlsRef.current[index];
+    const kept = previewUrlsRef.current.filter((_, i) => i !== index);
+    previewUrlsRef.current = kept;
+    setPreviewUrls(kept);
+    if (gone) URL.revokeObjectURL(gone);
   }, []);
 
   const clearFiles = useCallback((): void => {
     setFiles([]);
+    replacePreviews([]);
     if (inputRef.current) {
       inputRef.current.value = "";
     }
-  }, []);
+  }, [replacePreviews]);
 
   const InputComponent: React.FC<{
     showFileList?: boolean;
@@ -96,39 +141,37 @@ export const useFileUpload = ({
       {showFileList && files.length > 0 && (
         <div className="space-y-2 w-full">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-medium">
-              Selected files ({files.length}):
+            <p className="text-xs text-foreground-light">
+              Selected files ({files.length})
             </p>
             <Button
+              type="button"
+              variant="danger"
               size="sm"
-              // variant="light"
-              // color="danger"
-              onPress={clearFiles}
-              className="text-xs bg-red-500"
+              onClick={clearFiles}
             >
-              Clear All
+              Clear all
             </Button>
           </div>
           <div className="space-y-2">
             {files.map((file: File, index: number) => (
               <div
                 key={index}
-                className="flex items-center justify-between bg-gray-100 p-3 rounded-lg"
+                className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface-100 px-3 py-2.5"
               >
-                <div className="flex flex-col">
-                  <span className="text-xs font-medium">{file.name}</span>
-                  {formatFileSize && (
-                    <span className="text-xs text-gray-500">
-                      {formatFileSize(file.size)}
-                    </span>
-                  )}
+                <div className="flex min-w-0 flex-col">
+                  <span className="truncate text-xs font-medium text-foreground">
+                    {file.name}
+                  </span>
+                  <span className="text-xs tabular-nums text-foreground-light">
+                    {formatFileSize(file.size)}
+                  </span>
                 </div>
                 <Button
+                  type="button"
+                  variant="ghost"
                   size="sm"
-                  // variant="light"
-                  // color="danger"
-                  onPress={() => removeFile(index)}
-                  className="text-xs bg-red-500"
+                  onClick={() => removeFile(index)}
                 >
                   Remove
                 </Button>
@@ -142,6 +185,7 @@ export const useFileUpload = ({
 
   return {
     files,
+    previewUrls,
     onClick,
     removeFile,
     clearFiles,

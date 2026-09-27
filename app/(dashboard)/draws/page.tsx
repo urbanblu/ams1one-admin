@@ -12,7 +12,7 @@ import { LuShoppingBag, LuTrophy, LuTrendingUp } from "react-icons/lu";
 import {
   MetricCard,
   NumberBallRow,
-  PageHeader,
+  AppBarActions,
   PageShell,
 } from "@/components/ui";
 import { usePageAccess } from "@/hooks/use-page-access";
@@ -105,12 +105,11 @@ function DrawView() {
 
   return (
     <PageShell fill>
-      <PageHeader
-        className="shrink-0"
-        title="Draws & winnings"
-        description="Year-to-date performance and the full draw history."
-        actions={canCreateDraw ? <CreateDrawModal /> : null}
-      />
+      {canCreateDraw && (
+        <AppBarActions>
+          <CreateDrawModal />
+        </AppBarActions>
+      )}
 
       {canViewCards && (
         <div className="grid shrink-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -172,12 +171,17 @@ function DrawView() {
             <CustomTable
               columns={[
                 { key: "event", label: "Event #", sortable: true },
-                { key: "drawDate", label: "Draw Date", sortable: true },
-                { key: "eventName", label: "Event Name", sortable: false },
-                { key: "drawTime", label: "Draw Time", sortable: true },
+                { key: "drawDate", label: "Draw date", sortable: true },
+                { key: "eventName", label: "Event name", sortable: false },
+                { key: "drawTime", label: "Draw time", sortable: true },
                 { key: "preDraw", label: "Pre-Draw", sortable: false },
-                { key: "drawNumbers", label: "Draw Numbers", sortable: false },
-                { key: "payoutRatio", label: "Payout Ratio", sortable: false },
+                { key: "drawNumbers", label: "Draw numbers", sortable: false },
+                {
+                  key: "payoutRatio",
+                  label: "Payout ratio",
+                  sortable: false,
+                  align: "right",
+                },
               ]}
               data={
                 rows.map((r) => ({
@@ -195,7 +199,7 @@ function DrawView() {
                   drawTime: <span className="tabular-nums">{r.draw_time}</span>,
                   preDraw: canViewTickets ? (
                     <button
-                      className="cursor-pointer font-semibold tabular-nums text-primary underline decoration-dashed underline-offset-4 transition-colors hover:text-primary-strong"
+                      className="cursor-pointer font-medium tabular-nums text-brand-700 underline decoration-dashed underline-offset-4 transition-colors hover:text-brand-700"
                       onClick={(e) => {
                         e.stopPropagation();
                         onPreDrawClick(r.event_id);
@@ -204,7 +208,7 @@ function DrawView() {
                       {r.pre_draw}
                     </button>
                   ) : (
-                    <span className="tabular-nums text-zinc-400">
+                    <span className="tabular-nums text-foreground-muted">
                       {r.pre_draw}
                     </span>
                   ),
@@ -216,7 +220,7 @@ function DrawView() {
                     />
                   ),
                   payoutRatio: (
-                    <span className="font-semibold tabular-nums text-foreground">
+                    <span className="font-medium tabular-nums text-foreground">
                       {r.payout_ratio}
                     </span>
                   ),

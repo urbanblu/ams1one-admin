@@ -1,15 +1,21 @@
 "use client";
 
-import { drawerDialogClass, drawerWidth } from "@/components/ui";
+import {
+  DrawerTitleBar,
+  drawerBodyClass,
+  drawerDialogClass,
+  drawerWidth,
+  NumberBall,
+} from "@/components/ui";
 
 import CustomTable, { TableRow } from "@/components/custom-table";
-import { CloseButton, cn, Drawer, Table } from "@heroui/react";
+import { cn, Drawer, Table } from "@heroui/react";
 import React from "react";
 import { useState } from "react";
-import { IoChevronDown } from "react-icons/io5";
+import { LuChevronDown } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import GamesService from "@/api/games";
-import { formatGhs, parseStakeAmount } from "@/utils/currency";
+import { formatUsd, parseStakeAmount } from "@/utils/currency";
 
 const MOCK_STAKE_TIME = "12:45:01 PM";
 const MOCK_WINNING = "USD 0.00";
@@ -111,44 +117,39 @@ function DrawDrawer({
       }}
       isDismissable={true}
     >
-      <Drawer.Content placement="right" className={drawerWidth.wide}>
-        <Drawer.Dialog className={cn(drawerDialogClass, "w-full")}>
-          <Drawer.Header>
-            <div className="flex justify-between items-center">
-              <Drawer.Heading className="text-sm font-semibold">
-                {drawerMode === "post1"
-                  ? "Post Draw I"
-                  : drawerMode === "post2"
-                    ? "Post Draw II"
-                    : "Pre Draw Tickets"}
-              </Drawer.Heading>
-              <CloseButton
-                className="bg-transparent text-black"
-                onClick={onCloseTap}
-              />
-            </div>
-          </Drawer.Header>
-          <Drawer.Body>
+      <Drawer.Content placement="right">
+        <Drawer.Dialog className={cn(drawerDialogClass, drawerWidth.wide)}>
+          <DrawerTitleBar
+            title={
+              drawerMode === "post1"
+                ? "Post Draw I"
+                : drawerMode === "post2"
+                  ? "Post Draw II"
+                  : "Pre Draw Tickets"
+            }
+            onClose={onCloseTap}
+          />
+          <Drawer.Body className={drawerBodyClass}>
             {showPostPlaceholder ? (
-              <div className="p-6 text-sm text-muted-foreground">
+              <div className="text-sm text-foreground-light">
                 Post-draw ticket detail is not available from the API yet. Use
                 the live endpoint when it is published.
               </div>
             ) : (
               <div className="flex flex-col space-y-5 sm:h-[calc(100vh-6rem)] sm:overflow-hidden">
-                <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">
-                  {/* Gradient header */}
-                  <div className="bg-brand-gradient px-4 py-4">
+                <div className="overflow-hidden rounded-lg border border-border bg-surface">
+                  {/* Header strip */}
+                  <div className="border-b border-border bg-surface-100 px-4 py-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-bold text-white/60 uppercase tracking-wider">
+                        <span className="text-xs text-foreground-light">
                           Event
                         </span>
                         <div className="flex items-baseline gap-1 mt-0.5">
-                          <span className="text-lg font-semibold tabular-nums text-white leading-none">
+                          <span className="font-ident text-lg font-medium leading-none tabular-nums text-foreground">
                             #{event?.event_no ?? "—"}
                           </span>
-                          <span className="text-[11px] font-normal text-white/70 truncate max-w-[140px]">
+                          <span className="max-w-[140px] truncate text-xs font-normal text-foreground-light">
                             {event?.event_name ?? ""}
                           </span>
                         </div>
@@ -158,7 +159,7 @@ function DrawDrawer({
                         {(event?.draw_numbers ?? []).map((n, i) => (
                           <span
                             key={i}
-                            className="rounded-lg bg-white/20 px-2 py-1 text-xs font-semibold tabular-nums text-white"
+                            className="font-ident rounded-md border border-brand-300 bg-brand-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-brand-800"
                           >
                             {n}
                           </span>
@@ -167,18 +168,18 @@ function DrawDrawer({
                     </div>
                   </div>
                   {/* Stats row */}
-                  <div className="grid grid-cols-3 divide-x divide-border-subtle">
+                  <div className="grid grid-cols-3 divide-x divide-border">
                     {[
                       {
-                        label: "Total Wins",
+                        label: "Total wins",
                         value: event?.total_wins ?? "—",
                       },
                       {
-                        label: "Payout Ratio",
+                        label: "Payout ratio",
                         value: event?.payout_ratio ?? "—",
                       },
                       {
-                        label: "Date & Time",
+                        label: "Date & time",
                         value: event
                           ? `${event.draw_date} ${event?.draw_time ? `@ ${event?.draw_time}` : ""}`
                           : "—",
@@ -188,10 +189,10 @@ function DrawDrawer({
                         key={label}
                         className="flex flex-col items-start px-4 py-3"
                       >
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+                        <span className="text-xs font-medium text-foreground-light">
                           {label}
                         </span>
-                        <span className="text-xs font-semibold tabular-nums mt-0.5 truncate w-full">
+                        <span className="text-xs font-medium tabular-nums mt-0.5 truncate w-full">
                           {value}
                         </span>
                       </div>
@@ -215,7 +216,7 @@ function DrawDrawer({
                         },
                         {
                           key: "stakeValue",
-                          label: "Stake Value",
+                          label: "Stake value",
                           sortable: false,
                         },
                         {
@@ -225,12 +226,12 @@ function DrawDrawer({
                         },
                         {
                           key: "stakedBy",
-                          label: "Staked By",
+                          label: "Staked by",
                           sortable: false,
                         },
                         {
                           key: "phoneNumber",
-                          label: "Phone Number",
+                          label: "Phone number",
                           sortable: false,
                         },
                       ]}
@@ -244,7 +245,7 @@ function DrawDrawer({
                           <React.Fragment key={index}>
                             <Table.Row
                               id={`row-${index}`}
-                              className="hover:bg-surface-muted cursor-pointer"
+                              className="cursor-pointer hover:bg-surface-100"
                             >
                               {columns.map((col) => (
                                 <Table.Cell key={col.key}>
@@ -257,7 +258,7 @@ function DrawDrawer({
                                         "stackedBy",
                                         "phoneNumber",
                                       ].includes(col.key)
-                                        ? "font-semibold tabular-nums text-sm"
+                                        ? "font-medium tabular-nums text-sm"
                                         : "",
                                     )}
                                   >
@@ -266,9 +267,8 @@ function DrawDrawer({
                                         {row[col.key]}
                                       </span>
                                       {col.key === "phoneNumber" && (
-                                        <IoChevronDown
-                                          size={15}
-                                          className="shrink-0 cursor-pointer text-muted-foreground hover:text-black transition-colors"
+                                        <LuChevronDown
+                                          className="size-3.5 shrink-0 cursor-pointer text-foreground-muted transition-colors hover:text-foreground"
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             handleRowExpansion(index);
@@ -282,12 +282,12 @@ function DrawDrawer({
                             </Table.Row>
                             {openedRows.includes(index) && stakes && (
                               <>
-                                <Table.Row className="bg-surface-muted/50">
+                                <Table.Row className="bg-surface-100">
                                   <Table.Cell
                                     colSpan={columns.length}
                                     className="p-0"
                                   >
-                                    <div className="grid w-full grid-cols-6 border-b border-border-subtle px-4 py-3 pl-10">
+                                    <div className="grid w-full grid-cols-6 border-b border-border-subtle py-3 pr-5 pl-10">
                                       {[
                                         "Ticket #",
                                         "Play",
@@ -298,7 +298,7 @@ function DrawDrawer({
                                       ].map((header, hIndex) => (
                                         <span
                                           key={hIndex}
-                                          className="text-[10px] font-semibold text-muted-foreground uppercase"
+                                          className="text-xs font-medium text-foreground-light"
                                         >
                                           {header}
                                         </span>
@@ -313,13 +313,13 @@ function DrawDrawer({
                                   return (
                                     <Table.Row
                                       key={st.stake_id}
-                                      className="bg-surface-muted/50"
+                                      className="bg-surface-100"
                                     >
                                       <Table.Cell
                                         colSpan={columns.length}
                                         className="p-0"
                                       >
-                                        <div className="grid grid-cols-6 w-full min-w-0 py-3 px-6 hover:bg-white transition-colors border-b border-border-subtle pl-10">
+                                        <div className="grid w-full min-w-0 grid-cols-6 border-b border-border-subtle py-3 pr-5 pl-10 transition-colors hover:bg-surface">
                                           <span className="text-xs font-normal min-w-0 block truncate pr-2">
                                             {ticketNo ?? "—"}
                                           </span>
@@ -329,24 +329,25 @@ function DrawDrawer({
                                           <div>
                                             <div className="flex gap-2 items-center flex-wrap mr-0.5">
                                               {nums.map((num, ni) => (
-                                                <span
+                                                <NumberBall
                                                   key={ni}
-                                                  className="rounded-lg bg-primary px-1.5 py-1 text-xs font-semibold tabular-nums text-white"
+                                                  variant="solid"
+                                                  size="sm"
                                                 >
                                                   {num}
-                                                </span>
+                                                </NumberBall>
                                               ))}
                                             </div>
                                           </div>
-                                          <span className="text-xs font-semibold tabular-nums">
+                                          <span className="text-xs font-medium tabular-nums">
                                             {MOCK_STAKE_TIME}
                                           </span>
-                                          <span className="text-xs font-semibold tabular-nums">
-                                            {formatGhs(
+                                          <span className="text-xs font-medium tabular-nums">
+                                            {formatUsd(
                                               parseStakeAmount(st.stake_amount),
                                             )}
                                           </span>
-                                          <span className="text-xs font-semibold tabular-nums">
+                                          <span className="text-xs font-medium tabular-nums">
                                             {MOCK_WINNING}
                                           </span>
                                         </div>

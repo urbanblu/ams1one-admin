@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/ui";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 
 function WinningsTable({ writerId }: { writerId: string }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,19 +54,41 @@ function WinningsTable({ writerId }: { writerId: string }) {
           { key: "event", label: "Event #", sortable: false },
           { key: "eventName", label: "Event", sortable: false },
           { key: "game", label: "Game", sortable: true },
-          { key: "computedAt", label: "Computed At", sortable: false },
-          { key: "stakeAmount", label: "Stake Amount", sortable: false },
-          { key: "winAmount", label: "Win Amount", sortable: false },
+          { key: "computedAt", label: "Computed at", sortable: false },
+          {
+            key: "stakeAmount",
+            label: "Stake amount",
+            sortable: false,
+            align: "right",
+          },
+          {
+            key: "winAmount",
+            label: "Win amount",
+            sortable: false,
+            align: "right",
+          },
           { key: "status", label: "Status", sortable: false },
         ]}
         data={rows.map((r) => ({
-          ticket: r.ticket_no,
+          ticket: (
+            <span className="text-xs font-medium tabular-nums text-foreground">
+              {r.ticket_no}
+            </span>
+          ),
           event: String(r.event_no),
           eventName: r.event_name,
           game: r.game,
           computedAt: r.computed_at,
-          stakeAmount: formatGhs(parseFloat(String(r.stake_amount)) || 0),
-          winAmount: formatGhs(parseFloat(String(r.win_amount)) || 0),
+          stakeAmount: (
+            <span className="text-xs font-semibold tabular-nums text-foreground">
+              {formatUsd(parseFloat(String(r.stake_amount)) || 0)}
+            </span>
+          ),
+          winAmount: (
+            <span className="text-xs font-semibold tabular-nums text-emerald-700">
+              {formatUsd(parseFloat(String(r.win_amount)) || 0)}
+            </span>
+          ),
           status: <StatusBadge status={r.status} />,
         }))}
         pagination={pagination}

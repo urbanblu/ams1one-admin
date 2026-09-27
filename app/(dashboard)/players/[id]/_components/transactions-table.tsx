@@ -4,7 +4,7 @@ import CustomTable from "@/components/custom-table";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PlayersService, { type PlayerGame } from "@/api/players";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 import {
   LuArrowDownLeft,
   LuArrowUpRight,
@@ -19,31 +19,31 @@ const TX_META: Record<
 > = {
   deposit: {
     label: "Deposit",
-    color: "text-emerald-600",
+    color: "text-emerald-700",
     Icon: LuArrowDownLeft,
     credit: true,
   },
   win_credit: {
-    label: "Win Credit",
-    color: "text-emerald-600",
+    label: "Win credit",
+    color: "text-emerald-700",
     Icon: LuTrophy,
     credit: true,
   },
   refund: {
     label: "Refund",
-    color: "text-emerald-600",
+    color: "text-emerald-700",
     Icon: LuRefreshCw,
     credit: true,
   },
   ticket_purchase: {
-    label: "Ticket Purchase",
-    color: "text-rose-500",
+    label: "Ticket purchase",
+    color: "text-rose-700",
     Icon: LuTicket,
     credit: false,
   },
   withdrawal: {
     label: "Withdrawal",
-    color: "text-rose-500",
+    color: "text-rose-700",
     Icon: LuArrowUpRight,
     credit: false,
   },
@@ -93,14 +93,19 @@ function TransactionsTable({
         columns={[
           { key: "type", label: "Type", sortable: false },
           { key: "description", label: "Description", sortable: false },
-          { key: "amount", label: "Amount", sortable: false },
-          { key: "balanceAfter", label: "Balance After", sortable: false },
+          { key: "amount", label: "Amount", sortable: false, align: "right" },
+          {
+            key: "balanceAfter",
+            label: "Balance after",
+            sortable: false,
+            align: "right",
+          },
           { key: "createdAt", label: "Date", sortable: false },
         ]}
         data={rows.map((r) => {
           const meta = TX_META[r.tx_type] ?? {
             label: r.tx_type.replace(/_/g, " "),
-            color: "text-muted-foreground",
+            color: "text-foreground-light",
             Icon: LuArrowDownLeft,
             credit: true,
           };
@@ -108,30 +113,30 @@ function TransactionsTable({
           return {
             type: (
               <div className="flex items-center gap-1.5">
-                <Icon className={`w-3.5 h-3.5 shrink-0 ${meta.color}`} />
+                <Icon className={`size-3.5 shrink-0 ${meta.color}`} />
                 <span
-                  className={`text-xs font-semibold capitalize ${meta.color}`}
+                  className={`text-xs font-medium capitalize ${meta.color}`}
                 >
                   {meta.label}
                 </span>
               </div>
             ),
             description: (
-              <span className="text-xs text-muted-foreground truncate max-w-[180px] block">
+              <span className="block max-w-[180px] truncate text-xs text-foreground-light">
                 {r.description}
               </span>
             ),
             amount: (
               <span
-                className={`text-sm font-semibold tabular-nums ${meta.credit ? "text-emerald-600" : "text-rose-500"}`}
+                className={`text-xs font-semibold tabular-nums ${meta.credit ? "text-emerald-700" : "text-rose-700"}`}
               >
                 {meta.credit ? "+" : "−"}
-                {formatGhs(parseFloat(r.amount))}
+                {formatUsd(parseFloat(r.amount))}
               </span>
             ),
             balanceAfter: (
-              <span className="text-sm font-semibold tabular-nums">
-                {formatGhs(parseFloat(r.balance_after))}
+              <span className="text-xs font-semibold tabular-nums text-foreground">
+                {formatUsd(parseFloat(r.balance_after))}
               </span>
             ),
             createdAt: new Date(r.created_at).toLocaleDateString("en-GB", {

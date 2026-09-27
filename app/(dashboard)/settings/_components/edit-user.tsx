@@ -1,15 +1,23 @@
-import { Button as UiButton, drawerDialogClass } from "@/components/ui";
+import {
+  Button as UiButton,
+  DrawerTitleBar,
+  IconButton,
+  drawerBodyClass,
+  drawerDialogClass,
+  drawerFooterClass,
+  drawerWidth,
+} from "@/components/ui";
 import CustomInputComponent from "@/components/custom-input-component";
 import CustomSelectComponent from "@/components/custom-select-component";
 import PermissionsService from "@/api/permissions";
-import { CloseButton, CloseIcon, Drawer, Form } from "@heroui/react";
+import { cn, Drawer, Form } from "@heroui/react";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminUsersService from "@/api/admin-users";
 import ToastService from "@/utils/toast-service";
-import { FaRegEdit } from "react-icons/fa";
 import type { IAdminUser } from "@/interfaces/admin-users.interface";
 import ApiError from "@/utils/api_error";
+import { LuPencil } from "react-icons/lu";
 
 type Props = {
   user: IAdminUser;
@@ -63,98 +71,90 @@ function EditUserDrawer(payload: Props) {
 
   return (
     <>
-      <FaRegEdit
-        className="w-3 h-3 text-blue-500 cursor-pointer"
+      <IconButton
+        label={`Edit ${payload.user.full_name || "member"}`}
         onClick={() => setDrawerOpen(true)}
-      />
-      <Drawer.Backdrop
-        variant="blur"
-        className="backdrop-blur-xs"
-        isOpen={drawerIsOpen}
-        onOpenChange={setDrawerOpen}
       >
+        <LuPencil />
+      </IconButton>
+      <Drawer.Backdrop isOpen={drawerIsOpen} onOpenChange={setDrawerOpen}>
         <Drawer.Content placement="right">
-          <Drawer.Dialog className={drawerDialogClass}>
-            <Drawer.Header>
-              <CloseButton
-                className="flex size-8 cursor-pointer items-center justify-center self-end rounded-full bg-subtle text-muted-foreground transition-colors hover:bg-zinc-200 hover:text-foreground"
-                onClick={() => setDrawerOpen(false)}
-              >
-                <CloseIcon className="size-4" />
-              </CloseButton>
-            </Drawer.Header>
-            <Drawer.Body className="px-5 pb-6">
-              <Form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  const data = Object.fromEntries(
-                    new FormData(e.currentTarget),
-                  );
+          <Drawer.Dialog className={cn(drawerDialogClass, drawerWidth.form)}>
+            <Form
+              className="flex min-h-0 flex-1 flex-col"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(e.currentTarget));
 
-                  await editAdmin({
-                    first_name: String(data.firstName ?? ""),
-                    last_name: String(data.surname ?? ""),
-                    phone: String(data.phoneNumber ?? ""),
-                    is_active: status === "active",
-                    role_id: roleId === "__none__" ? null : roleId || null,
-                  });
-                }}
-              >
-                <div key={payload.user.id} className="flex flex-col space-y-3">
-                  <span className="text-lg font-bold">Edit user</span>
-                  <div className="space-y-4">
-                    <CustomInputComponent
-                      label="First Name"
-                      name="firstName"
-                      defaultValue={payload.user.first_name}
-                    />
-                    <CustomInputComponent
-                      label="Surname"
-                      name="surname"
-                      defaultValue={payload.user.last_name}
-                    />
-                    <CustomInputComponent
-                      label="Phone Number"
-                      name="phoneNumber"
-                      type="tel"
-                      defaultValue={payload.user.phone}
-                    />
-                    <CustomSelectComponent
-                      label="Status"
-                      placeholder=""
-                      showDropDownIcon
-                      list={[
-                        { key: "active", label: "Active" },
-                        { key: "inactive", label: "Inactive" },
-                      ]}
-                      initialItemKey={
-                        payload.user.is_active ? "active" : "inactive"
-                      }
-                      onSelectionChange={(item) => setStatus(item.key)}
-                    />
-                    <CustomSelectComponent
-                      label="Dashboard Role"
-                      placeholder="No role"
-                      showDropDownIcon
-                      list={roleOptions}
-                      initialItemKey={
-                        payload.user.dashboard_role?.id ?? "__none__"
-                      }
-                      onSelectionChange={(item) => setRoleId(item.key)}
-                    />
-                  </div>
-                  <UiButton
-                    className="mt-2"
-                    size="lg"
-                    type="submit"
-                    fullWidth
-                    isPending={isPending}
-                  >
-                    {isPending ? "Saving…" : "Save"}
-                  </UiButton>
+                await editAdmin({
+                  first_name: String(data.firstName ?? ""),
+                  last_name: String(data.surname ?? ""),
+                  phone: String(data.phoneNumber ?? ""),
+                  is_active: status === "active",
+                  role_id: roleId === "__none__" ? null : roleId || null,
+                });
+              }}
+            >
+              <DrawerTitleBar
+                icon={<LuPencil />}
+                title="Edit team member"
+                description={payload.user.full_name || undefined}
+                onClose={() => setDrawerOpen(false)}
+              />
+              <Drawer.Body className={drawerBodyClass}>
+                <div key={payload.user.id} className="space-y-4">
+                  <CustomInputComponent
+                    label="First Name"
+                    name="firstName"
+                    defaultValue={payload.user.first_name}
+                  />
+                  <CustomInputComponent
+                    label="Surname"
+                    name="surname"
+                    defaultValue={payload.user.last_name}
+                  />
+                  <CustomInputComponent
+                    label="Phone Number"
+                    name="phoneNumber"
+                    type="tel"
+                    defaultValue={payload.user.phone}
+                  />
+                  <CustomSelectComponent
+                    label="Status"
+                    placeholder=""
+                    showDropDownIcon
+                    list={[
+                      { key: "active", label: "Active" },
+                      { key: "inactive", label: "Inactive" },
+                    ]}
+                    initialItemKey={
+                      payload.user.is_active ? "active" : "inactive"
+                    }
+                    onSelectionChange={(item) => setStatus(item.key)}
+                  />
+                  <CustomSelectComponent
+                    label="Dashboard Role"
+                    placeholder="No role"
+                    showDropDownIcon
+                    list={roleOptions}
+                    initialItemKey={
+                      payload.user.dashboard_role?.id ?? "__none__"
+                    }
+                    onSelectionChange={(item) => setRoleId(item.key)}
+                  />
                 </div>
-              </Form>
-            </Drawer.Body>
+              </Drawer.Body>
+              <Drawer.Footer className={drawerFooterClass}>
+                <UiButton
+                  size="lg"
+                  type="submit"
+                  fullWidth
+                  isPending={isPending}
+                >
+                  {isPending ? "Saving…" : "Save changes"}
+                </UiButton>
+              </Drawer.Footer>
+            </Form>
           </Drawer.Dialog>
         </Drawer.Content>
       </Drawer.Backdrop>

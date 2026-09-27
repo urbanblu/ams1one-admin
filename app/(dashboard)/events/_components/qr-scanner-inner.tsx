@@ -11,7 +11,11 @@ interface QRScannerInnerProps {
 
 const READER_ID = "qr-reader-element";
 
-export default function QRScannerInner({ onScan, onError, active }: QRScannerInnerProps) {
+export default function QRScannerInner({
+  onScan,
+  onError,
+  active,
+}: QRScannerInnerProps) {
   const firedRef = useRef(false);
 
   useEffect(() => {
@@ -52,7 +56,11 @@ export default function QRScannerInner({ onScan, onError, active }: QRScannerInn
         .then(() => scanner.stop())
         .then(() => scanner.clear())
         .catch(() => {
-          try { scanner.clear(); } catch { /* ignore */ }
+          try {
+            scanner.clear();
+          } catch {
+            /* ignore */
+          }
         });
     };
     // onScan and onError are stable callbacks — intentionally excluded

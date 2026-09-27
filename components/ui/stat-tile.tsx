@@ -9,14 +9,17 @@ type StatTileProps = {
   /** Small caption under the value — a unit, a count, a delta. */
   hint?: React.ReactNode;
   icon?: React.ReactNode;
-  /** Tailwind classes for the icon chip, e.g. "bg-amber-50 text-amber-500". */
+  /** Escape hatch for an icon that carries meaning by colour. */
   iconClassName?: string;
   isLoading?: boolean;
   className?: string;
   onClick?: () => void;
 };
 
-/** White KPI tile: tiny muted label, big tight number, optional icon chip. */
+/**
+ * Compact KPI tile. Sentence-case label in the secondary text colour, figure
+ * at `font-medium` — the size carries the emphasis, not the weight.
+ */
 export function StatTile({
   label,
   value,
@@ -33,21 +36,21 @@ export function StatTile({
     <Wrapper
       onClick={onClick}
       className={cn(
-        "w-full overflow-hidden rounded-2xl border border-border-subtle bg-surface px-5 py-4 text-left",
+        "w-full overflow-hidden rounded-lg border border-border bg-surface px-4 py-3.5 text-left",
         onClick &&
-          "cursor-pointer transition-all hover:bg-subtle active:scale-[0.98]",
+          "cursor-pointer transition-colors hover:border-border-stronger hover:bg-surface-100",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <p className="min-w-0 flex-1 truncate text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+      <div className="flex items-center justify-between gap-3">
+        <p className="min-w-0 flex-1 truncate text-xs text-foreground-light">
           {label}
         </p>
         {icon && (
           <span
             className={cn(
-              "flex size-9 shrink-0 items-center justify-center rounded-xl [&>svg]:size-4",
-              iconClassName ?? "bg-primary-soft text-primary",
+              "flex shrink-0 items-center justify-center [&>svg]:size-3.5",
+              iconClassName ?? "text-foreground-muted",
             )}
           >
             {icon}
@@ -55,16 +58,14 @@ export function StatTile({
         )}
       </div>
       {isLoading ? (
-        <div className="mt-2 h-6 w-24 animate-pulse rounded bg-subtle" />
+        <div className="mt-2 h-6 w-24 animate-pulse rounded bg-surface-200" />
       ) : (
-        <p className="mt-1.5 truncate text-xl font-bold tracking-tight tabular-nums text-foreground">
+        <p className="mt-1.5 truncate text-xl font-medium tracking-tight tabular-nums text-foreground">
           {value}
         </p>
       )}
       {hint && (
-        <p className="mt-1 truncate text-[11px] text-muted-foreground">
-          {hint}
-        </p>
+        <p className="mt-1 truncate text-xs text-foreground-lighter">{hint}</p>
       )}
     </Wrapper>
   );

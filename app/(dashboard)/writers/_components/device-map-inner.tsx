@@ -93,7 +93,7 @@ export default function DeviceMapInner({ devices, onWriterClick }: Props) {
             <div className="text-xs space-y-1.5 py-1">
               <button
                 onClick={() => onWriterClick(d.writer.id)}
-                className="font-semibold text-sm text-foreground underline underline-offset-2 decoration-gray-400 hover:text-primary hover:decoration-primary transition-colors text-left cursor-pointer"
+                className="font-medium text-sm text-foreground underline underline-offset-2 decoration-gray-400 hover:text-brand-700 hover:decoration-brand-700 transition-colors text-left cursor-pointer"
               >
                 {d.writer.name}
               </button>
@@ -131,7 +131,7 @@ export default function DeviceMapInner({ devices, onWriterClick }: Props) {
                   {d.location_accuracy_m}m
                 </p>
               )}
-              <p className="text-zinc-400 text-[11px]">
+              <p className="text-foreground-muted text-xs">
                 Last seen {timeSince(d.location_reported_at)}
               </p>
             </div>

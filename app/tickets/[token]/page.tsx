@@ -72,8 +72,8 @@ type StatusBannerProps = {
 function StatusBanner({ type, scannedAt }: StatusBannerProps) {
   if (type === "scanned") {
     return (
-      <div className="flex items-start gap-3 rounded-2xl bg-amber-50 px-4 py-3 text-amber-700">
-        <LuCircleCheck className="mt-0.5 size-5 shrink-0 text-amber-500" />
+      <div className="flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-700">
+        <LuCircleCheck className="mt-0.5 size-5 shrink-0 text-amber-600" />
         <p className="text-sm font-medium leading-snug">
           This ticket was already used
           {scannedAt ? ` on ${formatScannedAt(scannedAt)}` : ""}.
@@ -84,8 +84,8 @@ function StatusBanner({ type, scannedAt }: StatusBannerProps) {
 
   if (type === "revoked") {
     return (
-      <div className="flex items-start gap-3 rounded-2xl bg-rose-50 px-4 py-3 text-rose-700">
-        <LuCircleX className="mt-0.5 size-5 shrink-0 text-rose-500" />
+      <div className="flex items-start gap-3 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-rose-700">
+        <LuCircleX className="mt-0.5 size-5 shrink-0 text-rose-600" />
         <p className="text-sm font-medium leading-snug">
           This ticket has been cancelled.
         </p>
@@ -94,8 +94,8 @@ function StatusBanner({ type, scannedAt }: StatusBannerProps) {
   }
 
   return (
-    <div className="flex items-start gap-3 rounded-2xl bg-subtle px-4 py-3 text-muted-foreground">
-      <LuCircleAlert className="mt-0.5 size-5 shrink-0 text-zinc-400" />
+    <div className="flex items-start gap-3 rounded-lg bg-subtle px-4 py-3 text-muted-foreground">
+      <LuCircleAlert className="mt-0.5 size-5 shrink-0 text-foreground-muted" />
       <p className="text-sm font-medium leading-snug">
         This event is no longer active.
       </p>
@@ -127,20 +127,19 @@ export default async function TicketPage({ params }: TicketPageProps) {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-border-subtle bg-surface">
+      <div className="w-full max-w-sm overflow-hidden rounded-xl border border-border bg-surface">
         {/* Event info */}
-        <div className="relative overflow-hidden bg-brand-gradient px-8 py-7 text-center">
-          <div className="pointer-events-none absolute -top-12 -right-12 size-40 rounded-full bg-white/20 blur-3xl" />
-          <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.06]" />
+        <div className="relative overflow-hidden border-b border-border bg-foreground px-8 py-7 text-center">
+          <div className="bg-line-grid pointer-events-none absolute inset-0" />
           <div className="relative space-y-1">
-            <h1 className="text-2xl font-bold leading-tight text-white">
+            <h1 className="text-2xl font-medium leading-tight text-white">
               {event.name}
             </h1>
-            <div className="flex items-center justify-center gap-1.5 pt-1 text-sm text-white/80">
+            <div className="flex items-center justify-center gap-1.5 pt-1 text-sm text-white/70">
               <LuCalendarDays className="size-4 shrink-0" />
               <span>{formatEventDate(event.event_date)}</span>
             </div>
-            <div className="flex items-center justify-center gap-1.5 text-sm text-white/60">
+            <div className="flex items-center justify-center gap-1.5 text-sm text-white/50">
               <LuMapPin className="size-4 shrink-0" />
               <span>{event.venue}</span>
             </div>

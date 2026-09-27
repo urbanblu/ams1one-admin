@@ -1,4 +1,5 @@
 import Helpers from "@/utils/helpers";
+import { fieldLabelClass } from "@/components/ui/field-label";
 import {
   CloseButton,
   cn,
@@ -106,11 +107,11 @@ function CustomInputComponent({
     if (!showPreficIcon) return undefined;
 
     if (type == "email") {
-      return <LuMail className="size-4 text-zinc-400" />;
+      return <LuMail className="size-3.5 text-foreground-muted" />;
     }
 
     if (type == "password") {
-      return <LuLock className="size-4 text-zinc-400" />;
+      return <LuLock className="size-3.5 text-foreground-muted" />;
     }
 
     return prefixIcon;
@@ -122,14 +123,14 @@ function CustomInputComponent({
     if (type == "password") {
       return (
         <CloseButton
-          className="mr-1 bg-transparent text-zinc-400 transition-colors hover:text-zinc-600"
+          className="mr-1 bg-transparent text-foreground-muted transition-colors hover:text-foreground"
           onPress={() => showPassword(!showing)}
         >
           <InputGroup.Suffix>
             {showing ? (
-              <LuEyeOff className="size-4" />
+              <LuEyeOff className="size-3.5" />
             ) : (
-              <LuEye className="size-4" />
+              <LuEye className="size-3.5" />
             )}
           </InputGroup.Suffix>
         </CloseButton>
@@ -153,6 +154,9 @@ function CustomInputComponent({
 
   const placeholderText = (() => {
     if (!showPlaceholder) return;
+    // An explicit placeholder outranks the per-type default: a caller that
+    // named one has a better one in mind than "Enter your email".
+    if (placeholder) return placeholder;
     if (type == "email") return "Enter your email";
     if (type == "password") return "Enter password";
 
@@ -190,10 +194,8 @@ function CustomInputComponent({
             {labelText && (
               <Label
                 className={cn(
-                  "mb-1.5 block text-xs font-medium",
-                  showInvalidState
-                    ? "text-destructive!"
-                    : "text-muted-foreground",
+                  fieldLabelClass,
+                  showInvalidState && "text-destructive!",
                 )}
                 htmlFor={id}
               >
@@ -202,14 +204,14 @@ function CustomInputComponent({
             )}
             <InputGroup
               className={cn(
-                "h-11 items-center bg-surface border border-solid rounded-xl px-4 transition-colors duration-200",
-                "focus-within:ring-0 focus-within:outline-none shadow-none",
+                "h-9 items-center bg-surface border border-solid rounded-md px-3 transition-colors duration-200",
+                "focus-within:outline-none shadow-none focus-within:ring-2 focus-within:ring-brand-500/20",
                 // HeroUI's .input-group__input adds its own px-3 py-2; zero it
                 // so the group's own h-11/px-4 is what actually measures.
                 "[&_input]:px-0 [&_input]:py-0 [&_input]:h-full",
                 showInvalidState
                   ? "border-destructive! focus-within:border-destructive!"
-                  : "border-border focus-within:border-primary",
+                  : "border-border-strong focus-within:border-brand-500",
                 className,
               )}
             >
@@ -274,17 +276,17 @@ function CustomInputComponent({
                       }
                     : undefined
                 }
-                className="text-sm text-foreground placeholder:text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-0 shadow-none"
+                className="text-sm text-foreground placeholder:text-sm placeholder:text-foreground-lighter focus:outline-none focus:ring-0 shadow-none"
               />
               {!!endContent && endContent}
             </InputGroup>
             {description && (
-              <Description className="mt-1.5 text-[11px] text-muted-foreground">
+              <Description className="mt-1.5 text-xs text-foreground-light">
                 {description}
               </Description>
             )}
             {(formAssociation === "outside" || hasSubmittedParentForm) && (
-              <FieldError className="mt-1.5 text-[11px] text-destructive" />
+              <FieldError className="mt-1.5 text-xs text-destructive" />
             )}
           </>
         );

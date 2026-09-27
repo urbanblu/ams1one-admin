@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/ui";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import WritersService from "@/api/writers";
-import { formatGhs } from "@/utils/currency";
+import { formatUsd } from "@/utils/currency";
 
 function SalesTable({ writerId }: { writerId: string }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,17 +55,30 @@ function SalesTable({ writerId }: { writerId: string }) {
           { key: "event", label: "Event #", sortable: true },
           { key: "eventName", label: "Event", sortable: false },
           { key: "game", label: "Game", sortable: false },
-          { key: "amountPaid", label: "Amount", sortable: false },
-          { key: "stakes", label: "Stakes", sortable: false },
+          {
+            key: "amountPaid",
+            label: "Amount",
+            sortable: false,
+            align: "right",
+          },
+          { key: "stakes", label: "Stakes", sortable: false, align: "right" },
           { key: "status", label: "Status", sortable: false },
         ]}
         data={rows.map((r) => ({
-          ticketId: r.ticket_no,
+          ticketId: (
+            <span className="text-xs font-medium tabular-nums text-foreground">
+              {r.ticket_no}
+            </span>
+          ),
           soldAt: r.sold_at,
           event: String(r.event_no),
           eventName: r.event_name,
           game: r.game,
-          amountPaid: formatGhs(parseFloat(String(r.total_amount)) || 0),
+          amountPaid: (
+            <span className="text-xs font-semibold tabular-nums text-foreground">
+              {formatUsd(parseFloat(String(r.total_amount)) || 0)}
+            </span>
+          ),
           stakes: String(r.stake_count),
           status: <StatusBadge status={r.status} />,
         }))}

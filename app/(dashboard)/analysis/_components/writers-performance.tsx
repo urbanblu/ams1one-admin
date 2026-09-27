@@ -122,7 +122,7 @@ function WritersPerformace() {
                         </span>
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <span className="size-2.5 rounded-full bg-primary" />
+                        <span className="size-2.5 rounded-full bg-brand-700" />
                         <span className="text-xs text-muted-foreground">
                           Active
                         </span>
@@ -199,19 +199,19 @@ function WritersPerformace() {
               />
             )}
             {canSeeBestWorst && (
-              <div className="flex-none overflow-hidden rounded-2xl border border-border-subtle bg-surface">
-                <div className="flex items-center gap-2 border-b border-border-subtle px-5 py-3.5">
-                  <LuMedal className="w-3.5 h-3.5 text-zinc-400" />
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+              <div className="flex-none overflow-hidden rounded-lg border border-border bg-surface">
+                <div className="flex items-center gap-2 border-b border-border px-5 py-3.5">
+                  <LuMedal className="w-3.5 h-3.5 text-foreground-muted" />
+                  <span className="text-xs font-medium text-foreground-light">
                     Best &amp; Worst Performance
                   </span>
                 </div>
                 <div className="p-4 flex flex-col gap-3">
-                  <div className="flex items-center justify-between gap-2 bg-emerald-50 rounded-lg px-3 py-2">
+                  <div className="flex items-center justify-between gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <LuTrendingUp className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <LuTrendingUp className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[11px] text-emerald-600 font-bold uppercase tracking-wider">
+                        <span className="text-xs text-emerald-600 font-medium">
                           Best Month
                         </span>
                         <span className="text-xs font-normal text-muted-foreground">
@@ -219,15 +219,15 @@ function WritersPerformace() {
                         </span>
                       </div>
                     </div>
-                    <span className="text-sm font-semibold tabular-nums text-emerald-600">
+                    <span className="text-sm font-medium tabular-nums text-emerald-600">
                       {bestWorst?.best_month?.performance ?? "—"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between gap-2 bg-rose-50 rounded-lg px-3 py-2">
+                  <div className="flex items-center justify-between gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2">
                     <div className="flex items-center gap-2">
                       <LuTrendingDown className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[11px] text-rose-500 font-bold uppercase tracking-wider">
+                        <span className="text-xs text-rose-600 font-medium">
                           Worst Month
                         </span>
                         <span className="text-xs font-normal text-muted-foreground">
@@ -235,7 +235,7 @@ function WritersPerformace() {
                         </span>
                       </div>
                     </div>
-                    <span className="text-sm font-semibold tabular-nums text-rose-500">
+                    <span className="text-sm font-medium tabular-nums text-rose-600">
                       {bestWorst?.worst_month?.performance ?? "—"}
                     </span>
                   </div>
@@ -250,7 +250,7 @@ function WritersPerformace() {
         <div className="grid gap-4 lg:grid-cols-4">
           {canSeeTopWriters && (
             <div className="flex min-w-0 flex-col lg:col-span-3 space-y-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+              <span className="text-xs font-medium text-foreground-light">
                 Top 10 retailers — year to date
               </span>
               <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
@@ -259,19 +259,19 @@ function WritersPerformace() {
                     index === 0
                       ? "text-yellow-400"
                       : index === 1
-                        ? "text-zinc-400"
+                        ? "text-foreground-muted"
                         : index === 2
                           ? "text-amber-600"
                           : null;
                   return (
                     <div
-                      className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface px-4 py-3"
+                      className="flex items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3"
                       key={w.writer_id}
                     >
                       {medalColor ? (
                         <LuMedal className={`w-4 h-4 shrink-0 ${medalColor}`} />
                       ) : (
-                        <span className="text-xs font-semibold tabular-nums text-zinc-300 shrink-0 w-4 text-center">
+                        <span className="text-xs font-medium tabular-nums text-foreground-muted shrink-0 w-4 text-center">
                           {index + 1}
                         </span>
                       )}
@@ -281,10 +281,10 @@ function WritersPerformace() {
                         size="sm"
                       />
                       <div className="flex flex-col min-w-0">
-                        <span className="font-semibold tabular-nums text-sm truncate text-primary">
+                        <span className="font-medium tabular-nums text-sm truncate text-brand-700">
                           {w.net_profit.formatted}
                         </span>
-                        <span className="truncate text-[11px] text-muted-foreground">
+                        <span className="truncate text-xs text-muted-foreground">
                           {w.writer_name}
                         </span>
                       </div>
@@ -297,23 +297,21 @@ function WritersPerformace() {
 
           {canSeeRetentionRate && (
             <div
-              className={`${canSeeTopWriters ? "lg:col-span-1" : "lg:col-span-4"} min-w-0 overflow-hidden rounded-2xl border border-border-subtle bg-surface`}
+              className={`${canSeeTopWriters ? "lg:col-span-1" : "lg:col-span-4"} min-w-0 overflow-hidden rounded-lg border border-border bg-surface`}
             >
-              <div className="flex items-start justify-between gap-3 border-b border-border-subtle px-5 py-4">
+              <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-4">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+                  <p className="text-xs font-medium text-foreground-light">
                     YTD retention rate
                   </p>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  <p className="mt-0.5 text-xs text-muted-foreground">
                     % of net earnings retained after payout
                   </p>
                 </div>
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                  <LuPercent className="size-4" />
-                </span>
+                <LuPercent className="size-3.5 shrink-0 text-foreground-muted" />
               </div>
               <div className="flex items-center justify-center py-8">
-                <span className="text-3xl font-bold tracking-tight tabular-nums truncate text-primary">
+                <span className="text-3xl font-medium tracking-tight tabular-nums truncate text-brand-700">
                   {retention?.retention_rate ?? "—"}
                 </span>
               </div>
@@ -383,7 +381,7 @@ function ActiveWritersStackedBarChart({ days }: { days: ActiveWriterDay[] }) {
   if (!days?.length) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <span className="text-xs font-normal text-zinc-400">
+        <span className="text-xs font-normal text-foreground-muted">
           Data not available
         </span>
       </div>
@@ -445,8 +443,8 @@ function ActiveWritersStackedBarChart({ days }: { days: ActiveWriterDay[] }) {
               const deployedVal = payload.find((p) => p.dataKey === "deployed")
                 ?.value as number | undefined;
               return (
-                <div className="rounded-xl border border-border-subtle bg-surface px-3 py-2 shadow-lg shadow-zinc-200/60">
-                  <div className="text-xs font-semibold text-foreground">
+                <div className="rounded-xl border border-border bg-surface px-3 py-2 shadow-overlay">
+                  <div className="text-xs font-medium text-foreground">
                     {formatDayLabel(String(label))}
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">

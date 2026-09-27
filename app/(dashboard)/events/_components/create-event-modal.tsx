@@ -1,8 +1,8 @@
 "use client";
 
-import { Button as UiButton } from "@/components/ui";
+import { Button as UiButton, Textarea } from "@/components/ui";
 import React from "react";
-import { Button, Form, Modal } from "@heroui/react";
+import { Form, Modal } from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LuCalendarDays, LuPlus } from "react-icons/lu";
 import EventsService from "@/api/events";
@@ -39,14 +39,10 @@ export default function CreateEventModal() {
 
   return (
     <>
-      <Button
-        className="h-10 cursor-pointer rounded-xl bg-brand-gradient px-4 text-sm font-semibold text-white transition-all hover:opacity-95 disabled:opacity-60"
-        size="md"
-        onClick={() => setIsOpen(true)}
-      >
-        <LuPlus className="size-4" />
+      <UiButton size="sm" onClick={() => setIsOpen(true)}>
+        <LuPlus />
         New event
-      </Button>
+      </UiButton>
 
       <Modal.Backdrop
         isOpen={isOpen}
@@ -57,15 +53,15 @@ export default function CreateEventModal() {
         isKeyboardDismissDisabled={isPending}
       >
         <Modal.Container placement="center" size="sm">
-          <Modal.Dialog className="rounded-3xl">
+          <Modal.Dialog className="rounded-lg">
             <Modal.Header>
-              <Modal.Icon className="rounded-2xl bg-primary-soft text-primary">
+              <Modal.Icon className="border-none bg-transparent text-foreground-muted">
                 <LuCalendarDays className="w-5 h-5" />
               </Modal.Icon>
-              <Modal.Heading className="text-lg font-semibold tracking-tight">
-                Create Event
+              <Modal.Heading className="text-base font-medium tracking-tight">
+                Create event
               </Modal.Heading>
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="mb-2 text-sm text-foreground-light">
                 Create an invite-only event and issue QR tickets via SMS.
               </p>
             </Modal.Header>
@@ -73,14 +69,14 @@ export default function CreateEventModal() {
             <Form onSubmit={handleSubmit}>
               <Modal.Body className="flex flex-col gap-3">
                 <CustomInputComponent
-                  label="Event Name"
+                  label="Event name"
                   name="name"
                   type="text"
                   isRequired
                   placeholder="e.g. AMS1One Anniversary Party"
                 />
                 <CustomInputComponent
-                  label="Date & Time"
+                  label="Date and time"
                   name="event_date"
                   type="datetime-local"
                   isRequired
@@ -91,17 +87,12 @@ export default function CreateEventModal() {
                   type="text"
                   placeholder="e.g. La Palm Royal Beach Hotel, Accra"
                 />
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs text-muted-foreground">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    placeholder="Optional event description"
-                    rows={2}
-                    className="w-full border border-border rounded-md px-3 py-2 text-xs focus:outline-none focus:border-primary resize-none"
-                  />
-                </div>
+                <Textarea
+                  label="Description"
+                  name="description"
+                  placeholder="Optional event description"
+                  rows={3}
+                />
               </Modal.Body>
 
               <Modal.Footer>

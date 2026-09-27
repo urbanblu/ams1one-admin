@@ -59,13 +59,16 @@ components/             # Shared UI components
     card.tsx            # Card, CardHeader, CardBody, CardFooter
     metric-card.tsx     # MetricCard — headline figure + breakdown rows
     stat-tile.tsx       # StatTile — compact KPI tile
-    hero-panel.tsx      # HeroPanel, HeroStat — brand gradient panel
+    hero-panel.tsx      # HeroPanel, HeroStat, HeroLedger, HeroDivider —
+                        #   the inverted (near-black) panel and its zones
     badge.tsx           # Badge, StatusBadge, StatusDot, toneForStatus
     avatar.tsx          # Avatar (initials / photo / status dot)
     button.tsx          # Button, IconButton
-    segmented-control.tsx
+    segmented-control.tsx    # single choice
+    filter-toggle-group.tsx  # multi-select
+    detail-row.tsx / form-section.tsx
     search-input.tsx
-    number-ball.tsx     # NumberBall, NumberBallRow — lottery numbers
+    number-ball.tsx     # NumberBall, NumberBallRow — mono lottery numbers
     page-header.tsx     # PageHeader, PageShell
     empty-state.tsx / query-state.tsx / skeleton.tsx
     drawer-chrome.tsx   # DrawerTitleBar, drawerDialogClass
@@ -127,57 +130,128 @@ utils/
 
 ## Design System
 
-The UI follows the **Ams1one Supervisor platform** design language
-(`urbanblu/ams1one_supervisor`). Tokens live in `app/globals.css`; never
+The UI follows the **Supabase** design language, rebuilt around the Ams1one
+violet rather than Supabase green. Tokens live in `app/globals.css`; never
 hardcode a hex value in a component.
+
+The three rules the whole system rests on:
+
+1. **Borders do the work.** Separation comes from a visible 1px line, never
+   from a shadow and rarely from a fill difference. There are no shadows in
+   the app except on overlays (`shadow-overlay`).
+2. **Structure over decoration.** No gradients, no blurred highlights, no
+   tinted icon chips. An icon is a bare 14–16px glyph in `text-foreground-muted`.
+3. **Hierarchy comes from size and colour, not weight.** `font-medium` is the
+   heaviest weight in the app. `font-bold` and `font-semibold` are not used.
 
 ### Tokens
 
+Neutrals are the Radix `slate` ramp Supabase's light theme is built on — a
+cool grey with a faint blue cast, not Tailwind's purple-leaning zinc. Do not
+reach for `zinc-*`, `gray-*` or `slate-*` utilities; use the tokens.
+
 | Token | Value | Use |
 | --- | --- | --- |
-| `--background` | `#f7f8fa` | page canvas (`bg-background`) |
-| `--surface` | `#ffffff` | cards, drawers, tables (`bg-surface`) |
-| `--subtle` | `#f4f4f5` | hover / track fills (`bg-subtle`) |
-| `--foreground` | `#171717` | primary text |
-| `--muted-foreground` | `#71717a` | secondary text |
-| `--primary` | `#9387eb` | brand violet |
-| `--primary-soft` | `#f1effd` | tinted chips, active nav |
-| `--brand-gradient` | `135deg #a99df0 → #9387eb → #7d6fe5` | `bg-brand-gradient` |
-| `--border-subtle` | `#f1f1f3` | card hairlines |
-| `--border` | `#e4e4e7` | inputs, dividers |
+| `--background` | `#ffffff` | main content canvas (`bg-background`) |
+| `--background-alt` | `#f8f9fa` | chrome: nav rail, mobile top bar |
+| `--surface` | `#ffffff` | panels, drawers, tables |
+| `--surface-100` | `#f6f7f8` | table headers, panel footers, control fills |
+| `--surface-200` | `#f1f3f5` | hover |
+| `--surface-300` | `#eceef0` | pressed / active nav item |
+| `--foreground` | `#11181c` | primary text |
+| `--foreground-light` | `#5b6166` | all secondary text and labels (6.3:1) |
+| `--foreground-lighter` | `#6f777d` | placeholders, dimmed figures (4.6:1) |
+| `--foreground-muted` | `#a8b0b6` | icon glyphs, disabled — **never body text** |
+| `--border` | `#e6e8eb` | panel outlines, row rules, dividers |
+| `--border-strong` | `#dfe3e6` | inputs, buttons |
+| `--border-stronger` | `#d7dbdf` | hover on a bordered control |
+| `--brand-500` | `#9387eb` | the identity violet — accents, dots, underlines |
+| `--brand-700` | `#6355d8` | **button fills and brand text** (5.5:1 with white) |
+| `--brand-100` | `#efedfd` | brand tint fill |
+| `--brand-800` | `#5244b4` | text on a brand tint |
 
-`--muted` is **also read by `@heroui/styles`** for its own secondary text, so it
-must stay a foreground colour — use `bg-subtle` for tinted surfaces, never
-`bg-muted`. The `:root` block also re-points HeroUI's internal `--accent`,
-`--danger`, `--success`, `--segment` and `--default` at these tokens so HeroUI
-widgets inherit the brand automatically.
+`--brand-500` is the brand, but white text on it only reaches 3:1, so anything
+that fills a surface and carries white text uses `--brand-700`. `--muted` is
+also read by `@heroui/styles` for its own secondary text, so it has to stay a
+foreground colour. The `:root` block re-points HeroUI's `--accent`, `--danger`,
+`--segment` and `--default` at these tokens so HeroUI widgets inherit the brand.
 
-Custom utilities: `bg-brand-gradient`, `text-brand-gradient`, `bg-dot-grid`,
-`animate-slide-up`, `animate-fade-in`, `animate-rise-in`.
+**Radii are collapsed on purpose:** `sm` 4px, `md`/default 6px, `lg`/`xl`/`2xl`
+8px, `3xl` 12px. `rounded-lg` is the panel radius, `rounded-md` the control
+radius, `rounded-full` is only for dots, badges and status indicators.
+
+Custom utilities: `font-ident` (mono, for IDs/codes/draw numbers),
+`bg-line-grid` (the faint grid on inverted panels), `focus-brand`,
+`animate-fade-in`, `animate-rise-in`, `animate-slide-up`. `bg-brand-gradient`
+survives as a legacy alias that now resolves to a flat `--brand-700` fill.
 
 Chart colours live in `utils/chart-colors.ts` (Recharts needs literals).
 
 ### Visual language
 
-- **Surfaces:** flat white, `rounded-2xl`, `border border-border-subtle`, no
-  shadow. Drawers and hero panels use `rounded-3xl`.
-- **Section labels:** `text-[11px] font-semibold uppercase tracking-wider text-zinc-400`.
-- **Figures:** `font-bold tracking-tight tabular-nums`; always `tabular-nums` for numbers.
-- **Icon chips:** `size-9 rounded-xl` with a 50-weight tint and a 500-weight
-  icon (`bg-amber-50 text-amber-500`), icons at `size-4`.
-- **Rows:** `divide-y divide-border-subtle`, `hover:bg-subtle`.
+- **Panels:** `rounded-lg border border-border bg-surface`, no shadow. Header
+  `px-5 py-3.5 border-b border-border`; footer `bg-surface-100`.
+- **Labels:** `text-xs text-foreground-light`, sentence case. The old
+  `text-[11px] uppercase tracking-wider` micro-label is gone; 12px is the
+  type floor.
+- **Figures:** `font-medium tracking-tight tabular-nums`; always `tabular-nums`.
+- **Identifiers:** writer IDs, event numbers, codes and draw numbers get
+  `font-ident` so a value reads as a value rather than as prose.
+- **Controls are compact:** buttons `h-7`/`h-8`/`h-9`, inputs and selects
+  `h-9`. Every variant is bordered, including the solid one.
+- **Rows:** `divide-y divide-border`, `hover:bg-surface-100`.
 - **Semantic colours:** emerald = success/active, amber = pending/warning,
-  rose = failed/inactive, blue = info, violet = brand. Use `StatusBadge` rather
-  than hand-rolling status pills.
-- **Icons:** `react-icons/lu` (Lucide) only, sized with `size-*`.
-- Page shells: `px-5 py-6 lg:px-8 lg:py-7` with `gap-5`, opened by `<PageHeader>`.
+  rose = failed/inactive, blue = info, violet = brand. Use the `-50` fill with
+  a `-200` border and `-600`/`-700` text; `-500` is too light for text on
+  white. Use `StatusBadge` rather than hand-rolling status pills.
+- **Callouts** (tinted alert strips) always carry a matching border.
+- **Emphasis panels invert** rather than going brand: `HeroPanel` is a near-
+  black `bg-foreground` surface with `bg-line-grid` and white type. That is
+  the only "loud" surface in the system.
+- **Icons:** `react-icons/lu` (Lucide) only, `size-3.5`/`size-4`, bare.
+- Page shells: `px-4 py-5 lg:px-6 lg:py-6` with `gap-4`, opened by
+  `<PageHeader>`, which closes itself with a `border-b border-border` rule.
 
 ### Tabs
 
-`Tabs.Indicator` from HeroUI mis-positions itself when the initially selected
-tab is **not the first one** (React Aria computes a shared-element offset that
-never settles). For any tab bar whose default is not the first tab, use
+HeroUI's `variant="secondary"` **is** the underline variant — it already gives
+a `border-b` container and a 2px bottom-line indicator. Style the indicator
+with `<Tabs.Indicator className="rounded-none bg-brand-500" />`; do not give
+it a radius or a full background, which turns it back into a pill.
+
+`Tabs.Indicator` also mis-positions itself when the initially selected tab is
+**not the first one** (React Aria computes a shared-element offset that never
+settles). For any tab bar whose default is not the first tab, use
 `<SegmentedControl>` instead — it is plain state, no measurement.
+
+### App bar
+
+The shell renders one app bar for every route ([nav-rail.tsx](components/nav-rail.tsx)).
+Pages fill it through portals from `@/components/ui`, so the nodes stay in the
+page's own React tree and page state drives them directly:
+
+- `<AppBarActions>` — the right-hand slot: tab bars, search fields, the
+  primary action. List pages already use it.
+- `<AppBarIdentity>` — the **last breadcrumb** on a detail page: back control,
+  avatar, name, an optional inline `adornment` (e.g. an edit trigger) and a
+  `meta` identifier. Pass `isLoading` while the entity is still fetching.
+
+A detail route's trail ends in a synthesised "Details" crumb. Mounting an
+`AppBarIdentity` supersedes it — the placeholder and its chevron hide, the
+identity's chevron appears. That swap is pure CSS (`empty:` on the host,
+`group-has-[[data-app-bar-identity]]/bar:` on the crumbs), so neither the bar
+nor the shell holds state about what the mounted page published.
+
+**Detail pages therefore carry no header of their own.** Do not re-add a
+back button, avatar or `<h1>` to the page body — the bar owns all of it, and
+`AppBarIdentity`'s name *is* the page's `<h1>`.
+
+### Selection controls
+
+- `<SegmentedControl>` — single choice. Bordered track on `bg-surface-100`,
+  selected item lifted onto `bg-surface` with its own border. No brand fill.
+- `<FilterToggleGroup>` — multi-select sibling, same track, plus a dot per
+  option that fills with `bg-brand-500` when on.
 
 ## Custom Components
 
@@ -199,11 +273,29 @@ Props: `label`, `name`, `type`, `defaultValue`, `isRequired`, `className`, `onCh
 - `data`: `TableRow[]` where each key matches a column key
 - `pagination`: `{ pageNumber, pageSize, totalCount }`
 - Column keys must be unique — duplicate keys cause React rendering errors
-- Renders as a white `rounded-2xl` card: header `bg-surface-muted` with
-  `text-[11px] uppercase tracking-wider text-zinc-400`, body cells `px-5 py-3.5`,
-  rows `hover:bg-subtle`. Cell content supplies its own emphasis — wrap the
-  primary column in `font-medium text-foreground` and numbers in
-  `font-semibold tabular-nums text-foreground`.
+- Renders as a white `rounded-lg` panel: header `bg-surface-100` with
+  `text-xs font-medium text-foreground-light`, body cells `px-4 py-2.5
+  text-xs`, rows `hover:bg-surface-100`, footer on `bg-surface-100`. Cell
+  content supplies its own emphasis — wrap the primary column in
+  `font-medium text-foreground`, numbers in `font-medium tabular-nums
+  text-foreground`, and IDs in `font-ident`.
+
+### Delight moments
+
+Delight lands on specific moments, never across a page — a screen where every
+tile animates is a screen that takes a second to become readable.
+
+- `useCountUp` (`hooks/use-count-up.ts`) animates a figure from where it reads
+  to where it should read. Reserved for the one number on a screen people
+  actually watch (the sales hero), not for every tile. It resumes from the
+  value on screen rather than restarting, snaps instantly under
+  `prefers-reduced-motion`, and callers pair the animated span with an
+  `sr-only` span holding the settled value.
+- `CustomTable`'s `emptyState` prop lets a page explain an emptiness it caused
+  — a filter, a date with nothing in it — and offer the way out. Prefer it to
+  `emptyMessage` whenever the page knows *why* the table is empty.
+- Entrance animations run unconditionally at mount (a keyed remount replays
+  them); never gate content visibility on a class the page toggles later.
 
 ### `CustomDatePicker`
 
@@ -219,7 +311,8 @@ Returns: `{ files, onClick, removeFile, clearFiles, InputComponent }`
 ## Drawers
 
 Use `drawerDialogClass` on `Drawer.Dialog` and `DrawerTitleBar` (both from
-`@/components/ui`) so every drawer shares the same chrome. Pattern used
+`@/components/ui`) so every drawer shares the same chrome — `rounded-l-xl`
+with a `border-l`, and a flat scrim (no backdrop blur). Pattern used
 throughout the app:
 
 ```tsx
